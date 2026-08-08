@@ -1,0 +1,29 @@
+.DS_Store
+**/.git.local/
+**/.env
+**/.env.*
+!**/.env*.md
+
+# Default-deny at repo root (full project trees stay local)
+/*
+!.gitignore
+!README.md
+
+# Published project roots
+!explore-ai/
+!whatsfeed/
+!low-code-platform/
+
+# Only */docs/developer/c4-model/ under those roots
+# Ignore one-level entries (*/** does not match depth-1 files like .env.example)
+*/*
+!*/docs/
+*/**
+!*/docs/
+!*/docs/developer/
+!*/docs/developer/c4-model/
+!*/docs/developer/c4-model/**
+
+# After */** so Cursor skills remain trackable
+!.cursor/
+!.cursor/**
