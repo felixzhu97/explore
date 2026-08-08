@@ -9,6 +9,7 @@ Architecture insight in this repo lives under each project's `docs/developer/c4-
 | Explore AI | [`explore-ai/docs/developer/c4-model/`](../../../../explore-ai/docs/developer/c4-model/) |
 | WhatsFeed | [`whatsfeed/docs/developer/c4-model/`](../../../../whatsfeed/docs/developer/c4-model/) |
 | Low Code Platform | [`low-code-platform/docs/developer/c4-model/`](../../../../low-code-platform/docs/developer/c4-model/) |
+| Shopping System | [`shopping-system/docs/developer/c4-model/`](../../../../shopping-system/docs/developer/c4-model/) |
 
 New projects use: `<project>/docs/developer/c4-model/`.
 

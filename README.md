@@ -5,7 +5,7 @@
 
 A collection of **architecture diagrams** for public projects — primarily [C4 Model](https://c4model.com/) views — to help developers understand system boundaries, containers, and core components.
 
-> **Scope:** Explore AI, WhatsFeed, and Low Code Platform (`explore-ai`, `whatsfeed`, `low-code-platform`).  
+> **Scope:** Explore AI, WhatsFeed, Low Code Platform, and Shopping System (`explore-ai`, `whatsfeed`, `low-code-platform`, `shopping-system`).  
 > This repository publishes architecture models and documentation only — not full application source trees.
 
 ## Table of Contents
@@ -37,6 +37,7 @@ Diagrams are written in **PlantUML**. Some directories also include pre-rendered
 | [Explore AI](https://github.com/felixzhu97/explore-ai) | C4 | [`explore-ai/docs/developer/c4-model/`](explore-ai/docs/developer/c4-model/) | Conversational AI platform: Chat, RAG, tools, eval (Spring AI + Angular) |
 | [WhatsFeed](https://github.com/felixzhu97/whatsfeed) | C4 | [`whatsfeed/docs/developer/c4-model/`](whatsfeed/docs/developer/c4-model/) | Social + messaging: feed, chat/calls, Nest API, optional AI |
 | [Low Code Platform](https://github.com/felixzhu97/low-code-platform) | C4 | [`low-code-platform/docs/developer/c4-model/`](low-code-platform/docs/developer/c4-model/) | Visual page builder: canvas, components, themes, export |
+| [Shopping System](https://github.com/felixzhu97/shopping-system) | C4 | [`shopping-system/docs/developer/c4-model/`](shopping-system/docs/developer/c4-model/) | E-commerce monorepo: Web shop, admin, API |
 
 ## Repository Layout
 
@@ -45,7 +46,8 @@ public-docs/
 ├── README.md
 ├── explore-ai/docs/developer/c4-model/     # C1–C4 flat
 ├── whatsfeed/docs/developer/c4-model/      # C1–C4 flat
-└── low-code-platform/docs/developer/c4-model/
+├── low-code-platform/docs/developer/c4-model/
+└── shopping-system/docs/developer/c4-model/
 ```
 
 ## Quick Start
@@ -66,13 +68,15 @@ Useful entry points:
 - [Explore AI system context](explore-ai/docs/developer/c4-model/C1-Context.puml)
 - [WhatsFeed system context](whatsfeed/docs/developer/c4-model/C1-Context.puml)
 - [Low Code Platform system context](low-code-platform/docs/developer/c4-model/C1-Context.puml)
+- [Shopping System system context](shopping-system/docs/developer/c4-model/C1-Context.puml)
 
 ## Suggested Learning Path
 
 1. Read [Explore AI C4](explore-ai/docs/developer/c4-model/) for Spring AI + Angular container and deployment boundaries
 2. Read [WhatsFeed C4](whatsfeed/docs/developer/c4-model/) for Nest API, clients, and Python service boundaries
 3. Read [Low Code Platform C4](low-code-platform/docs/developer/c4-model/) for SPA canvas / domain layout and Vercel deploy
-4. Compare how frontend shells, BFF/API containers, and external systems are drawn across these projects
+4. Read [Shopping System C4](shopping-system/docs/developer/c4-model/) for Web / Admin / API container split
+5. Compare how frontend shells, BFF/API containers, and external systems are drawn across these projects
 
 ## Contributing
 
@@ -100,6 +104,7 @@ Use clear conventional-style messages, for example:
 docs(explore-ai): refine backend component diagram
 docs(whatsfeed): clarify Nest API container boundaries
 docs(low-code-platform): update deployment production view
+docs(shopping-system): refine API component diagram
 ```
 
 ## Code of Conduct
