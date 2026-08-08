@@ -28,6 +28,7 @@ Current published C4 trees:
 - `explore-ai/docs/developer/c4-model/`
 - `whatsfeed/docs/developer/c4-model/`
 - `low-code-platform/docs/developer/c4-model/`
+- `shopping-system/docs/developer/c4-model/`
 
 ## Stage (required)
 
@@ -39,6 +40,7 @@ git add .cursor/skills/
 git add explore-ai/docs/developer/c4-model/
 git add whatsfeed/docs/developer/c4-model/
 git add low-code-platform/docs/developer/c4-model/
+git add shopping-system/docs/developer/c4-model/
 git status --short
 ```
 
