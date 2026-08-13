@@ -1,0 +1,206 @@
+# E8 商业化与平台
+
+← [用户故事地图](../User-Story-Map.md)
+
+## 背景
+
+进行中能力：商业化最小入口（配额、法务、Metrics 上锁、匿名账号）、可选 Google/GitHub OAuth 登录（访客模式保留）、可插拔 RAG ETL、文本情感分析、天气工具领域化，以及 Supervisor 自动分派专家 Agent。
+
+---
+
+## US-18 商业化底座：配额、法务页与账号雏形
+
+**As a** ExploreAI 访客与运营方  
+**I want** 日配额保护成本、法务文档可访问、Metrics 可按需上锁，并看到匿名账号状态  
+**So that** 产品具备可商业化的最小计费与合规入口
+
+### 验收标准
+
+1. **Scenario** 日配额与法务、账号状态可见
+   **GIVEN** 访客或运营方使用产品相关入口  
+   **WHEN** 访问涉及用量或账号的界面  
+   **THEN** 日配额可保护成本相关使用  
+   **AND** 法务文档可访问  
+   **AND** 可看到匿名账号状态
+
+2. **Scenario** Metrics 可按需上锁
+   **GIVEN** Metrics 能力已部署  
+   **WHEN** 运营方按需启用上锁  
+   **THEN** Metrics 访问受上锁策略约束  
+   **AND** 仍服务于可商业化的最小合规入口
+
+### 状态
+
+进行中
+
+---
+
+## US-18b 可选 OAuth 登录与访客模式
+
+**As a** ExploreAI 访客  
+**I want** 在保留访客模式的同时可选 Google 或 GitHub 登录，并随时登出  
+**So that** 我可以按需绑定身份而不被强制登录墙挡住
+
+### 验收标准
+
+1. **Scenario** 未配置 OAuth 时仍为访客
+   **GIVEN** Google 与 GitHub OAuth 均未启用  
+   **WHEN** 打开侧栏账号菜单  
+   **THEN** `/api/account/me` 返回 `mode=anonymous`  
+   **AND** 不显示登录入口（`loginAvailable=false`，`loginProviders=[]`）  
+   **AND** 会话仍按 Client Identity 隔离
+
+2. **Scenario** 启用 Google 后可登录
+   **GIVEN** `APP_OAUTH_GOOGLE_ENABLED=true` 且 Client 凭证已配置  
+   **WHEN** 用户选择 Continue with Google 并完成授权  
+   **THEN** 账号关联到当前 Client Identity  
+   **AND** `/api/account/me` 返回 `mode=authenticated` 与邮箱  
+   **AND** 侧栏显示登出
+
+3. **Scenario** 启用 GitHub 后可登录
+   **GIVEN** `APP_OAUTH_GITHUB_ENABLED=true` 且 GitHub OAuth App 凭证已配置  
+   **WHEN** 用户选择 Continue with GitHub 并完成授权  
+   **THEN** 账号关联到当前 Client Identity（`provider=github`）  
+   **AND** `/api/account/me` 返回 `mode=authenticated`  
+   **AND** `loginProviders` 包含 `github`
+
+4. **Scenario** 登出后回到访客
+   **GIVEN** 用户已登录  
+   **WHEN** 用户选择 Log out  
+   **THEN** 会话认证清除  
+   **AND** 仍可使用访客模式（Client Identity cookie 保留）
+
+### 状态
+
+已实现
+
+Jira:
+- Google 访客可选登录：[AI-332](https://felixzhu.atlassian.net/browse/AI-332)
+- GitHub 并列可选登录：[AI-333](https://felixzhu.atlassian.net/browse/AI-333)
+
+---
+
+## US-18c Account data isolation via Owner Key
+
+**As a** ExploreAI visitor who signs in  
+**I want** my guest-browser data to move under my account partition after OAuth  
+**So that** the same sessions and library items follow me across devices once authenticated
+
+### Acceptance criteria
+
+1. **Scenario** Guest data uses client owner key
+   **GIVEN** the visitor is anonymous with Client Identity cookie  
+   **WHEN** they create chat / skills / pipelines / automations  
+   **THEN** rows are stored with `owner_key = c:{clientId}`
+
+2. **Scenario** OAuth login merges guest into account
+   **GIVEN** guest rows exist under `c:{clientId}`  
+   **WHEN** OAuth login succeeds and links the Account User  
+   **THEN** those rows are reassigned to `u:{accountUserId}`  
+   **AND** subsequent data APIs resolve Owner Key via CurrentOwnerResolver
+
+3. **Scenario** Privacy erase deletes current owner partition
+   **GIVEN** the current Owner Key owns durable rows  
+   **WHEN** the visitor calls privacy erase  
+   **THEN** owner-scoped stores for that key are deleted
+
+### Status
+
+已实现
+
+---
+
+## US-19 RAG ETL 管道
+
+**As a** 平台工程师  
+**I want** 通过可插拔的 ETL 端口处理不同格式文档  
+**So that** 新增文档类型时无需修改应用层代码
+
+### 验收标准
+
+1. **Scenario** 经 ETL 端口处理不同格式文档
+   **GIVEN** 平台提供可插拔 ETL 端口  
+   **WHEN** 接入或处理某一文档格式  
+   **THEN** 文档经该端口完成处理流水线
+
+2. **Scenario** 新增文档类型不改应用层
+   **GIVEN** 需要支持新的文档类型  
+   **WHEN** 通过扩展 ETL 端口实现该类型  
+   **THEN** 无需修改应用层代码即可纳入处理
+
+### 状态
+
+进行中
+
+---
+
+## US-20 文本分析
+
+**As a** 管理员  
+**I want** 对文本进行结构化情感分析  
+**So that** 我可以了解用户反馈的情绪倾向
+
+### 验收标准
+
+1. **Scenario** 对文本做结构化情感分析
+   **GIVEN** 管理员提供待分析文本  
+   **WHEN** 触发文本情感分析  
+   **THEN** 得到结构化的情感分析结果
+
+2. **Scenario** 结果反映情绪倾向
+   **GIVEN** 情感分析已完成  
+   **WHEN** 管理员查看结果  
+   **THEN** 可了解用户反馈的情绪倾向
+
+### 状态
+
+进行中
+
+---
+
+## US-21 Tools 天气查询
+
+**As a** 开发者  
+**I want** 通过充血领域模型封装天气查询逻辑  
+**So that** 工具调用遵循领域建模最佳实践
+
+### 验收标准
+
+1. **Scenario** 天气查询逻辑由领域模型承载
+   **GIVEN** 天气查询作为工具能力存在  
+   **WHEN** 开发者查看或扩展天气查询  
+   **THEN** 查询逻辑封装在充血领域模型中
+
+2. **Scenario** 工具调用符合领域建模实践
+   **GIVEN** 天气工具被调用  
+   **WHEN** 执行查询  
+   **THEN** 调用路径遵循领域建模最佳实践（相对贫血脚本式堆砌）
+
+### 状态
+
+进行中
+
+---
+
+## US-22 Supervisor 自动路由
+
+**As a** 最终用户  
+**I want** 描述任务后由 Supervisor 自动分派专家 Agent  
+**So that** 我不必手动设计流水线
+
+### 验收标准
+
+1. **Scenario** 描述任务后自动分派专家 Agent
+   **GIVEN** Supervisor 路由能力可用  
+   **WHEN** 用户描述任务  
+   **THEN** Supervisor 自动分派合适的专家 Agent  
+   **AND** 用户不必手动设计流水线
+
+2. **Scenario** 用户无需搭图即可推进任务
+   **GIVEN** 用户仅提供任务描述  
+   **WHEN** 系统完成分派与执行入口  
+   **THEN** 用户可在不手动编排画布的情况下获得后续处理
+
+### 状态
+
+进行中

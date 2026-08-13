@@ -1,6 +1,6 @@
 # Sync Repo
 
-Sync **architecture docs only** from the local workspace into this meta-repo. Full application source trees stay local and must not be published.
+Sync **architecture and living product docs** from the local workspace into this meta-repo. Full application source trees stay local and must not be published.
 
 Prepare nested Git first — see [nested-git](nested-git.md). This document only covers staging docs into the meta-repo.
 
@@ -13,24 +13,24 @@ Allowed to stage and commit:
 | Path | Role |
 |------|------|
 | `*/docs/developer/c4-model/` | Flat C1–C4 PlantUML (and optional PNG) |
-| `*/README.md` | Optional project README (un-ignored via `!*/README.md`) |
+| `*/docs/Glossary.md` | Domain ubiquitous language |
+| `*/docs/product-owner/` | User Story Map + epic story files |
+| `*/README.md` | Project README (un-ignored via `!*/README.md`) |
 | `README.md` | Projects catalog and entry points |
 | `.gitignore` | Default-deny root + docs whitelist |
 | `.cursor/skills/` | Maintainer workflow skills |
 
-**Not** published: `docs/product-owner/` user-story trees, `docs/Glossary.md`, project `.cursor/skills/`, or application source.
+**Not** published: project `.cursor/skills/`, application source, secrets, or build artifacts.
 
-Meta-repo maintainers sync **existing** `docs/developer/c4-model/` trees. Do not use this meta-repo workflow to rewrite project-local skills, Glossary, or user-story docs.
+Root `.gitignore` uses `/*` default-deny, un-ignores published project roots, then allows C4, Glossary, product-owner trees, and project READMEs. New local projects are ignored automatically; onboarding needs `!<name>/` plus those shared rules.
 
-Root `.gitignore` uses `/*` default-deny, un-ignores published project roots, then allows `*/docs/developer/c4-model/` and `*/README.md`. New local projects are ignored automatically; onboarding needs `!<name>/` plus those shared docs rules.
+Current published project roots:
 
-Current published C4 trees:
-
-- `explore-ai/docs/developer/c4-model/`
-- `explore-iam/docs/developer/c4-model/`
-- `whatsfeed/docs/developer/c4-model/`
-- `low-code-platform/docs/developer/c4-model/`
-- `shopping-system/docs/developer/c4-model/`
+- `explore-ai/`
+- `explore-iam/`
+- `whatsfeed/`
+- `low-code-platform/`
+- `shopping-system/`
 
 ## Stage (required)
 
@@ -39,23 +39,22 @@ Stage **only** whitelist paths. Do **not** use `git add -A`.
 ```bash
 git add .gitignore README.md
 git add .cursor/skills/
-git add explore-ai/docs/developer/c4-model/
-git add explore-iam/docs/developer/c4-model/
-git add whatsfeed/docs/developer/c4-model/
-git add low-code-platform/docs/developer/c4-model/
-git add shopping-system/docs/developer/c4-model/
-# Optional, when a project README is whitelisted:
-# git add <name>/README.md
+git add explore-ai/README.md explore-ai/docs/Glossary.md explore-ai/docs/product-owner/ explore-ai/docs/developer/c4-model/
+git add explore-iam/README.md explore-iam/docs/Glossary.md explore-iam/docs/product-owner/ explore-iam/docs/developer/c4-model/
+git add whatsfeed/README.md whatsfeed/docs/Glossary.md whatsfeed/docs/product-owner/ whatsfeed/docs/developer/c4-model/
+git add low-code-platform/README.md low-code-platform/docs/Glossary.md low-code-platform/docs/product-owner/ low-code-platform/docs/developer/c4-model/
+git add shopping-system/README.md shopping-system/docs/Glossary.md shopping-system/docs/product-owner/ shopping-system/docs/developer/c4-model/
 git status --short
 ```
 
-When onboarding a new project, extend the `git add` list with that project's `docs/developer/c4-model/` path (and `README.md` when published).
+When onboarding a new project, extend the `git add` list with that project's whitelist paths.
 
 ## Onboard a new project
 
 1. Add flat `docs/developer/c4-model/` files using `C1-`–`C4-` naming (see [c4-model](c4-model.md))
-2. Add a row to the Projects table in root `README.md` (Title Case display name + kebab-case path)
-3. Whitelist the project root in `.gitignore` (`!<name>/`)
-4. Add that C4 path (and `README.md` if publishing one) to the stage commands above
-5. Stage whitelist paths, then follow [commit-pr](commit-pr.md)
-6. (Optional, outside meta) project-repo skills live only in that project’s Git remote
+2. Add `docs/Glossary.md` and `docs/product-owner/` (User Story Map + stories) when ready
+3. Add project `README.md`
+4. Add a row to the Projects table in root `README.md` (Title Case display name + kebab-case path)
+5. Whitelist the project root in `.gitignore` (`!<name>/`)
+6. Stage whitelist paths, then follow [commit-pr](commit-pr.md)
+7. (Optional, outside meta) project-repo skills live only in that project’s Git remote

@@ -6,7 +6,7 @@
 A collection of **architecture diagrams** for public projects — primarily [C4 Model](https://c4model.com/) views — to help developers understand system boundaries, containers, and core components.
 
 > **Scope:** Catalogued projects listed in [Projects](#projects) below.  
-> This repository publishes architecture models and documentation only — not full application source trees.
+> This repository publishes C4 models, project READMEs, Glossaries, and User Story Maps — not full application source trees.
 
 ## Table of Contents
 
@@ -45,11 +45,21 @@ Diagrams are written in **PlantUML**. Some directories also include pre-rendered
 ```text
 public-docs/
 ├── README.md
-├── explore-ai/docs/developer/c4-model/     # C1–C4 flat
-├── explore-iam/docs/developer/c4-model/    # C1–C4 flat
-├── whatsfeed/docs/developer/c4-model/      # C1–C4 flat
-├── low-code-platform/docs/developer/c4-model/
-└── shopping-system/docs/developer/c4-model/
+├── explore-ai/
+│   ├── README.md
+│   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
+├── explore-iam/
+│   ├── README.md
+│   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
+├── whatsfeed/
+│   ├── README.md
+│   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
+├── low-code-platform/
+│   ├── README.md
+│   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
+└── shopping-system/
+    ├── README.md
+    └── docs/{Glossary.md,product-owner/,developer/c4-model/}
 ```
 
 ## Quick Start

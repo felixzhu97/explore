@@ -16,8 +16,7 @@
 !shopping-system/
 !explore-iam/
 
-# Only */docs/developer/c4-model/ under those roots
-# Ignore one-level entries (*/** does not match depth-1 files like .env.example)
+# Ignore one-level entries under project roots, then re-allow docs
 */*
 !*/docs/
 */**
@@ -25,6 +24,9 @@
 !*/docs/developer/
 !*/docs/developer/c4-model/
 !*/docs/developer/c4-model/**
+!*/docs/Glossary.md
+!*/docs/product-owner/
+!*/docs/product-owner/**
 
 # Optional project root README under any published project root
 !*/README.md

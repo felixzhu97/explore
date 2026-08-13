@@ -58,7 +58,7 @@ Typical actions: sync a project's architecture docs into the meta-repo; add or c
 - [ ] Root README Projects / entry points updated (or N/A)
 - [ ] Linked commit/PR includes why + References (official / research)
 - [ ] Staged via whitelist paths only (see developer sync-repo skill)
-- [ ] User-story markdown trees were not added to the meta-repo
+- [ ] Glossary / User Story Map updated when domain language or backlog changed (or N/A)
 ```
 
 Add ticket-specific Done items when needed (e.g. PNG render, new `.gitignore` whitelist entry).

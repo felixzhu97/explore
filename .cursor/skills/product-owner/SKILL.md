@@ -1,6 +1,6 @@
 ---
 name: product-owner
-description: Shape backlog items for syncing this meta-repo and updating C4 models. Use when writing stories, acceptance criteria, or Definition of Done for architecture-doc sync or C4 work. Does not require committing user-story markdown trees.
+description: Shape backlog items for syncing this meta-repo and updating C4 models. Use when writing stories, acceptance criteria, or Definition of Done for architecture-doc sync, C4, Glossary, or User Story Map work.
 ---
 
 # Product Owner
@@ -11,15 +11,15 @@ Shape work as short stories for **syncing the repo** or **updating C4 models**. 
 
 **Every** new or edited ticket **must** follow [story-template](references/story-template.md). Do not invent alternate structures.
 
-**Do not** require committing `docs/product-owner/User-Story-Map.md` or `user-stories/` into this meta-repo. Tickets may live in Jira (or equivalent); story-template is for ticket text, not a published doc tree.
+**Do not** require inventing alternate ticket structures. Project living docs (`docs/Glossary.md`, `docs/product-owner/`) **are** published via the sync whitelist — see [Developer sync-repo](../developer/references/sync-repo.md). Jira tickets may still use [story-template](references/story-template.md) for ticket text.
 
 ## Story types
 
 | Type | Example outcome |
 |------|-----------------|
-| Sync repo | Architecture docs for a project are published via the whitelist |
+| Sync repo | Architecture / Glossary / user-story docs published via the whitelist |
 | Update C4 | A C1/C2/C3 (or deployment) view is accurate and renderable |
-| Onboard project | New kebab-case project appears in README with C4 path |
+| Onboard project | New kebab-case project appears in README with C4 + living docs paths |
 
 ## Role
 
@@ -60,8 +60,8 @@ Full template: [story-template](references/story-template.md)
 
 - [ ] Background, User Story, AC, DoD present
 - [ ] ≥3 testable scenarios ([acceptance-criteria](references/acceptance-criteria.md))
-- [ ] DoD covers sync repo + C4 + commit/PR References
-- [ ] No requirement to publish user-story markdown trees
+- [ ] DoD covers sync repo + C4 + Glossary/stories when touched + commit/PR References
+- [ ] Living docs staged only via whitelist paths (see developer sync-repo)
 
 ## Related
 
