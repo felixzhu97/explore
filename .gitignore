@@ -14,6 +14,7 @@
 !whatsfeed/
 !low-code-platform/
 !shopping-system/
+!explore-iam/
 
 # Only */docs/developer/c4-model/ under those roots
 # Ignore one-level entries (*/** does not match depth-1 files like .env.example)
@@ -24,6 +25,9 @@
 !*/docs/developer/
 !*/docs/developer/c4-model/
 !*/docs/developer/c4-model/**
+
+# Optional project root README under any published project root
+!*/README.md
 
 # After */** so Cursor skills remain trackable
 !.cursor/
