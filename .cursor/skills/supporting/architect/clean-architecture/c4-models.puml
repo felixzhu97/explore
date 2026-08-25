@@ -1,0 +1,452 @@
+# PlantUML C4 模型图参考
+
+## C4 模型概述
+
+| 层级 | 用途 | 受众 |
+|------|------|------|
+| Context (C1) | 系统全景图 | 业务、技术团队 |
+| Container (C2) | 容器/服务图 | 开发、运维 |
+| Component (C3) | 组件图 | 开发团队 |
+| Code (C4) | 代码详细图 | 开发团队 |
+
+## PUML C4 插件使用
+
+在 PlantUML 文件顶部引入 C4 扩展：
+
+```plantuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+```
+
+## C1 - 系统上下文图
+
+### 基础系统上下文
+
+```plantuml
+@startuml SystemContext
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 系统上下文图 - 电商平台
+
+Person(customer, "客户", "浏览和购买商品的用户")
+Person(admin, "管理员", "管理商品和订单")
+System(ecommerce, "电商平台", "核心电商系统")
+
+System_Ext(payment, "支付系统", "Stripe 支付网关")
+System_Ext(email, "邮件服务", "SendGrid 邮件服务")
+System_Ext(inventory, "库存系统", "ERP 库存管理")
+
+Rel(customer, ecommerce, "使用")
+Rel(admin, ecommerce, "管理")
+Rel(ecommerce, payment, "处理支付")
+Rel(ecommerce, email, "发送邮件")
+Rel(ecommerce, inventory, "同步库存")
+
+SHOW_LEGEND()
+@enduml
+```
+
+### 完整系统上下文
+
+```plantuml
+@startuml SystemContextFull
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(user, "用户", "注册并使用系统的用户")
+System(platform, "社交平台", "分享内容的社交平台")
+System_Ext(google, "Google", "OAuth 认证")
+System_Ext(s3, "AWS S3", "存储图片和视频")
+System_Ext(cdn, "CDN", "内容分发网络")
+
+Rel(user, platform, "注册/登录")
+Rel(platform, google, "OAuth 认证")
+Rel(platform, s3, "上传媒体文件")
+Rel(platform, cdn, "分发静态资源")
+
+SHOW_LEGEND()
+@enduml
+```
+
+## C2 - 容器图
+
+### 后端服务容器图
+
+```plantuml
+@startuml ContainerDiagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 容器图 - 电商平台后端
+
+Person(customer, "客户", "网购用户")
+Person(admin, "管理员", "后台管理人员")
+
+System_Boundary(ecommerce, "电商平台") {
+    Container(web_app, "Web 应用", "React", "提供用户界面")
+    Container(api_gateway, "API 网关", "Kong/Nginx", "路由和认证")
+    Container(user_service, "用户服务", "Node.js", "用户管理")
+    Container(product_service, "商品服务", "Node.js", "商品 CRUD")
+    Container(order_service, "订单服务", "Node.js", "订单处理")
+    Container(payment_service, "支付服务", "Node.js", "支付集成")
+    ContainerDb(database, "主数据库", "PostgreSQL", "存储核心数据")
+    ContainerDb(redis, "缓存", "Redis", "会话和缓存")
+    ContainerQueue(queue, "消息队列", "RabbitMQ", "异步消息处理")
+}
+
+System_Ext(payment_gateway, "支付网关", "Stripe API")
+System_Ext(email_service, "邮件服务", "SendGrid API")
+
+Rel(customer, web_app, "访问", "HTTPS")
+Rel(admin, web_app, "管理", "HTTPS")
+Rel(web_app, api_gateway, "API 调用")
+Rel(api_gateway, user_service, "REST")
+Rel(api_gateway, product_service, "REST")
+Rel(api_gateway, order_service, "REST")
+Rel(api_gateway, payment_service, "REST")
+Rel(user_service, database, "读写")
+Rel(product_service, database, "读写")
+Rel(order_service, database, "读写")
+Rel(order_service, queue, "发布事件")
+Rel(payment_service, queue, "消费事件")
+Rel(payment_service, payment_gateway, "调用")
+Rel(payment_service, email_service, "发送通知")
+Rel(user_service, redis, "缓存会话")
+Rel(product_service, redis, "缓存商品")
+
+SHOW_LEGEND()
+@enduml
+```
+
+### 整洁架构容器图
+
+```plantuml
+@startuml CleanArchitectureContainers
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title 整洁架构容器图
+
+System_Boundary(api, "API 服务") {
+    ContainerPresention(controller, "Controller", "Express/REST", "处理 HTTP 请求")
+    ContainerPresention(middleware, "Middleware", "Express", "认证、日志、验证")
+    
+    ContainerApplication(usecase, "Use Cases", "TypeScript", "业务逻辑编排")
+    ContainerApplication(dtos, "DTOs", "TypeScript", "数据传输对象")
+    
+    ContainerDomain(domain, "Domain", "TypeScript", "核心业务逻辑")
+    ContainerDomain(entities, "Entities", "TypeScript", "业务实体")
+    ContainerDomain(value_objects, "Value Objects", "TypeScript", "不可变值")
+    ContainerDomain(services, "Domain Services", "TypeScript", "领域服务")
+    ContainerDomain(interfaces, "Interfaces", "TypeScript", "仓储接口")
+    
+    ContainerInfrastructure(repositories, "Repositories", "TypeORM", "数据访问实现")
+    ContainerInfrastructure(external, "External Services", "Axios", "外部 API 调用")
+    ContainerDb(database, "Database", "PostgreSQL", "持久化存储")
+}
+
+System_Ext(auth_provider, "认证服务", "Auth0")
+System_Ext(email_provider, "邮件服务", "SendGrid")
+
+Rel(middleware, controller, "请求")
+Rel(controller, usecase, "调用")
+Rel(usecase, domain, "使用")
+Rel(usecase, dto, "输入/输出")
+Rel(domain, interfaces, "定义接口")
+Rel(repositories, interfaces, "实现")
+Rel(repositories, database, "读写")
+Rel(external, auth_provider, "验证")
+Rel(external, email_provider, "发送")
+
+SHOW_LEGEND()
+@enduml
+```
+
+## C3 - 组件图
+
+### 订单服务组件图
+
+```plantuml
+@startuml ComponentDiagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 组件图 - 订单服务
+
+Container(order_service, "订单服务", "Node.js")
+
+Container_Boundary(order_domain, "Domain Layer") {
+    Component(order_entity, "Order Entity", "Class", "订单实体")
+    Component(order_item, "OrderItem", "Value Object", "订单项")
+    Component(pricing_service, "Pricing Service", "Domain Service", "价格计算")
+    Component(order_repository, "IOrderRepository", "Interface", "仓储接口")
+}
+
+Container_Boundary(order_application, "Application Layer") {
+    Component(create_order_usecase, "CreateOrderUseCase", "Use Case", "创建订单")
+    Component(cancel_order_usecase, "CancelOrderUseCase", "Use Case", "取消订单")
+    Component(order_dto, "OrderDTO", "Class", "数据传输对象")
+}
+
+Container_Boundary(order_infra, "Infrastructure Layer") {
+    Component(postgres_order_repo, "PostgresOrderRepository", "Repository", "仓储实现")
+    Component(order_event_publisher, "OrderEventPublisher", "Publisher", "发布领域事件")
+}
+
+Rel(order_service, create_order_usecase, "使用")
+Rel(order_service, cancel_order_usecase, "使用")
+Rel(create_order_usecase, order_entity, "创建/保存")
+Rel(create_order_usecase, pricing_service, "调用")
+Rel(create_order_usecase, order_repository, "调用接口")
+Rel(cancel_order_usecase, order_entity, "修改状态")
+Rel(postgres_order_repo, order_repository, "实现")
+Rel(order_event_publisher, order_entity, "发布事件")
+
+SHOW_LEGEND()
+@enduml
+```
+
+## C4 - 代码详细图
+
+### 类图示例
+
+```plantuml
+@startuml ClassDiagram
+skinparam classAttributeIconSize 0
+
+class Order {
+    -id: OrderId
+    -customerId: CustomerId
+    -items: OrderItem[]
+    -status: OrderStatus
+    -createdAt: Date
+    +create(props): Order
+    +addItem(item): void
+    +confirm(): void
+    +cancel(): void
+    +get total(): Money
+}
+
+class OrderItem {
+    -productId: ProductId
+    -quantity: number
+    -price: Money
+    +get subtotal(): Money
+}
+
+class Money {
+    -amount: number
+    -currency: string
+    +create(amount, currency): Money
+    +add(other): Money
+    +multiply(factor): Money
+    +isGreaterThan(other): boolean
+}
+
+class OrderStatus {
+    <<enum>>
+    PENDING
+    CONFIRMED
+    SHIPPED
+    DELIVERED
+    CANCELLED
+}
+
+interface IOrderRepository {
+    +findById(id): Promise<Order>
+    +save(order): Promise<void>
+    +delete(id): Promise<void>
+}
+
+Order "1" o-- "n" OrderItem
+OrderItem --> Money
+Order --> OrderStatus
+Order ..> IOrderRepository
+
+@enduml
+```
+
+### 序列图示例
+
+```plantuml
+@startuml SequenceDiagram
+autonumber
+
+actor Customer
+participant "API Gateway" as gateway
+participant "Order Service" as orderService
+participant "Order Entity" as order
+participant "Payment Service" as payment
+participant "Order Repository" as repo
+
+Customer -> gateway: POST /orders
+gateway -> orderService: CreateOrderUseCase.execute()
+
+activate orderService
+orderService -> order: Order.create()
+activate order
+order -> order: validate items
+order -> order: calculate total
+deactivate order
+
+orderService -> payment: processPayment()
+activate payment
+payment -> payment: call payment gateway
+alt payment success
+    payment --> orderService: paymentId
+    orderService -> order: confirm()
+    orderService -> repo: save()
+    activate repo
+    repo --> orderService: saved
+    deactivate repo
+    orderService --> gateway: 201 Created
+    gateway --> Customer: OrderResponse
+else payment failed
+    payment --> orderService: PaymentFailedError
+    orderService --> gateway: 400 Bad Request
+    gateway --> Customer: ErrorResponse
+end
+deactivate payment
+deactivate orderService
+
+@enduml
+```
+
+## 部署图
+
+```plantuml
+@startuml DeploymentDiagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 部署图 - AWS 部署
+
+Deployment_Node(aws, "AWS Cloud", "Amazon Web Services") {
+    Deployment_Node(ecs, "ECS Cluster", "Docker Containers") {
+        Container(web_server, "Web Server", "Nginx", "静态文件和反向代理")
+        Container(api_cluster, "API Cluster", "Node.js", "API 服务")
+    }
+    
+    Deployment_Node(rds, "RDS", "PostgreSQL") {
+        ContainerDb(postgres, "Primary DB", "PostgreSQL 14", "主数据库")
+        ContainerDb(read_replica, "Read Replica", "PostgreSQL 14", "只读副本")
+    }
+    
+    Deployment_Node(cache, "ElastiCache", "Redis") {
+        Container(redis_cluster, "Redis Cluster", "Redis 7", "缓存层")
+    }
+    
+    Deployment_Node(s3, "S3", "Object Storage") {
+        Container(storage, "Media Storage", "S3", "文件存储")
+    }
+}
+
+Rel(web_server, api_cluster, "HTTPS 请求")
+Rel(api_cluster, postgres, "主数据库连接")
+Rel(api_cluster, read_replica, "只读查询")
+Rel(api_cluster, redis_cluster, "缓存读写")
+Rel(api_cluster, storage, "文件上传/下载")
+
+SHOW_LEGEND()
+@enduml
+```
+
+## 动态图
+
+```plantuml
+@startuml DynamicDiagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title 动态图 - 创建订单流程
+
+Participant(customer, "Customer", "用户")
+Participant(controller, "OrderController", "控制器")
+Participant(usecase, "CreateOrderUseCase", "用例")
+Participant(order, "Order Entity", "实体")
+Participant(repository, "OrderRepository", "仓储")
+Participant(publisher, "EventPublisher", "事件发布")
+
+customer -> controller: POST /orders { items }
+controller -> usecase: execute(input)
+usecase -> order: create()
+order -> order: validate()
+order -> order: calculateTotal()
+usecase -> repository: save(order)
+repository -> repository: INSERT to DB
+usecase -> publisher: publish(OrderCreated)
+publisher -> publisher: dispatch to queue
+usecase --> controller: OrderDTO
+controller --> customer: 201 Created
+
+@enduml
+```
+
+## 样式定制
+
+```plantuml
+@startuml StyledDiagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+' 自定义颜色
+skinparam backgroundcolor #FAFAFA
+skinparam defaultTextAlignment center
+skinparam wrapWidth 200
+
+' 层级颜色
+skinparam personBackgroundColor #FF6B6B
+skinparam systemBackgroundColor #4ECDC4
+skinparam containerBackgroundColor #45B7D1
+skinparam componentBackgroundColor #96CEB4
+skinparam databaseBackgroundColor #FFEAA7
+
+' 边框和箭头
+skinparam rectangleBorderThickness 2
+skinparam arrowThickness 2
+
+' 字体
+skinparam defaultFontSize 14
+skinparam defaultFontName Roboto
+
+LAYOUT_WITH_LEGEND()
+
+title 样式定制示例
+
+Person(user, "用户", "最终用户")
+System(api, "API 系统", "后端服务")
+ContainerDb(db, "数据库", "PostgreSQL", "存储数据")
+
+Rel(user, api, "请求")
+Rel(api, db, "查询")
+
+SHOW_LEGEND()
+@enduml
+```
+
+## 文档自动更新
+
+### 何时更新 C4 图
+
+| 场景 | 更新图表 |
+|------|----------|
+| 新增服务/容器 | C2 容器图 |
+| 新增组件/类 | C3 组件图 |
+| 新增接口 | C1 上下文图 |
+| 架构重构 | 所有图表 |
+
+### PUML 文件组织
+
+```
+docs/
+├── architecture/
+│   ├── system-context.puml      # C1 图
+│   ├── containers.puml          # C2 图
+│   ├── components/
+│   │   ├── order-service.puml   # C3 图
+│   │   └── user-service.puml   # C3 图
+│   ├── deployment/
+│   │   └── aws.puml             # 部署图
+│   └── sequence/
+│       └── create-order.puml    # 序列图
+```

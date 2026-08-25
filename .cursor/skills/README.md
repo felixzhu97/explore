@@ -1,47 +1,65 @@
 # Skills
 
-Project skills for **Public Docs** (`felixzhu97/public`). Thin `SKILL.md`
-entry points; details live in each skill's `references/`. Project rules live
-in [`.cursor/rules/`](../rules/).
+Cursor skills for **Public Docs** (`felixzhu97/public`). This directory is
+**self-contained** — clone the repo on another machine and point Cursor at
+`.cursor/` (rules + skills) without copying from `~/.cursor/`.
 
-## Skills
+## Layout
+
+```text
+.cursor/
+├── rules/                          # Project + vendored global rules
+│   ├── public-docs-meta.mdc        # Meta-repo whitelist (always apply)
+│   ├── living-docs.mdc             # Scoped living-docs trigger
+│   ├── architecture.mdc            # ← ~/.cursor/rules (global copy)
+│   ├── java-standards.mdc
+│   └── angular-standards.mdc
+└── skills/
+    ├── README.md                   # This file — meta-repo entry points
+    ├── GLOBAL-SKILLS-INDEX.md      # ← ~/.cursor/skills/README.md (global copy)
+    ├── developer/                  # Meta-repo: sync, C4, gh stack, nested Git
+    ├── product-owner/              # Meta-repo: sync/C4 tickets
+    ├── scrum-team/                 # ← ~/.cursor/skills/scrum-team (global copy)
+    ├── stakeholders/               # ← ~/.cursor/skills/stakeholders
+    └── supporting/                 # ← ~/.cursor/skills/supporting
+```
+
+Cursor plugin skills stay under `~/.cursor/skills-cursor/` on each machine
+(not vendored here).
+
+## Meta-repo skills (this catalog)
 
 | Skill | Use when |
 |-------|----------|
-| [developer](./developer/) | Nested project Git, living docs, sync architecture docs, update C4, GitHub Stack, branch / commit / PR |
-| [product-owner](./product-owner/) | Write stories, acceptance criteria, and DoD for sync-repo or C4 work |
+| [developer](./developer/) | Nested Git, living docs, sync docs, C4, GitHub Stack, commit/PR |
+| [product-owner](./product-owner/) | Stories / AC / DoD for sync or C4 work |
 
-## Rules (always / scoped)
+See [developer/SKILL.md](./developer/SKILL.md) and
+[product-owner/SKILL.md](./product-owner/SKILL.md).
 
-| Rule | Scope |
+## Vendored global skills
+
+Full copy of `~/.cursor/skills/` (excluding this repo's top-level
+`developer/` / `product-owner/` overlays):
+
+| Tree | Index |
 |------|-------|
-| [public-docs-meta](../rules/public-docs-meta.mdc) | Always — meta-repo whitelist, nested Git, stack delivery |
-| [living-docs](../rules/living-docs.mdc) | `**/docs/Glossary.md`, `**/docs/product-owner/**`, `**/docs/developer/c4-model/**` |
+| Scrum Team | [scrum-team/SKILL.md](./scrum-team/SKILL.md) |
+| Stakeholders | [stakeholders/SKILL.md](./stakeholders/SKILL.md) |
+| Supporting | [supporting/SKILL.md](./supporting/SKILL.md) |
 
-## References layout
+Overview: [GLOBAL-SKILLS-INDEX.md](./GLOBAL-SKILLS-INDEX.md)
 
-```text
-developer/references/
-  nested-git.md            # .git ↔ .git.local for project clones
-  sync-repo.md             # whitelist, stage commands, onboard project
-  living-docs.md           # Glossary → domain model → C4 → stories (phases)
-  c4-model.md              # docs/developer/c4-model flat C1–C4 naming
-  delivery-github-stack.md # gh stack atomic Draft PRs
-  commit-pr.md             # branch / commit / PR title & body
+When editing **nested project application source** (not meta whitelist paths),
+prefer `scrum-team/developers/` skills. When **syncing docs into this
+meta-repo**, prefer `./developer/`.
 
-product-owner/references/
-  story-template.md
-  acceptance-criteria.md
+## Refresh from global (maintainers)
+
+```bash
+cp ~/.cursor/rules/{architecture,java-standards,angular-standards}.mdc .cursor/rules/
+rsync -a ~/.cursor/skills/scrum-team/ .cursor/skills/scrum-team/
+rsync -a ~/.cursor/skills/stakeholders/ .cursor/skills/stakeholders/
+rsync -a ~/.cursor/skills/supporting/ .cursor/skills/supporting/
+cp ~/.cursor/skills/README.md .cursor/skills/GLOBAL-SKILLS-INDEX.md
 ```
-
-## How to use
-
-- Prepare nested project Git → `developer` → [nested-git](./developer/references/nested-git.md)
-- Domain or architecture doc change → [living-docs](./developer/references/living-docs.md)
-- Sync docs or edit C4 → `developer`
-- Stack of Draft PRs → [delivery-github-stack](./developer/references/delivery-github-stack.md)
-- Commit or open a PR → [commit-pr](./developer/references/commit-pr.md)
-- Shape a sync/C4 ticket → `product-owner`
-
-Global scrum-team skills under `~/.cursor/skills/` are **not** duplicated here;
-this tree is the meta-repo source of truth for publishing docs.
