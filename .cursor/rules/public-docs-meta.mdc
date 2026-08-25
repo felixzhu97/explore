@@ -1,0 +1,43 @@
+---
+description: Public meta-repo scope — whitelist sync, nested Git, GitHub Stack delivery, no application source
+alwaysApply: true
+---
+
+# Public Docs Meta-Repo
+
+This repository (`felixzhu97/public`) publishes **architecture and living
+product docs** for catalogued Explore projects. Full application source trees
+stay in each project's own Git remote.
+
+## Publish whitelist
+
+Stage **only** paths in [sync-repo](../skills/developer/references/sync-repo.md):
+
+- `README.md`, `.gitignore`, `.cursor/skills/**`
+- `*/README.md`, `*/docs/Glossary.md`, `*/docs/product-owner/**`
+- `*/docs/developer/c4-model/**`
+
+Never `git add -A`. Never commit secrets (`.env`, credentials).
+
+## Nested Git
+
+Before staging from a project clone, hide nested `.git` as `.git.local` —
+see [nested-git](../skills/developer/references/nested-git.md).
+
+Project `.cursor/skills/` live in **project repos**, not this meta-repo.
+
+## Delivery
+
+- Branch: `<type>/<slug>` per [commit-pr](../skills/developer/references/commit-pr.md)
+- Dependent work: atomic **Draft PRs via GitHub Stack** (`gh stack`) —
+  see [delivery-github-stack](../skills/developer/references/delivery-github-stack.md)
+- Living docs order: Glossary → domain model → other C4 → story map —
+  see [living-docs](../skills/developer/references/living-docs.md)
+
+## Catalog changes
+
+When onboarding or renaming a project, update together:
+
+1. Root [README.md](../../README.md) Projects table (Title Case + kebab path)
+2. [.gitignore](../../.gitignore) published project root (`!<name>/`)
+3. [sync-repo](../skills/developer/references/sync-repo.md) stage list

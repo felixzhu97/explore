@@ -60,8 +60,9 @@ Full template: [story-template](references/story-template.md)
 
 - [ ] Background, User Story, AC, DoD present
 - [ ] ≥3 testable scenarios ([acceptance-criteria](references/acceptance-criteria.md))
-- [ ] DoD covers sync repo + C4 + Glossary/stories when touched + commit/PR References
+- [ ] DoD covers sync repo + living-docs phases + C4 + Glossary/stories when touched + stack/PR References
 - [ ] Living docs staged only via whitelist paths (see developer sync-repo)
+- [ ] Dependent doc work uses GitHub Stack Draft PRs (see developer delivery-github-stack)
 
 ## Related
 

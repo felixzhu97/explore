@@ -8,12 +8,12 @@
 
 | Type | Pattern | Example |
 |------|---------|---------|
-| feat | `feat/<slug>` | `feat/onboard-three-explore` |
+| feat | `feat/<slug>` | `feat/onboard-explore-chat` |
 | fix | `fix/<slug>` | `fix/explore-ai-context` |
 | refactor | `refactor/<slug>` | `refactor/c4-folder-layout` |
 | docs | `docs/<slug>` | `docs/readme-projects-table` |
 | test | `test/<slug>` | `test/plantuml-render` |
-| chore | `chore/<slug>` | `chore/gitignore-whitelist` |
+| chore | `chore/<slug>` | `chore/cursor-project-config` |
 | perf | `perf/<slug>` | `perf/diagram-assets` |
 | ci | `ci/<slug>` | `ci/docs-checks` |
 
@@ -23,21 +23,26 @@ Rules:
 
 - Branch prefix **must** match the primary change type
 - Always use `<type>/<slug>` with a kebab-case slug
-- With a Jira ticket: still use `<type>/<slug>` — put the issue key only in commit/PR body (`Jira: https://…`), not in the branch name
+- With a Jira ticket: still use `<type>/<slug>` — put the issue key only in the PR body (`JIRA: https://…`), not in the branch name
 - Do **not** use `feature/` for new branches
 - Long-lived line: `main` only (do not push work directly except via PR)
 
-## Branch / PR flow (Chain PRs)
+## Branch / PR flow (GitHub Stack)
+
+Use [`gh stack`](https://docs.github.com/en/pull-requests/get-started/stacked-prs-quickstart) for dependent work. Full policy: [delivery-github-stack](./delivery-github-stack.md).
 
 ```
 main
- └── docs/explore-ai-c4-context        # PR #1 → base: main
-      └── fix/explore-ai-context-typo  # PR #2 → base: docs/explore-ai-c4-context
+ └── docs/explore-ai-glossary           # Draft PR #1 → base: main
+      └── docs/explore-ai-c4-model      # Draft PR #2 → base: previous branch
 ```
 
-1. First branch in a chain: from `main`; PR **base** = `main`
-2. Follow-up in the same chain: from the **previous branch**; PR **base** = that branch
-3. Standalone work: `<type>/<slug>` from `main`, PR base = `main`
+1. First layer: `gh stack init` from `main`; one atomic concern per branch
+2. Next layers: `gh stack add`; PR **base** = previous branch
+3. Submit: `gh stack submit --auto` (Draft); no `--open` until ready for review
+4. Standalone work with no dependency: one branch from `main`, one Draft PR
+
+Manual chain PRs (same base/head rules) are acceptable when `gh stack` is unavailable.
 
 ## Commit message
 
@@ -49,7 +54,7 @@ main
 
 ### References priority (required)
 
-Prefer **specific** pages, not homepages. Search the web in real time when needed.
+Prefer **specific** pages, not homepages.
 
 | Priority | Source |
 |----------|--------|
@@ -66,7 +71,8 @@ Avoid: random blogs, undated tweets, marketing landing pages (unless no primary 
 <why: brief motivation for this change>
 
 References:
-- [Title](URL)
+
+- https://…
 ```
 
 Example:
@@ -77,23 +83,58 @@ docs: refine Explore AI system context C4
 Clarify Spring AI and Angular boundaries so newcomers can read C1 before containers.
 
 References:
-- [C4 Model](https://c4model.com/)
-- [Spring AI Reference](https://docs.spring.io/spring-ai/reference/)
+
+- https://c4model.com/
+- https://docs.spring.io/spring-ai/reference/
 ```
 
-## PR body
+Commit References use **raw URLs** (no markdown link titles).
 
-Plain sections only (no markdown headings):
+## PR title (required)
+
+Business summary line only — **no** Conventional Commits prefix (`docs:`, `feat:`, …).
+
+Rules:
+
+1. Short English line naming the user/product outcome or problem fixed
+2. **Imperative verb** (*Rename*, *Refresh*, *Align*, *Update*, *Add*, …)
+3. No trailing period; no Jira key in the title
+
+Examples:
+
+- Bad: `docs: align Explore AI C4 model`
+- Good: `Align Explore AI C4 model with domain flows`
+
+Branch still uses `<type>/<slug>`.
+
+## PR body (required)
+
+Do **not** repeat the PR title in the body. Plain sections only (no markdown headings). Wrap prose to **≤72 characters per line**. Do not break URLs mid-token.
 
 ```
-<why this change matters>
+{why: 1–3 sentences}
 
 References:
-- [Title](URL)
 
-Jira:
-- https://…/browse/…
+- https://…
+
+JIRA: https://…/browse/…
 ```
 
-- PR **References** must match the commit References (same links)
-- Include the `Jira:` block only when a ticket exists
+Order (fixed):
+
+1. Why
+2. `References:` + blank line + flat raw URL bullets (same URLs as commit)
+3. `JIRA: <url>` on one line at the **bottom** — only when a ticket exists
+
+Example:
+
+```
+Refresh the story map and E1 chat session epic to match
+the revised glossary and C4 boundaries.
+
+References:
+
+- https://c4model.com/
+- https://docs.spring.io/spring-ai/reference/
+```

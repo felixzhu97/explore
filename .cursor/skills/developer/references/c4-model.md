@@ -8,9 +8,9 @@ Architecture insight in this repo lives under each project's `docs/developer/c4-
 |---------|------|
 | Explore AI | [`explore-ai/docs/developer/c4-model/`](../../../../explore-ai/docs/developer/c4-model/) |
 | Explore IAM | [`explore-iam/docs/developer/c4-model/`](../../../../explore-iam/docs/developer/c4-model/) |
-| WhatsFeed | [`whatsfeed/docs/developer/c4-model/`](../../../../whatsfeed/docs/developer/c4-model/) |
-| Low Code Platform | [`low-code-platform/docs/developer/c4-model/`](../../../../low-code-platform/docs/developer/c4-model/) |
-| Shopping System | [`shopping-system/docs/developer/c4-model/`](../../../../shopping-system/docs/developer/c4-model/) |
+| Explore Chat | [`explore-chat/docs/developer/c4-model/`](../../../../explore-chat/docs/developer/c4-model/) |
+| Explore Commerce | [`explore-commerce/docs/developer/c4-model/`](../../../../explore-commerce/docs/developer/c4-model/) |
+| Explore Lowcode | [`explore-lowcode/docs/developer/c4-model/`](../../../../explore-lowcode/docs/developer/c4-model/) |
 
 New projects use: `<project>/docs/developer/c4-model/`.
 
@@ -24,11 +24,10 @@ Public catalog uses mature-project names (not community’s `C1-SystemContext`):
 |--------|--------------|------------------|---------|
 | `C1-` | System Context | `C1-Context.puml` | `C1-Context.puml` |
 | `C2-` | Container | `C2-Container.puml` | `C2-Container.puml` |
-| `C3-` | Component | `C3-Component-<Scope>.puml` | `C3-Component-Backend.puml` |
-| `C4-` | Code | `C4-Code-<Scope>.puml` | `C4-Code-ChatClient.puml` |
-| `C4-` | Dynamic (supporting) | `C4-Dynamic-<Scenario>.puml` | `C4-Dynamic-ChatFlow.puml` |
-| `C4-` | Deployment (supporting) | `C4-Deployment.puml` / `C4-Deployment-<Scope>.puml` | `C4-Deployment-Production.puml` |
-| `C4-` | Sequence-style flow | `C4-Sequence-<Scenario>.puml` | `C4-Sequence-Login.puml` |
+| `C3-` | Component | `C3-Component.puml` or `C3-Component-<Scope>.puml` | `C3-Component.puml` |
+| `C4-` | Code | `C4-Code-<Scope>.puml` | `C4-Code-Domain-Model.puml` |
+| `C4-` | Dynamic (supporting) | `C4-Dynamic-<Scenario>.puml` | `C4-Dynamic-Rag-Ask.puml` |
+| `C4-` | Deployment (supporting) | `C4-Deployment.puml` | `C4-Deployment.puml` |
 
 Rules:
 
@@ -56,12 +55,13 @@ Reference layout:
 ```text
 docs/developer/c4-model/
 ├── README.md
+├── style-zinc.puml          # shared by Code + Dynamic tracks (when used)
 ├── C1-Context.puml
 ├── C2-Container.puml
-├── C3-Component-Backend.puml
-├── C3-Component-Frontend.puml
-├── C4-Deployment.puml
-└── C4-Deployment-Production.puml
+├── C3-Component.puml
+├── C4-Code-Domain-Model.puml
+├── C4-Dynamic-<Scenario>.puml
+└── C4-Deployment.puml
 ```
 
 ## README index (required)
@@ -84,10 +84,10 @@ If **any** row matches, update the listed artifacts in the **same PR**. If none 
 |--------|--------|
 | New external actor/system, or system purpose change | `C1-Context.puml` |
 | New container, subdomain boundary, major data store | `C2-Container.puml` |
-| New/changed module or component structure inside a container | Matching `C3-Component-*.puml` |
-| New/changed class-level design worth a Code view | Matching `C4-Code-*.puml` |
-| New/changed critical runtime flow | Matching `C4-Dynamic-*.puml` or `C4-Sequence-*.puml` |
-| Deploy topology, ports, hosting | Matching `C4-Deployment*.puml` |
+| New/changed module or component structure inside a container | `C3-Component.puml` (prefer single combined diagram) |
+| New/changed class-level design worth a Code view | `C4-Code-Domain-Model.puml` or `C4-Code-<Scope>.puml` |
+| New/changed critical runtime flow | `C4-Dynamic-<Scenario>.puml` (+ `style-zinc.puml` when styles change) |
+| Deploy topology, ports, hosting | `C4-Deployment.puml` |
 | Project added to or removed from the catalog | Matching `docs/developer/c4-model/` + root README Projects |
 | Pure wording polish with no architecture semantics | None (N/A) |
 
