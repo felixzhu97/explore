@@ -1,0 +1,24 @@
+---
+description: Living docs phased workflow for published Glossary, C4, and product-owner paths
+globs: "**/docs/Glossary.md,**/docs/product-owner/**,**/docs/developer/c4-model/**"
+alwaysApply: false
+---
+
+# Living Docs (published projects)
+
+When a change affects domain language, architecture, or user-visible
+capabilities in a **published** project tree, follow the three-phase workflow
+in [living-docs](../skills/developer/references/living-docs.md).
+
+Quick order:
+
+1. **Phase 1 (before code in the source repo):** `Glossary.md` →
+   `C4-Code-Domain-Model.puml`
+2. **Phase 2:** implement in the project repo (out of meta whitelist)
+3. **Phase 3 (sync to meta):** structural C4, Dynamic diagrams, deployment,
+   User Story Map + epics
+
+Sync Phase 1–3 doc updates into this meta-repo via stacked Draft PRs
+([delivery-github-stack](../skills/developer/references/delivery-github-stack.md)).
+
+C4 naming and visual tracks: [c4-model](../skills/developer/references/c4-model.md).
