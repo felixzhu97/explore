@@ -30,7 +30,7 @@ Explore IAM 作为 OIDC Provider，支持业务应用 SSO，并可通过 OAuth2 
 
 ### 状态
 
-规划中
+已实现（本地 OIDC Provider + Explore AI Registered Client；表单登录；Jira [EXP-351](https://felixzhu.atlassian.net/browse/EXP-351)）
 
 ---
 
