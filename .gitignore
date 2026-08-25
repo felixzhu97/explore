@@ -11,10 +11,10 @@
 
 # Published project roots
 !explore-ai/
-!whatsfeed/
-!low-code-platform/
-!shopping-system/
 !explore-iam/
+!explore-chat/
+!explore-commerce/
+!explore-lowcode/
 
 # Ignore one-level entries under project roots, then re-allow docs
 */*

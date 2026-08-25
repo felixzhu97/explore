@@ -36,9 +36,9 @@ Diagrams are written in **PlantUML**. Some directories also include pre-rendered
 |---------|------|------|-------------|
 | [Explore AI](https://github.com/felixzhu97/explore-ai) | C4 | [`explore-ai/docs/developer/c4-model/`](explore-ai/docs/developer/c4-model/) | Conversational AI platform: Chat, RAG, tools, eval (Spring AI + Angular) |
 | [Explore IAM](explore-iam/README.md) | C4 | [`explore-iam/docs/developer/c4-model/`](explore-iam/docs/developer/c4-model/) | AWS IAM–style identity, policy, STS, and SSO for sibling apps |
-| [WhatsFeed](https://github.com/felixzhu97/whatsfeed) | C4 | [`whatsfeed/docs/developer/c4-model/`](whatsfeed/docs/developer/c4-model/) | Social + messaging: feed, chat/calls, Nest API, optional AI |
-| [Low Code Platform](https://github.com/felixzhu97/low-code-platform) | C4 | [`low-code-platform/docs/developer/c4-model/`](low-code-platform/docs/developer/c4-model/) | Visual page builder: canvas, components, themes, export |
-| [Shopping System](https://github.com/felixzhu97/shopping-system) | C4 | [`shopping-system/docs/developer/c4-model/`](shopping-system/docs/developer/c4-model/) | E-commerce monorepo: Web shop, admin, API |
+| [Explore Chat](https://github.com/felixzhu97/explore-chat) | C4 | [`explore-chat/docs/developer/c4-model/`](explore-chat/docs/developer/c4-model/) | Social + messaging: feed, chat/calls, Nest API, optional AI |
+| [Explore Commerce](https://github.com/felixzhu97/explore-commerce) | C4 | [`explore-commerce/docs/developer/c4-model/`](explore-commerce/docs/developer/c4-model/) | E-commerce monorepo: Web shop, admin, API |
+| [Explore Lowcode](https://github.com/felixzhu97/explore-lowcode) | C4 | [`explore-lowcode/docs/developer/c4-model/`](explore-lowcode/docs/developer/c4-model/) | Visual page builder: canvas, components, themes, export |
 
 ## Repository Layout
 
@@ -51,13 +51,13 @@ public-docs/
 ├── explore-iam/
 │   ├── README.md
 │   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
-├── whatsfeed/
+├── explore-chat/
 │   ├── README.md
 │   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
-├── low-code-platform/
+├── explore-commerce/
 │   ├── README.md
 │   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
-└── shopping-system/
+└── explore-lowcode/
     ├── README.md
     └── docs/{Glossary.md,product-owner/,developer/c4-model/}
 ```
@@ -79,17 +79,17 @@ Useful entry points:
 
 - [Explore AI system context](explore-ai/docs/developer/c4-model/C1-Context.puml)
 - [Explore IAM system context](explore-iam/docs/developer/c4-model/C1-Context.puml)
-- [WhatsFeed system context](whatsfeed/docs/developer/c4-model/C1-Context.puml)
-- [Low Code Platform system context](low-code-platform/docs/developer/c4-model/C1-Context.puml)
-- [Shopping System system context](shopping-system/docs/developer/c4-model/C1-Context.puml)
+- [Explore Chat system context](explore-chat/docs/developer/c4-model/C1-Context.puml)
+- [Explore Commerce system context](explore-commerce/docs/developer/c4-model/C1-Context.puml)
+- [Explore Lowcode system context](explore-lowcode/docs/developer/c4-model/C1-Context.puml)
 
 ## Suggested Learning Path
 
 1. Read [Explore AI C4](explore-ai/docs/developer/c4-model/) for Spring AI + Angular container and deployment boundaries
 2. Read [Explore IAM C4](explore-iam/docs/developer/c4-model/) for AWS IAM–style identity, policy, STS, and SSO boundaries
-3. Read [WhatsFeed C4](whatsfeed/docs/developer/c4-model/) for Nest API, clients, and Python service boundaries
-4. Read [Low Code Platform C4](low-code-platform/docs/developer/c4-model/) for SPA canvas / domain layout and Vercel deploy
-5. Read [Shopping System C4](shopping-system/docs/developer/c4-model/) for Web / Admin / API container split
+3. Read [Explore Chat C4](explore-chat/docs/developer/c4-model/) for Nest API, clients, and Python service boundaries
+4. Read [Explore Commerce C4](explore-commerce/docs/developer/c4-model/) for Web / Admin / API container split
+5. Read [Explore Lowcode C4](explore-lowcode/docs/developer/c4-model/) for SPA canvas / domain layout and Vercel deploy
 6. Compare how frontend shells, BFF/API containers, and external systems are drawn across these projects
 
 ## Contributing
