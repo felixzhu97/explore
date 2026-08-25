@@ -1,0 +1,243 @@
+@startuml C4-Code-Domain-Model
+!include style-zinc.puml
+title Code diagram (C4) — Explore IAM domain model (DDD)
+hide empty members
+
+legend right
+  |= Stereotype |= Meaning |
+  | <<AggregateRoot>> | Consistency boundary |
+  | <<Entity>> | Identity + lifecycle |
+  | <<ValueObject>> | Immutable; equality by value |
+  | <<DomainService>> | Stateless domain logic |
+endlegend
+
+package "com.iam.common.domain.base" as pkg_kernel {
+  abstract class AbstractImmutable
+  abstract class AbstractEntity
+  abstract class AbstractEmbeddable
+  abstract class AbstractNamedEntity
+  abstract class AbstractAuditEvent {
+    getOccurredAt()
+    occurredBefore()
+    occurredAfter()
+  }
+  class DomainStrings {
+    requireNonBlank()
+  }
+}
+
+AbstractEntity --|> AbstractImmutable
+AbstractNamedEntity --|> AbstractEntity
+AbstractAuditEvent --|> AbstractImmutable
+
+package "com.iam.common.domain.vo" as pkg_common {
+  class Arn <<ValueObject>> {
+    user()
+    role()
+  }
+  class Action <<ValueObject>> {
+    matches()
+  }
+  class Resource <<ValueObject>> {
+    matches()
+  }
+  class PrincipalId <<ValueObject>> {
+    generate()
+  }
+  class ReasonCode <<ValueObject>>
+  enum Effect <<ValueObject>> {
+    ALLOW
+    DENY
+    --
+    fromString()
+  }
+}
+
+Arn --|> AbstractEmbeddable
+Action --|> AbstractEmbeddable
+Resource --|> AbstractEmbeddable
+PrincipalId --|> AbstractEmbeddable
+ReasonCode --|> AbstractEmbeddable
+
+package "com.iam.identity.domain" as pkg_identity {
+  class IamUser <<AggregateRoot>> {
+    create()
+    createForFederatedLogin()
+    disable()
+    enable()
+    changeEmail()
+    assignRole()
+    hasRole()
+    assignedRoleIds()
+    encodedPasswordHash()
+    isLoginEnabled()
+  }
+  class Group <<AggregateRoot>> {
+    create()
+    arn()
+    addMember()
+    removeMember()
+    hasMember()
+    memberUserIds()
+  }
+  class GroupMember <<Entity>> {
+    userId()
+  }
+  class UserRoleAssignment <<Entity>> {
+    roleId()
+  }
+  class Role <<AggregateRoot>> {
+    create()
+    arn()
+    trustPolicy()
+    authority()
+  }
+  class TrustPolicyDocument <<ValueObject>> {
+    allowAll()
+  }
+}
+
+IamUser --|> AbstractEntity
+Group --|> AbstractNamedEntity
+Role --|> AbstractNamedEntity
+TrustPolicyDocument --|> AbstractEmbeddable
+Group "1" *-- "0..*" GroupMember : members
+IamUser "1" *-- "0..*" UserRoleAssignment : roles
+Role --> Arn
+Role --> TrustPolicyDocument
+
+package "com.iam.policy.domain" as pkg_policy {
+  class PolicyDocument <<AggregateRoot>> {
+    create()
+    statements()
+  }
+  class PolicyStatement <<ValueObject>> {
+    of()
+    effect()
+    actions()
+    resources()
+    matches()
+  }
+  class PolicyAttachment <<AggregateRoot>> {
+    attach()
+    policyId()
+    principalArn()
+  }
+  class EvaluationContext <<ValueObject>>
+  class AuthorizationDecision <<ValueObject>> {
+    isAllowed()
+  }
+}
+
+package "com.iam.policy.domain.service" as pkg_policy_svc {
+  class PolicyEngine <<DomainService>> {
+    evaluate()
+  }
+}
+
+PolicyDocument --|> AbstractNamedEntity
+PolicyAttachment --|> AbstractImmutable
+PolicyDocument "1" *-- "1..*" PolicyStatement : document_json
+PolicyAttachment --> PolicyDocument : references policyId
+PolicyAttachment --> Arn
+EvaluationContext --> PrincipalId
+EvaluationContext --> Action
+EvaluationContext --> Resource
+AuthorizationDecision --> Effect
+AuthorizationDecision --> ReasonCode
+PolicyEngine ..> PolicyDocument : reads
+PolicyEngine ..> AuthorizationDecision : returns
+
+package "com.iam.sts.domain" as pkg_sts {
+  class AssumedRoleSession <<AggregateRoot>> {
+    create()
+    isExpired()
+    roleArn()
+    sessionName()
+    callerPrincipal()
+    expiresAt()
+  }
+}
+
+AssumedRoleSession --|> AbstractImmutable
+AssumedRoleSession --> Arn
+
+package "com.iam.federation.domain" as pkg_federation {
+  class OidcClient <<AggregateRoot>> {
+    register()
+    seed()
+    isPublicClient()
+    id()
+    clientId()
+    clientIdIssuedAt()
+    clientName()
+    clientUri()
+    redirectUris()
+    postLogoutRedirectUris()
+    scopes()
+    responseTypes()
+    clientAuthenticationMethods()
+    authorizationGrantTypes()
+    requiresAuthorizationConsent()
+    storedSecretHash()
+  }
+  class FederatedIdentityLink <<AggregateRoot>> {
+    create()
+    linkedUserId()
+  }
+  class ClientId <<ValueObject>>
+  class RedirectUri <<ValueObject>>
+}
+
+FederatedIdentityLink --|> AbstractImmutable
+ClientId --|> AbstractEmbeddable
+RedirectUri --|> AbstractEmbeddable
+OidcClient --> ClientId
+OidcClient --> RedirectUri
+FederatedIdentityLink ..> IamUser : links
+
+package "com.iam.audit.domain" as pkg_audit {
+  class AuditActor <<ValueObject>>
+  class AuditTarget <<ValueObject>> {
+    matches()
+  }
+  class ManagementEvent <<AggregateRoot>> {
+    logManagementAction()
+    logAuthentication()
+    wasSuccessful()
+    wasFailure()
+    involvesActor()
+    targets()
+  }
+  class AuthorizationDecisionLog <<AggregateRoot>> {
+    capture()
+    fromEvaluation()
+    isAllowed()
+    isDenied()
+    wasExplicitDeny()
+    wasImplicitDeny()
+  }
+  enum AuditOutcome <<ValueObject>> {
+    SUCCESS
+    FAILURE
+  }
+}
+
+ManagementEvent --|> AbstractAuditEvent
+AuthorizationDecisionLog --|> AbstractAuditEvent
+ManagementEvent --> AuditActor
+ManagementEvent --> AuditTarget
+ManagementEvent --> AuditOutcome
+AuthorizationDecisionLog --> PrincipalId
+AuthorizationDecisionLog --> Action
+AuthorizationDecisionLog --> Resource
+AuthorizationDecisionLog --> Effect
+AuthorizationDecisionLog --> ReasonCode
+AuthorizationDecisionLog ..> AuthorizationDecision : captures
+
+note bottom of pkg_kernel
+  Layering (per module): controller → service → domain ← infra
+  Preferred Terms: docs/Glossary.md
+end note
+
+@enduml
