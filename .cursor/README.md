@@ -1,8 +1,7 @@
 # Cursor config (portable)
 
 This `.cursor/` tree is **vendored for cross-machine development**. After
-clone, enable project rules/skills in Cursor — no manual copy from
-`~/.cursor/` required.
+clone, open the repo in Cursor — no manual copy from `~/.cursor/` required.
 
 | Path | Source | Role |
 |------|--------|------|
@@ -11,8 +10,23 @@ clone, enable project rules/skills in Cursor — no manual copy from
 | [rules/architecture.mdc](./rules/architecture.mdc) | `~/.cursor/rules` | Java DDD layers, naming, tests |
 | [rules/java-standards.mdc](./rules/java-standards.mdc) | Global copy | Java conventions |
 | [rules/angular-standards.mdc](./rules/angular-standards.mdc) | Global copy | Angular conventions |
-| [skills/](./skills/) | Mixed | Meta `developer/` + `product-owner/` + global `scrum-team/` / `stakeholders/` / `supporting/` |
+| [agents/](./agents/) | `~/.cursor/agents` | Custom subagents (architect, developer, …) |
+| [skills/](./skills/) | Mixed | Meta `developer/` + `product-owner/` + global scrum-team tree |
 
-Index: [skills/README.md](./skills/README.md)
+Indexes:
 
-Refresh commands: see **Refresh from global** in [skills/README.md](./skills/README.md).
+- [agents/README.md](./agents/README.md)
+- [skills/README.md](./skills/README.md)
+
+## Refresh from global (maintainers)
+
+```bash
+cp ~/.cursor/rules/{architecture,java-standards,angular-standards}.mdc .cursor/rules/
+cp ~/.cursor/agents/*.md .cursor/agents/
+rsync -a ~/.cursor/skills/scrum-team/ .cursor/skills/scrum-team/
+rsync -a ~/.cursor/skills/stakeholders/ .cursor/skills/stakeholders/
+rsync -a ~/.cursor/skills/supporting/ .cursor/skills/supporting/
+cp ~/.cursor/skills/README.md .cursor/skills/GLOBAL-SKILLS-INDEX.md
+```
+
+Not vendored: `~/.cursor/skills-cursor/` (Cursor plugin skills, per machine).
