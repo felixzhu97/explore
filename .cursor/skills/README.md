@@ -58,6 +58,7 @@ meta-repo**, prefer `./developer/`.
 
 ```bash
 cp ~/.cursor/rules/{architecture,java-standards,angular-standards}.mdc .cursor/rules/
+cp ~/.cursor/agents/*.md .cursor/agents/
 rsync -a ~/.cursor/skills/scrum-team/ .cursor/skills/scrum-team/
 rsync -a ~/.cursor/skills/stakeholders/ .cursor/skills/stakeholders/
 rsync -a ~/.cursor/skills/supporting/ .cursor/skills/supporting/
