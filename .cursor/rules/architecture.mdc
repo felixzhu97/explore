@@ -1,0 +1,139 @@
+---
+description: Core project constraints — feature modules with controller/service/domain/infra/mapper, Java naming, REST, test naming. Deep guides live in skills.
+alwaysApply: true
+---
+
+# Architecture & Java Core
+
+## Dependency Rule
+
+Per feature module:
+
+```
+controller → service → domain ← infra
+                ↘     ↗
+                 mapper
+```
+
+**Domain has NO dependencies on other layers.**  
+`infra` implements `domain.repository` and other outbound adapters.  
+`mapper` maps DTOs ↔ domain objects (MapStruct or plain mappers); no business rules.
+
+## Layers (per feature)
+
+| Package | Role | Contains |
+|---------|------|----------|
+| `controller/` | Presentation | Controllers, request/response DTOs |
+| `service/` | Application | Orchestration only (`@Service`) |
+| `domain/` | DDD core | Entities, VOs, repository interfaces |
+| `infra/` | Infrastructure | Repository impls, external clients, persistence config |
+| `mapper/` | Mapping | DTO ↔ domain mappers (no business logic) |
+
+## Forbidden in New Code
+
+- `domain/port/` — use `domain/repository/` (or `domain/service/`)
+- `*Port` interface suffix — prefer `*Repository`, `*Gateway`, or a domain-specific name
+- `adapter/in` / `adapter/out` packages
+- Top-level-only `web/` / `application/` / `infrastructure/` for **new** code — use per-feature `controller` / `service` / `domain` / `infra` / `mapper`
+- Business rules inside `mapper/`
+
+## Project Structure
+
+```
+src/main/java/com.ai/
+├── {feature}/
+│   ├── controller/
+│   ├── service/
+│   ├── domain/
+│   │   ├── model/
+│   │   ├── vo/
+│   │   └── repository/
+│   ├── infra/
+│   └── mapper/
+└── common/
+    └── exception/
+```
+
+## Domain Rules
+
+- Domain uses JPA mapping + Lombok + Bean Validation on kernel and types
+- `@Id` / `@Version` only on `@MappedSuperclass` bases (`AbstractImmutable` / `AbstractEntity`); subclasses do not repeat them
+- No `@Service` / `@Component` on domain types (those stay in `service/`)
+- Aggregates / entities: `@Entity` + `@Getter` + `@NoArgsConstructor(PROTECTED, force = true)`; rich behavior; Getter/Setter per [ddd-rich-model](../skills/scrum-team/developers/developer/references/ddd-rich-model.md) (no class-level `@Setter` on aggregates)
+- JPA default physical naming on domain types — no `@Table`, `@Column(name)`, or `@JoinColumn(name)`; see [ddd-rich-model](../skills/scrum-team/developers/developer/references/ddd-rich-model.md)
+- Value objects: `@Embeddable` (not record-only)
+- Repository: interface in `domain/repository/`, implementation in `infra/`
+
+## Java Naming
+
+| Type | Rule | Example |
+|------|------|---------|
+| Domain Model | PascalCase | `ChatSession` |
+| Value Objects | PascalCase | `SessionId` |
+| Repository | PascalCase + Repository | `ChatRepository` |
+| Service | PascalCase + Service | `ChatService` |
+| Controller | PascalCase + Controller | `ChatController` |
+| Mapper | PascalCase + Mapper | `ChatMapper` |
+| DTO | PascalCase + Request/Response | `ChatRequest` |
+| Methods | camelCase | `findById` |
+| Constants | UPPER_SNAKE_CASE | `MAX_RETRY` |
+| Package | lowercase | `com.ai.chat.domain.model` |
+
+Prefer `*Service` in `service/` over `*UseCase`.
+
+## DI / REST / Validation
+
+```java
+@Service
+@RequiredArgsConstructor
+class ChatService {
+    private final ChatRepository repository;
+}
+```
+
+| Operation | Status |
+|-----------|--------|
+| Create | 201 |
+| Success | 200 |
+| No Content | 204 |
+| Error | 4xx/5xx |
+
+```java
+public record ChatRequest(@NotBlank String message, String sessionId) {}
+```
+
+## Test Naming
+
+Natural language with spaces (no snake_case underscores):
+
+```
+should expected result when condition
+```
+
+- Vitest / JUnit `@DisplayName`: `should open popover below chip when space is available`
+- Java method names (identifiers cannot contain spaces): `shouldOpenPopoverBelowChipWhenSpaceIsAvailable`
+
+## Checklist
+
+- [ ] Domain has no outward dependencies
+- [ ] No circular dependencies
+- [ ] Entities encapsulate behavior
+- [ ] Repository impls live under `infra/`, not `domain/` or `service/`
+- [ ] Mappers live under `mapper/` and contain no business rules
+
+## Hard constraints (delivery)
+
+When **creating a Jira ticket**, **branching**, **committing**, or **opening a PR**: always follow [developer](../skills/scrum-team/developers/developer/SKILL.md) §6 (`<type>/<slug>`, Chain PRs, commit/PR templates, prose ≤72 cols) and [Product Owner](../skills/scrum-team/developers/product-owner/SKILL.md). **References** must prefer official documentation and research links ([dependency-docs](../skills/scrum-team/developers/developer/references/dependency-docs.md), [sources](../skills/scrum-team/developers/market-tech-analysis/references/sources.md), arXiv).
+
+**Living docs delivery order** (features with new domain language or architecture): Glossary → domain model (`C4-Code-Domain-Model.puml`) → implement → other C4 + User Story Map — see [living-docs](../skills/scrum-team/developers/developer/references/living-docs.md).
+
+## Skills (on demand)
+
+| Task | Skill |
+|------|-------|
+| Feature / tests / commit / Apple UX | [developer](../skills/scrum-team/developers/developer/SKILL.md) |
+| Business Analysis（领域 / 统一语言 / 搭桥） | [business-analysis](../skills/scrum-team/developers/business-analysis/SKILL.md)（由 `business-analyst` 必读） |
+| Market + tech strategy（动向 / 竞品 / GTM） | [market-tech-analysis](../skills/scrum-team/developers/market-tech-analysis/SKILL.md)（由 `market-analyst` / `tech-analyst` 按需读取） |
+| Spring AI / RAG / tools | [spring-ai](../skills/scrum-team/developers/spring-ai/SKILL.md) |
+| Angular depth | [angular-developer](../skills/scrum-team/developers/angular-developer/SKILL.md) |
+| Product Owner / Jira | [Product Owner](../skills/scrum-team/developers/product-owner/SKILL.md) |

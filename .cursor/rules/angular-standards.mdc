@@ -1,0 +1,396 @@
+---
+description: Angular 20+ 编码规范和最佳实践，遵循苹果设计理念和 Angular 官方风格指南
+globs: **/*.ts **/*.html **/*.scss
+alwaysApply: false
+---
+
+# Angular 编码规范
+
+## 项目结构
+
+```
+src/
+├── app/
+│   ├── core/                 # 单例服务、全局配置
+│   │   ├── services/
+│   │   ├── guards/
+│   │   └── interceptors/
+│   ├── shared/                # 可复用组件、指令、管道
+│   │   ├── components/
+│   │   ├── directives/
+│   │   └── pipes/
+│   ├── features/              # 功能模块
+│   │   └── {feature}/
+│   │       ├── components/
+│   │       ├── services/
+│   │       └── {feature}.routes.ts
+│   ├── app.component.ts
+│   ├── app.config.ts
+│   └── app.routes.ts
+└── styles/
+    ├── _variables.scss
+    ├── _mixins.scss
+    └── _typography.scss
+```
+
+## 组件规范
+
+### 命名
+
+| 类型 | 规则 | 示例 |
+|------|------|------|
+| 组件文件 | kebab-case | `user-card.component.ts` |
+| 组件类 | PascalCase + Component | `UserCardComponent` |
+| 选择器 | kebab-case + 前缀 | `app-user-card` |
+| 模板文件 | 与组件同名 | `user-card.component.html` |
+| 样式文件 | 与组件同名 | `user-card.component.scss` |
+
+### 组件模板
+
+```typescript
+@Component({
+  selector: 'app-user-card',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  templateUrl: './user-card.component.html',
+  styleUrl: './user-card.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class UserCardComponent {
+  // 输入属性使用 input()
+  user = input.required<User>();
+  editable = input(false);
+
+  // 输出事件使用 output()
+  edit = output<User>();
+  delete = output<string>();
+
+  // 内部状态使用 signal
+  isExpanded = signal(false);
+
+  // 计算属性使用 computed
+  fullName = computed(() => `${this.user().firstName} ${this.user().lastName}`);
+
+  // 依赖注入使用 inject()
+  private userService = inject(UserService);
+
+  // 方法使用箭头函数保持 this
+  handleEdit = () => this.edit.emit(this.user());
+
+  handleDelete = () => this.delete.emit(this.user().id);
+}
+```
+
+### 模板语法
+
+```html
+<!-- 使用 @ 控制流 (Angular 17+) -->
+@if (user(); as user) {
+  <div class="user-card">
+    <h3>{{ fullName() }}</h3>
+    @if (editable()) {
+      <button (click)="handleEdit()">Edit</button>
+    }
+  </div>
+} @else {
+  <app-skeleton />
+}
+
+<!-- 循环 -->
+@for (item of items(); track item.id) {
+  <app-list-item [item]="item" />
+}
+
+<!-- 安全导航 -->
+<p>{{ user()?.email ?? 'No email' }}</p>
+```
+
+## 服务规范
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class UserService {
+  private http = inject(HttpClient);
+
+  // 公开只读信号
+  users = signal<User[]>([]);
+  loading = signal(false);
+  error = signal<string | null>(null);
+
+  // 返回 Observable 供组件订阅
+  fetchUsers(): Observable<User[]> {
+    return this.http.get<User[]>('/api/users').pipe(
+      tap(users => this.users.set(users)),
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError = (error: HttpErrorResponse) => {
+    this.error.set(error.message);
+    return throwError(() => error);
+  };
+}
+```
+
+## 路由规范
+
+```typescript
+// 使用延迟加载
+export const routes: Routes = [
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  {
+    path: 'users',
+    loadChildren: () => import('./features/users/routes'),
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import('./features/admin/routes'),
+    canMatch: [authGuard, adminGuard],
+  },
+];
+```
+
+## 样式规范
+
+```scss
+// 使用 BEM 命名
+.user-card {
+  padding: var(--spacing-md);
+  background: var(--bg-card);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  &__name {
+    font-size: var(--font-size-headline);
+    font-weight: 600;
+  }
+
+  &--compact {
+    padding: var(--spacing-xs);
+  }
+
+  &--highlighted {
+    border: 2px solid var(--system-blue);
+  }
+}
+
+// 变量定义
+:host {
+  --spacing-xs: 8px;
+  --spacing-md: 16px;
+  --radius-md: 12px;
+  --bg-card: rgb(255, 255, 255);
+}
+```
+
+## 类型规范
+
+```typescript
+// 优先使用 interface 定义数据结构
+interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: Email;
+  role: UserRole;
+  createdAt: Date;
+}
+
+// 使用 enum 定义枚举
+enum UserRole {
+  Admin = 'admin',
+  User = 'user',
+  Guest = 'guest',
+}
+
+// API 响应
+interface ApiResponse<T> {
+  data: T;
+  meta: PaginationMeta;
+}
+
+// 表单 DTO
+interface CreateUserDto {
+  firstName: string;
+  lastName: string;
+  email: Email;
+}
+```
+
+## 错误处理
+
+```typescript
+// 组件内错误处理
+@Component({...})
+export class UserListComponent {
+  private userService = inject(UserService);
+
+  error = this.userService.error;
+
+  @if (error()) {
+    <app-error-state [message]="error()" (retry)="loadUsers()" />
+  }
+}
+
+// 服务内错误处理
+private handleError(error: HttpErrorResponse): Observable<never> {
+  const message = error.error?.message || 'An error occurred';
+  this.notificationService.showError(message);
+  return throwError(() => error);
+}
+```
+
+## 测试规范
+
+```typescript
+describe('UserCardComponent', () => {
+  let component: UserCardComponent;
+  let fixture: ComponentFixture<UserCardComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [UserCardComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(UserCardComponent);
+    component = fixture.componentInstance;
+    component.user = TestFixtures.user;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should display user name', () => {
+    const name = fixture.nativeElement.querySelector('.user-card__name');
+    expect(name.textContent).toContain('John Doe');
+  });
+
+  it('should emit edit event', () => {
+    const editSpy = spyOn(component.edit, 'emit');
+    component.handleEdit();
+    expect(editSpy).toHaveBeenCalledWith(TestFixtures.user);
+  });
+});
+```
+
+## Angular 必须避免的错误（踩坑经验）
+
+### 1. 模板中禁止使用 `*ngFor`
+
+Angular 17+ 统一使用 `@for` 控制流语法。`*ngFor` 在 standalone 组件中需要 `NgFor` 指令，且与 `@if` 等新语法混用容易出错。
+
+```typescript
+// ❌ 错误：使用 *ngFor
+*ngFor="let tab of tabs"
+
+// ✅ 正确：使用 @for 控制流
+@for (tab of tabs(); track tab.value) {
+  <button (click)="select(tab)">{{ tab.label }}</button>
+}
+```
+
+### 2. 禁止在模板中使用 Angular 动画触发器语法 `[@name]`
+
+Angular 动画需要注册 `BrowserAnimationsModule` 或 `provideAnimations()`。未注册时直接使用 `[@fadeIn]` 会导致运行时错误。
+
+```typescript
+// ❌ 错误：模板中写了动画语法但未注册模块
+<div class="tab-content" [@fadeIn]>
+
+// ✅ 正确方式一：用纯 CSS 动画替代（推荐）
+.tab-content { animation: fadeIn 0.3s ease; }
+
+// ✅ 正确方式二：若必须使用 Angular 动画，需同时在 app.config.ts 注册
+import { provideAnimations } from '@angular/platform-browser/animations';
+providers: [provideAnimations()]
+```
+
+### 3. 必须为所有 HTTP 请求注册 `provideHttpClient()`
+
+在 Angular 15+ 的 standalone 应用中，使用 `HttpClient` 必须显式注册 provider，否则运行时 `No provider for _HttpClient` 报错。
+
+```typescript
+// ❌ app.config.ts 缺少 provider，导致所有 HttpClient 注入失败
+providers: [provideRouter(routes)]
+
+// ✅ 正确：注册 HttpClient
+providers: [
+  provideRouter(routes),
+  provideHttpClient()
+]
+```
+
+### 4. 禁止使用 `[key]` 属性
+
+`[key]` 不是 Angular 已知属性，会产生 `Can't bind to 'key'` 编译错误。如需重新触发组件生命周期（如动画），通过改变组件 `@if` 条件或使用 `*ngIf` 实现。
+
+```html
+<!-- ❌ 错误 -->
+<div class="tab-section" [key]="activeTab()">
+
+<!-- ✅ 正确：改变条件触发组件重建 -->
+@if (activeTab() === 'home') {
+  <app-home-tab />
+}
+```
+
+### 5. 所有 UI 文案必须使用 i18n，不硬编码
+
+组件模板中的所有可见文字（按钮、标签、提示语、空状态）必须从 i18n 服务获取，不允许写死英文。
+
+```typescript
+// ❌ 错误：模板中硬编码英文
+<h3 class="panel-title">AI Chat</h3>
+<p class="empty-title">No image yet</p>
+<button>Generate Image</button>
+
+// ✅ 正确：使用 I18nService 获取翻译
+protected readonly i18n = inject(I18nService);
+// 模板中：
+// {{ i18n.t().aiHub.chat.title }}
+// {{ i18n.t().aiHub.image.emptyState }}
+// {{ i18n.t().aiHub.image.generateButton }}
+```
+
+### 6. 添加新的 i18n key 时必须同步所有语言
+
+当在 `Translations` 接口中添加新 key 时（如 `nav.aiHub`），必须同时在 `translations` 对象的每种语言（en/zh/ja/fr/es）中添加对应翻译。
+
+```typescript
+// ✅ 正确：接口声明 + 5 种语言全部添加
+// interfaces
+export interface Translations {
+  nav: {
+    aiinfra: string;
+    aiHub: string;  // ← 新 key
+  };
+}
+// en
+translations.en.nav.aiHub = 'AI Hub';
+// zh
+translations.zh.nav.aiHub = 'AI Hub';
+// ja
+translations.ja.nav.aiHub = 'AI Hub';
+// fr
+translations.fr.nav.aiHub = 'AI Hub';
+// es
+translations.es.nav.aiHub = 'AI Hub';
+```
+
+### 7. 路由指向完整功能组件，不指向占位组件
+
+路由 path 应直接指向包含完整 UI 和逻辑的功能组件，避免中间层占位组件。
+
+```typescript
+// ❌ 错误：路由指向空占位组件
+{ path: 'aihubs', component: PlaceholderComponent }
+
+// ✅ 正确：路由直接指向完整组件
+{ path: 'aihubs', loadComponent: () => import('./components/ai/ai-hub/ai-hub.component').then(m => m.AiHubComponent) }
+```
