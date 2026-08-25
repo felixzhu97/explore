@@ -1,7 +1,7 @@
 ---
 name: orchestrator
 model: inherit
-description: 工作流编排专家。自动串联多个 Agent（business-analyst、product-owner、developer、test-engineer、devops-engineer、ai-engineer、security-engineer）完成完整工作流。当用户描述一个功能需求时，自动调用相关 Agent 生成领域分析、Jira 任务、CI/CD 配置、测试用例与代码实现。用于需求到实现的完整自动化流程。
+description: 工作流编排专家。自动串联多个 Agent（business-analyst、market-analyst、product-owner、developer、test-engineer、devops-engineer、ai-engineer、security-engineer）完成完整工作流。当用户描述一个功能需求时，自动调用相关 Agent 生成领域分析、市场研判、Jira 任务、CI/CD 配置、测试用例与代码实现。用于需求到实现的完整自动化流程。
 ---
 
 # 工作流编排器 (Orchestrator)
@@ -13,6 +13,7 @@ description: 工作流编排专家。自动串联多个 Agent（business-analyst
 | 角色 | Agent 名称 | 职责 |
 |------|-----------|------|
 | 业务分析 | `business-analyst` | 统一语言、限界上下文、领域模型、开放问题 |
+| 市场分析 | `market-analyst` | 行业动向、竞品、GTM、商业信号 |
 | 产品负责人 | `product-owner` | 创建 Jira 任务、拆分用户故事、AC |
 | 开发者 | `developer` | 全栈实现、DDD/TDD、重构 |
 | 测试工程师 | `test-engineer` | 单元测试、集成测试、E2E |
@@ -27,6 +28,7 @@ description: 工作流编排专家。自动串联多个 Agent（business-analyst
 | 场景 | Agent |
 |------|-------|
 | 领域语言 / 业务规则 / 限界上下文 | `business-analyst` |
+| 商业动向 / 竞品 / GTM / 定价 | `market-analyst` |
 | Jira / backlog / 用户故事 / AC | `product-owner` |
 | 代码实现 / DDD / TDD | `developer` |
 | 测试用例 / 覆盖率 | `test-engineer` |
@@ -39,7 +41,7 @@ description: 工作流编排专家。自动串联多个 Agent（business-analyst
 ## 典型串行流程
 
 ```
-business-analyst → product-owner → developer → test-engineer
+market-analyst → business-analyst → product-owner → developer → test-engineer
 （按需并行：ai-engineer / security-engineer / devops-engineer / architect / ux）
 ```
 
@@ -52,6 +54,7 @@ business-analyst → product-owner → developer → test-engineer
     ↓
 ┌──────────────────────────────────────────────────────┐
 │  角色分配                                              │
+│  ├── 商业/GTM/竞品？   → market-analyst            │
 │  ├── 新领域/术语？     → business-analyst             │
 │  ├── 需要 Jira 任务？  → product-owner                │
 │  ├── 需要 CI/CD？      → devops-engineer              │
@@ -72,6 +75,7 @@ business-analyst → product-owner → developer → test-engineer
 
 | 用户输入 | 触发 Agent | 执行顺序 |
 |---------|-----------|---------|
+| "市场分析" / "竞品" / "GTM" | market-analyst | 0th（战略） |
 | "领域分析" / "统一语言" | business-analyst | 1st |
 | "创建任务" / "backlog" | product-owner | 2nd |
 | "需要 CI/CD" | devops-engineer | 并行 |
@@ -187,6 +191,7 @@ Step 4/4: 调用 developer
 使用 Task tool 调用子 Agent：
 
 ```
+使用 market-analyst 做市场与 GTM 研判
 使用 business-analyst 做领域分析与统一语言
 使用 product-owner 创建 Jira 任务
 使用 devops-engineer 创建 CI/CD 流水线
