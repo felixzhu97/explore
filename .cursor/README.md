@@ -10,7 +10,7 @@ clone, open the repo in Cursor — no manual copy from `~/.cursor/` required.
 | [rules/architecture.mdc](./rules/architecture.mdc) | `~/.cursor/rules` | Java DDD layers, naming, tests |
 | [rules/java-standards.mdc](./rules/java-standards.mdc) | Global copy | Java conventions |
 | [rules/angular-standards.mdc](./rules/angular-standards.mdc) | Global copy | Angular conventions |
-| [agents/](./agents/) | `~/.cursor/agents` | Custom subagents (10 roles: BA, PO, dev, AI, security, …) |
+| [agents/](./agents/) | `~/.cursor/agents` | Custom subagents (11 roles: marketing, BA, PO, dev, AI, security, …) |
 | [skills/](./skills/) | Mixed | Meta `developer/` + `product-owner/` + global scrum-team tree |
 
 Indexes:
