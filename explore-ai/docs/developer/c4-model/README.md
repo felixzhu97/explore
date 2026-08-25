@@ -2,16 +2,41 @@
 
 使用 PlantUML 绘制的 C4 架构模型，描述 AI Chat & Agent Platform 的完整架构。
 
+Source of truth: `.puml`。官方 C4: [c4model.com](https://c4model.com/)。库: [C4-PlantUML](https://github.com/plantuml-stdlib/C4-PlantUML)。
+
+## Visual tracks
+
+| Track | Files | Style |
+| ----- | ----- | ----- |
+| **Structural C4** | C1–C3, Deployment | Official **`C4_blue_new`** theme（线框；勿与 zinc 混用） |
+| **Domain + Dynamics** | Code domain model, `C4-Dynamic-*` | Shared zinc look via [`style-zinc.puml`](style-zinc.puml) |
+
+Do not mix `C4_blue_new` into domain/dynamic diagrams（也不要把 `style-zinc.puml` 用于 structural C4）。
+
 ## 文件
 
 | 文件 | 层级 | 说明 |
 | --- | --- | --- |
 | `C1-Context.puml` | C1 | 系统上下文图（含 LaunchDarkly、Datadog、cloud-minimal prod） |
 | `C2-Container.puml` | C2 | 容器图（13 个子域 + 功能开关横切） |
-| `C3-Component-Backend.puml` | C3 | 后端组件图（Clean Architecture 四层） |
-| `C3-Component-Frontend.puml` | C3 | 前端组件图（路由守卫、chat-shell、分解 API 服务、RUM） |
-| `C4-Deployment.puml` | C4 | 本地开发环境部署图（:4200 → :9000） |
-| `C4-Deployment-Production.puml` | C4 | 生产部署图（Vercel + Render Starter + Datadog RUM + LaunchDarkly） |
+| `C3-Component.puml` | C3 | **单图**：前后端组件 + Clean Architecture 四层 |
+| `C4-Code-Domain-Model.puml` | **Code** | 领域模型（Entity 行为 + VO / Repository；对齐 `com.ai.*.domain`） |
+| `C4-Deployment.puml` | Deployment | **单图**：本地 dev + 生产（Vercel + Render） |
+| `style-zinc.puml` | Shared | Code + Dynamics 共用 zinc 样式 |
+| `C4-Dynamic-Document-Upload.puml` | Dynamic | 文档上传 ETL |
+| `C4-Dynamic-Rag-Ask.puml` | Dynamic | RAG SSE 问答 |
+| `C4-Dynamic-Chat-Tools.puml` | Dynamic | Chat 工具 SSE + A2UI 图表 |
+
+> **Code vs Deployment**：C4 官方第 4 层是 **Code**（类与关系）。本仓 `C4-Deployment.puml` 是部署视图；领域类型总览见 `C4-Code-Domain-Model.puml`。图中 stereotype 表示约定，**没有**共享 Java `Entity`/`AggregateRoot` 基类。
+
+
+### When to open which track
+
+- 边界 / 部署拓扑 → Structural C4（`C4_blue_new`）
+- 统一语言 / 聚合行为与 VO → Code domain model
+- 运行时主链路（上传、RAG、Chat 工具）→ `C4-Dynamic-*`
+
+---
 
 ---
 
@@ -27,27 +52,39 @@
 
 ---
 
-## C3 - 后端组件图
+## C3 - 组件图
 
-![C3-Component-Backend](png/C3-Component-Backend.png)
+![C3-Component](png/C3-Component.png)
+
+前后端合并在单图中（参照 Academic C3 结构）；Web App 边界 + Backend 四层分组。
 
 ---
 
-## C3 - 前端组件图
+## Code - 领域模型
 
-![C3-Component-Frontend](png/C3-Component-Frontend.png)
+![C4-Code-Domain-Model](png/C4-Code-Domain-Model.png)
+
+按 `com.ai.*.domain` 分包；Aggregate / Entity 展示领域行为（factory、状态转换、聚合内操作）。术语见 [Glossary](../../Glossary.md) Appendix A。
 
 ---
 
 ## C4 - 部署图
 
-### 本地开发
-
 ![C4-Deployment](png/C4-Deployment.png)
 
-### 生产环境
+本地 dev（`:4200` → `:9000`）与生产（Vercel + Render Starter）合并在单图中；详见图内 `cloud-minimal prod` 注释。
 
-![C4-Deployment-Production](png/C4-Deployment-Production.png)
+---
+
+## Dynamic - 运行时序列
+
+| 图 | 链路 |
+| --- | --- |
+| [C4-Dynamic-Document-Upload.puml](C4-Dynamic-Document-Upload.puml) | 文档上传 → 分块 → 嵌入 → H2 |
+| [C4-Dynamic-Rag-Ask.puml](C4-Dynamic-Rag-Ask.puml) | RAG 提问 → 检索 → SSE 流式回答 |
+| [C4-Dynamic-Chat-Tools.puml](C4-Dynamic-Chat-Tools.puml) | Chat 工具调用 → SSE → A2UI 图表 |
+
+![C4-Dynamic-Rag-Ask](png/C4-Dynamic-Rag-Ask.png)
 
 ---
 
@@ -125,7 +162,7 @@ RAG 检索经 `H2SpringAiVectorStore`（Spring AI `VectorStore` SPI）+ `VectorS
 ### 前端 (Web Frontend)
 
 - **框架**: Angular 22 + TypeScript
-- **路由**: `/chat` / `/generate` / `/rag` / `/metrics` + flag `/pipelines` `/skills` `/vision` `/mcp` `/eval` `/asr`
+- **路由**: `/chat` `/chat/:sessionId` / `/generate` / `/rag` / `/metrics` + flag `/pipelines` `/skills` `/vision` `/mcp` `/eval` `/asr`
 - **对话壳**: `shared/components/chat-shell`（message-pane / sender-bar / bubble-list / welcome），供 Chat / RAG / Agents 共用
 - **实现目录**: `app/chat/`、`app/generate/{image,tts}/`、`app/metrics/`（与业务域 / 路由对齐）
 - **API 服务**: `ApiChatService` / `ApiRagService` / `ApiMediaService` / `AgentsService` / `MetricsService` + `sse-client.ts` + shared ECharts panels
@@ -167,7 +204,10 @@ Browser → Vercel (Angular static) → Render Starter explore-ai (:8080 + H2 ep
 
 **Prod frontend**: `https://www.felixzhu.chat` (Vercel)  
 **Prod API (browser)**: same-origin `/api` → Vercel rewrite → Render  
-**Prod API (direct)**: `https://explore-ai-3krr.onrender.com/api`
+**Prod OAuth (browser)**: same-origin `/oauth2/*` + `/login/oauth2/*` → Vercel rewrite → Render  
+**Prod API (direct)**: `https://explore-ai-3krr.onrender.com/api`  
+**Google OAuth redirect URI**: `https://www.felixzhu.chat/login/oauth2/code/google`  
+**GitHub OAuth redirect URI**: `https://www.felixzhu.chat/login/oauth2/code/github`
 
 
 **cloud-minimal**: `module-pipelines` / `module-skills` **开启**；Vision / ASR / MCP / Eval / Ollama **关闭**
@@ -229,13 +269,13 @@ Browser → Vercel (Angular static) → Render Starter explore-ai (:8080 + H2 ep
 - 重新生成 PNG：
 
 ```bash
-cd docs/c4-model && mkdir -p png && plantuml -o png *.puml
+cd docs/developer/c4-model && mkdir -p png && plantuml -tpng -o png *.puml
 ```
 
 若本机无 `plantuml` CLI：
 
 ```bash
-cd docs/c4-model && docker run --rm -v "$PWD":/data plantuml/plantuml -o png '*.puml'
+cd docs/developer/c4-model && docker run --rm -v "$PWD":/data plantuml/plantuml -tpng -o png /data/*.puml
 ```
 
 ## 相关文档
