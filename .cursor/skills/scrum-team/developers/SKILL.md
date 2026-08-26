@@ -53,6 +53,7 @@ Prefer the specific child skill when the task is clear.
 ### Quality (owned by Developers in Scrum)
 - [`tdd-unit-testing`](./tdd-unit-testing/)
 - [`code-review`](./code-review/)
+- [`cybersecurity`](./cybersecurity/) — threat modeling, security architecture, incident/vuln (subagent: `security-architect`)
 
 Moved Explore-AI skills index: [`EXPLORE_SKILLS.md`](./EXPLORE_SKILLS.md)
 

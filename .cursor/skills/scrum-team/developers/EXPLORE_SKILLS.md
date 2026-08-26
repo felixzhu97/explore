@@ -10,6 +10,7 @@ Moved from `explore-ai/.cursor/skills`. Live under this Developers role folder.
 | [angular-developer](./angular-developer/) | Angular depth |
 | [angular-new-app](./angular-new-app/) | Angular new project |
 | [spring-ai](./spring-ai/) | Spring AI |
+| [cybersecurity](./cybersecurity/) | Threat modeling, security architecture, incident/vuln |
 | [product-owner](./product-owner/) | PO story templates / Jira MCP (nested under Developers; role router remains `../product-owner/`) |
 
 Architecture rule: `~/.cursor/rules/architecture.mdc`
