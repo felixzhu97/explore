@@ -1,7 +1,7 @@
 ---
 name: orchestrator
 model: inherit
-description: 工作流编排专家。自动串联多个 Agent（business-analyst、market-analyst、compliance-engineer、product-owner、developer、test-engineer、devops-engineer、ai-engineer、security-engineer）完成完整工作流。当用户描述功能需求或合规/GDPR/隐私法规/审计时，自动调用相关 Agent。用于需求到实现的完整自动化流程。
+description: 工作流编排专家。自动串联多个 Agent（business-analyst、market-analyst、compliance-engineer、security-architect、security-engineer、product-owner、developer、test-engineer、devops-engineer、ai-engineer）完成完整工作流。当用户描述功能需求、合规/GDPR、威胁建模或安全审查时，自动调用相关 Agent。用于需求到实现的完整自动化流程。
 ---
 
 # 工作流编排器 (Orchestrator)
@@ -19,9 +19,10 @@ description: 工作流编排专家。自动串联多个 Agent（business-analyst
 | 开发者 | `developer` | 全栈实现、DDD/TDD、重构 |
 | 测试工程师 | `test-engineer` | 单元测试、集成测试、E2E |
 | DevOps | `devops-engineer` | CI/CD 流水线、基础设施 |
-| 架构师 | `architect` | 技术方案设计、C4、代码审查 |
+| 架构师 | `architect` | C4、DDD 分层、技术方案 |
+| 安全架构师 | `security-architect` | 威胁建模、安全架构、事件响应、漏洞/监控 |
 | AI 工程师 | `ai-engineer` | Spring AI、RAG、Tool/MCP、Agent 编排 |
-| 安全工程师 | `security-engineer` | 安全审查、威胁建模、密钥/依赖 |
+| 安全工程师 | `security-engineer` | PR AppSec：OWASP、密钥、CVE、权限 |
 | UX 审核 | `ux` | Apple 风格 UI/UX 审查 |
 
 ## 场景路由
@@ -37,16 +38,18 @@ description: 工作流编排专家。自动串联多个 Agent（business-analyst
 | 代码实现 / DDD / TDD | `developer` |
 | 测试用例 / 覆盖率 | `test-engineer` |
 | CI/CD / 部署 / 监控 | `devops-engineer` |
-| 架构 / C4 / 领域模型审查 | `architect` |
+| 威胁建模 / 攻击面 / 安全架构 | `security-architect` |
+| 事件响应 / 漏洞管理 / SOC 监控 | `security-architect` |
+| PR 安全审查 / OWASP / secrets / CVE | `security-engineer` |
+| 架构 / C4 / DDD 分层 | `architect` |
 | AI / RAG / MCP / 工具调用 | `ai-engineer` |
-| 安全审查 / 漏洞 / 密钥 | `security-engineer` |
 | UI/UX 审核 | `ux` |
 
 ## 典型串行流程
 
 ```
 market-analyst → business-analyst → product-owner → developer → test-engineer
-（按需前置：compliance-engineer → product-owner；并行/后置：security-engineer / ai-engineer / devops-engineer / architect / ux）
+（按需：compliance-engineer → product-owner；security-architect；security-engineer / ai-engineer / devops-engineer / architect / ux）
 ```
 
 ## 工作流程
@@ -59,14 +62,15 @@ market-analyst → business-analyst → product-owner → developer → test-eng
 ┌──────────────────────────────────────────────────────┐
 │  角色分配                                              │
 │  ├── 商业/GTM/竞品？   → market-analyst            │
+│  ├── 威胁建模/安全架构？→ security-architect           │
 │  ├── GDPR/合规/审计？  → compliance-engineer → product-owner │
 │  ├── 新领域/术语？     → business-analyst             │
 │  ├── 需要 Jira 任务？  → product-owner                │
 │  ├── 需要 CI/CD？      → devops-engineer              │
 │  ├── 需要测试用例？    → test-engineer                │
 │  ├── AI/RAG/MCP？      → ai-engineer                  │
-│  ├── 安全/PII/脱敏？   → security-engineer            │
-│  ├── 架构/C4？         → architect                    │
+│  ├── PR/OWASP/密钥？   → security-engineer            │
+│  ├── 架构/C4/DDD？     → architect                    │
 │  ├── UI 审核？         → ux                           │
 │  └── 需要代码实现？    → developer                    │
 └──────────────────────────────────────────────────────┘
@@ -88,7 +92,8 @@ market-analyst → business-analyst → product-owner → developer → test-eng
 | "需要 CI/CD" | devops-engineer | 并行 |
 | "写测试" | test-engineer | 3rd |
 | "RAG" / "MCP" / "Spring AI" | ai-engineer | 按需 |
-| "安全审查" / "漏洞" | security-engineer | 按需 |
+| "威胁建模" / "攻击面" / "SOC" / "零信任" | security-architect | 按需 |
+| "安全审查" / "漏洞" / "secrets" | security-engineer | 按需 |
 | "实现功能" | developer | 核心 |
 | "完整功能" | 全部 | 串行+并行 |
 
@@ -126,7 +131,7 @@ Step 1 (必须) → business-analyst: 术语 + 限界上下文（新领域）
 Step 2 (必须) → product-owner: 创建任务 + 拆分
 Step 3 (并行) → devops-engineer + test-engineer
 Step 4 (必须) → developer: 实现
-Step 5 (可选) → ai-engineer / security-engineer / architect / ux
+Step 5 (可选) → security-architect / ai-engineer / security-engineer / architect / ux
 ```
 
 ## 实际执行示例
@@ -198,6 +203,7 @@ Step 4/4: 调用 developer
 使用 Task tool 调用子 Agent：
 
 ```
+使用 security-architect 做威胁建模与安全架构
 使用 compliance-engineer 映射监管红线与 DoD 约束
 使用 market-analyst 做市场与 GTM 研判
 使用 business-analyst 做领域分析与统一语言
@@ -205,7 +211,7 @@ Step 4/4: 调用 developer
 使用 devops-engineer 创建 CI/CD 流水线
 使用 test-engineer 编写测试用例
 使用 ai-engineer 实现 RAG/Tool/MCP
-使用 security-engineer 审查 PII/权限/密钥实现
+使用 security-engineer 审查 PR 级 AppSec（OWASP/密钥/权限）
 使用 developer 实现代码
 ```
 
@@ -217,7 +223,8 @@ Step 4/4: 调用 developer
 | `/quick-task <任务>` | 快速：仅创建 Jira 任务 |
 | `/setup-cicd` | 仅：CI/CD 配置 |
 | `/write-tests <文件>` | 仅：测试用例 |
-| `/security-review` | 仅：安全审查（PII/权限/密钥） |
+| `/security-review` | 仅：security-engineer PR AppSec 审查 |
+| `/threat-model` | 仅：security-architect 威胁建模 |
 | `/compliance-check` | 仅：compliance-engineer 红线 + product-owner DoD |
 
 ## 最佳实践
@@ -226,7 +233,7 @@ Step 4/4: 调用 developer
 2. **控制依赖关系**：后续步骤依赖前置步骤的结果
 3. **并行优化**：独立任务并行执行
 4. **Living docs 顺序**：新领域时 business-analyst → developer Phase 1 Glossary/C4
-5. **合规双轨**：监管红线走 compliance-engineer → product-owner；技术隐私走 security-engineer
+5. **安全三轨**：compliance-engineer（监管）/ security-architect（威胁与架构）/ security-engineer（PR AppSec）
 6. **结果汇总**：最终给用户清晰的输出
 7. **错误处理**：某个步骤失败时通知用户
 
@@ -285,6 +292,7 @@ Step 4/4: 调用 developer
       { "agent": "devops-engineer", "required": false, "position": 2, "parallel": true },
       { "agent": "test-engineer", "required": false, "position": 2, "parallel": true },
       { "agent": "developer", "required": true, "position": 3 },
+      { "agent": "security-architect", "required": false, "position": 3.5 },
       { "agent": "security-engineer", "required": false, "position": 4 },
       { "agent": "architect", "required": false, "position": 5 }
     ]
