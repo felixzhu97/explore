@@ -17,9 +17,8 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Version comes from package.json "packageManager" (do not also set version here)
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - uses: actions/setup-node@v4
         with:
@@ -30,4 +29,6 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Affected lint/test/build
-        run: pnpm exec nx affected -t lint,test,build --base=origin/main --head=HEAD
+        run: |
+          git fetch origin main --depth=1 || true
+          pnpm exec nx affected -t lint,test,build --base=origin/main --head=HEAD
