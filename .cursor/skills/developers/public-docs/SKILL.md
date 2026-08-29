@@ -42,7 +42,7 @@ Tickets for sync or C4 work follow [public-docs-backlog](../../product-owner/pub
 - [ ] C4: matching `.puml` updated per trigger matrix (or N/A)
 - [ ] Glossary / User Story Map / project README updated when living docs changed (or N/A)
 - [ ] README Projects / entry points updated if catalog changed (or N/A)
-- [ ] Branch: `<type>/<slug>`; Commit: subject + why + References; PR: business title + why + References
+- [ ] Branch: `<slug>` (no prefix); Commit: subject = PR title + why + References; PR: same title + why + References
 - [ ] Stack submitted as Drafts (`gh stack submit --auto`; no `--open` until ready)
 
 ## Related

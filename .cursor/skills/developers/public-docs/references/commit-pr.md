@@ -4,28 +4,25 @@
 
 ## Branch naming
 
-**Prefix = change type** (same set as commit types). Do **not** default every branch to `feat`.
+Use a single English **kebab-case** slug — **no** directory prefix.
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| feat | `feat/<slug>` | `feat/onboard-explore-chat` |
-| fix | `fix/<slug>` | `fix/explore-ai-context` |
-| refactor | `refactor/<slug>` | `refactor/c4-folder-layout` |
-| docs | `docs/<slug>` | `docs/readme-projects-table` |
-| test | `test/<slug>` | `test/plantuml-render` |
-| chore | `chore/<slug>` | `chore/cursor-project-config` |
-| perf | `perf/<slug>` | `perf/diagram-assets` |
-| ci | `ci/<slug>` | `ci/docs-checks` |
+```
+<slug>
+```
 
-Allowed types: `feat` | `fix` | `refactor` | `docs` | `test` | `chore` | `perf` | `ci`
+Examples: `glossary-update`, `domain-model-diagram`, `input-validation`.
+
+**Do not** use these branch prefixes: `feat/`, `fix/`, `refactor/`, `docs/`,
+`test/`, `chore/`, `perf/`, `ci/`, `eng/`, `dev/`, `feature/`.
 
 Rules:
 
-- Branch prefix **must** match the primary change type
-- Always use `<type>/<slug>` with a kebab-case slug
-- With a Jira ticket: still use `<type>/<slug>` — put the issue key only in the PR body (`JIRA: https://…`), not in the branch name
-- Do **not** use `feature/` for new branches
+- Slug describes the change in plain English
+- With a Jira ticket: still use `<slug>` only — put the issue key in the PR
+  body (`JIRA: https://…`), not in the branch name
 - Long-lived line: `main` only (do not push work directly except via PR)
+
+Reference (title style): [WebKit Pull Requests](https://docs.webkit.org/Deep%20Dive/GitHub/PullRequests.html).
 
 ## Branch / PR flow (GitHub Stack)
 
@@ -33,8 +30,16 @@ Use [`gh stack`](https://docs.github.com/en/pull-requests/get-started/stacked-pr
 
 ```
 main
- └── docs/explore-ai-glossary           # Draft PR #1 → base: main
-      └── docs/explore-ai-c4-model      # Draft PR #2 → base: previous branch
+ └── glossary-update              # Draft PR #1 → base: main
+      └── domain-model-diagram    # Draft PR #2 → base: previous branch
+```
+
+Optional feature stack (same rules):
+
+```
+main
+ └── input-validation
+      └── validation-api
 ```
 
 1. First layer: `gh stack init` from `main`; one atomic concern per branch
@@ -47,10 +52,11 @@ Manual chain PRs (same base/head rules) are acceptable when `gh stack` is unavai
 ## Commit message
 
 1. One complete change per commit
-2. Subject ≤ 50 chars, imperative, no trailing period
-3. After the subject, add a **short why** (1–3 sentences)
-4. Always add **References** (priority below)
-5. Never: `Co-authored-by`, `Made with`, emoji in subject
+2. Subject ≤ 50 chars, imperative, **no type prefix**, no trailing period
+3. **Commit subject = PR title** (same line)
+4. After the subject, add a **short why** (1–3 sentences)
+5. Always add **References** (priority below)
+6. Never: `Co-authored-by`, `Made with`, emoji in subject
 
 ### References priority (required)
 
@@ -66,7 +72,7 @@ Prefer **specific** pages, not homepages.
 Avoid: random blogs, undated tweets, marketing landing pages (unless no primary source exists — then note why).
 
 ```
-<type>: <short description>
+<short description>
 
 <why: brief motivation for this change>
 
@@ -78,14 +84,14 @@ References:
 Example:
 
 ```
-docs: refine Explore AI system context C4
+Align domain model diagram with glossary terms
 
-Clarify Spring AI and Angular boundaries so newcomers can read C1 before containers.
+Diagram labels must match the glossary before later
+layers reference those names.
 
 References:
 
 - https://c4model.com/
-- https://docs.spring.io/spring-ai/reference/
 ```
 
 Commit References use **raw URLs** (no markdown link titles).
@@ -97,15 +103,18 @@ Business summary line only — **no** Conventional Commits prefix (`docs:`, `fea
 Rules:
 
 1. Short English line naming the user/product outcome or problem fixed
-2. **Imperative verb** (*Rename*, *Refresh*, *Align*, *Update*, *Add*, …)
+2. **Imperative verb** (*Align*, *Update*, *Reject*, *Add*, …) — same as commit subject
 3. No trailing period; no Jira key in the title
+4. Not past tense, gerunds, or descriptive sentences (*Users can…*, *Updated…*, *Fixed…*)
 
-Examples:
+| Bad | Good |
+|-----|------|
+| `docs: align domain model` | `Align domain model diagram with glossary terms` |
+| `Updated branch naming rules` | `Update branch naming documentation` |
+| `Users can submit valid forms` | `Reject empty input on form submit` |
+| `Fixed validation on empty input` | `Add validation for required fields` |
 
-- Bad: `docs: align Explore AI C4 model`
-- Good: `Align Explore AI C4 model with domain flows`
-
-Branch still uses `<type>/<slug>`.
+Branch uses `<slug>` only (no prefix).
 
 ## PR body (required)
 
@@ -130,11 +139,14 @@ Order (fixed):
 Example:
 
 ```
-Refresh the story map and E1 chat session epic to match
-the revised glossary and C4 boundaries.
+Diagram labels must match the glossary before later
+layers reference those names.
 
 References:
 
 - https://c4model.com/
-- https://docs.spring.io/spring-ai/reference/
+
+JIRA: https://example.atlassian.net/browse/PROJ-123
 ```
+
+(Omit the `JIRA:` line when no ticket exists.)
