@@ -1,9 +1,9 @@
-# Delivery policy: Atomic Draft PRs via GitHub Stack (required)
+# Delivery policy: Fine-grained Draft PRs via GitHub Stack (required)
 
 When shipping work in this meta-repo, do **not** open one large catch-all PR.
-Submit a **GitHub Stack of atomic Draft PRs**.
+Submit a **GitHub Stack of fine-grained Draft PRs**.
 
-1. **Atomic Draft PR**: one reviewable concern per PR (catalog → glossary → C4 →
+1. **Fine-grained Draft PR**: one reviewable concern per PR (catalog → glossary → C4 →
    stories). Each layer stays **Draft** until marked ready.
 2. **Plan the stack before coding** when the change spans multiple concerns.
    Living docs order when domain language or architecture changes:
