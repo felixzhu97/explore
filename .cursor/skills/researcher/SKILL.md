@@ -8,7 +8,7 @@ description: >-
 
 # Researcher
 
-[`supporting`](../) 赋能角色（非 Scrum 三人组）。
+Supporting 赋能角色（非 Scrum 三人组）。
 
 ## Skills in this role
 
