@@ -1,35 +1,31 @@
-# Nested Project Git
+# Nested Project Git (legacy)
 
-Each application under `public/` is its own Git repository (own `origin`). This meta-repo must not nest those `.git` directories while staging.
+**Preferred model:** `public/` is the **Nx workspace Git root**. Catalogued
+Explore apps (`explore-ai`, `explore-iam`, `explore-chat`, …) are developed
+in-tree. Shared deps live under [`packages/`](../../../../../packages/README.md).
+Do **not** rely on nested remotes for day-to-day dependency versions.
 
-## Convention
+Sibling GitHub remotes (`felixzhu97/explore-*`) may remain as **read-only
+mirrors** of historical history. Prefer opening PRs against `public`.
 
-Local full project trees keep VCS as `.git.local` when the meta-repo is being committed, so they do not collide with this meta-repo.
+## Legacy nested `.git` (optional / migration only)
+
+If a local tree still has a nested Git dir from before the Nx root:
 
 ```bash
-# Work inside a project clone (normal day-to-day)
-mv explore-ai/.git.local explore-ai/.git
-
-# Before committing this meta-repo, hide nested Git again
+# Hide nested Git before staging the meta/Nx repo
 mv explore-ai/.git explore-ai/.git.local
-```
 
-Replace `explore-ai` with the target project directory name. Repeat for every published project that has a nested Git dir.
-
-## Pull / push project remotes
-
-Projects are **owned** remotes (not third-party upstream mirrors). When you need latest project source before updating C4:
-
-```bash
+# Restore only when pulling an old mirror (not for new feature work)
 mv explore-ai/.git.local explore-ai/.git
 git -C explore-ai pull --ff-only
 mv explore-ai/.git explore-ai/.git.local
 ```
 
-Never `git push` from a project directory as part of the meta-repo sync workflow unless the ticket explicitly asks for a project-repo PR.
-
 ## Rules
 
-1. Before any meta-repo `git add` of `*/docs/developer/c4-model/`, ensure nested `.git` → `.git.local`
-2. After meta commit, restore `.git.local` → `.git` if you will continue project work
-3. `.gitignore` already ignores `**/.git.local/`
+1. Before meta/Nx `git add`, ensure nested `.git` is renamed to `.git.local`
+   if present
+2. `.gitignore` ignores `**/.git.local/`
+3. Do not `git push` from a nested project dir as part of the public workspace
+   workflow unless explicitly mirroring
