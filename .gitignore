@@ -3,11 +3,23 @@
 **/.env
 **/.env.*
 !**/.env*.md
+**/node_modules/
+**/dist/
+**/build/
+**/.nx/cache/
+**/.nx/workspace-data/
 
 # Default-deny at repo root (full project trees stay local)
 /*
 !.gitignore
 !README.md
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!nx.json
+!.npmrc
+!renovate.json
+!packages/
 
 # Published project roots
 !explore-ai/
@@ -31,6 +43,15 @@
 # Optional project root README under any published project root
 !*/README.md
 
-# After */** so Cursor skills remain trackable
+# Nx project registration (keep explore-* internal layouts; track only Nx project.json)
+!*/project.json
+
+# Shared packages (full tree) — after */** so they remain trackable
+!packages/
+!packages/**
+
+# After */** so Cursor skills / CI remain trackable
 !.cursor/
 !.cursor/**
+!.github/
+!.github/**

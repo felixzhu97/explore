@@ -1,0 +1,25 @@
+{
+  "name": "@explore/public",
+  "private": true,
+  "description": "Nx workspace root for catalogued Explore projects under public/",
+  "scripts": {
+    "graph": "nx graph",
+    "affected": "nx affected -t lint,test,build",
+    "lint": "nx run-many -t lint --all",
+    "test": "nx run-many -t test --all",
+    "build": "nx run-many -t build --all"
+  },
+  "devDependencies": {
+    "@nx/eslint": "^22.0.0",
+    "@nx/js": "^22.0.0",
+    "@nx/workspace": "^22.0.0",
+    "nx": "^22.0.0",
+    "prettier": "^3.6.0",
+    "typescript": "~5.8.2"
+  },
+  "packageManager": "pnpm@10.32.0",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=10"
+  }
+}
