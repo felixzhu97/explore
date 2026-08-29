@@ -1,0 +1,31 @@
+{
+  "name": "explore-chat",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "explore-chat",
+  "projectType": "application",
+  "tags": ["type:app", "scope:explore", "lang:typescript"],
+  "implicitDependencies": ["shared-types", "contracts-ai"],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test -f project.json && echo explore-chat nx project ok",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test -f project.json && echo explore-chat test stub ok",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test -f project.json && echo explore-chat build stub ok",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}
