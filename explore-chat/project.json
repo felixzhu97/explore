@@ -4,7 +4,7 @@
   "sourceRoot": "explore-chat",
   "projectType": "application",
   "tags": ["type:app", "scope:explore", "lang:typescript"],
-  "implicitDependencies": ["shared-types", "contracts-ai"],
+  "implicitDependencies": ["shared-types", "contracts-ai", "dev-ports"],
   "targets": {
     "lint": {
       "executor": "nx:run-commands",

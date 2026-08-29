@@ -50,7 +50,7 @@ Canonical terms and package paths: [docs/Glossary.md](docs/Glossary.md).
 Rules summary: [.cursor/rules/architecture.mdc](.cursor/rules/architecture.mdc).
 
 ```text
-Browser / Mobile ──HTTPS / WS──► NestJS (:3001, /api/v1)
+Browser / Mobile ──HTTPS / WS──► NestJS (:9200, /api/v1)
                                       │
                     ┌─────────────────┼─────────────────┐
                     ▼                 ▼                 ▼
@@ -61,15 +61,15 @@ Browser / Mobile ──HTTPS / WS──► NestJS (:3001, /api/v1)
 
 ```text
 apps/
-  web              # Next.js web app (:4000)
+  web              # Next.js web app (:4220)
   admin            # Admin console (:4001)
   mobile           # Expo / React Native
 services/
-  server           # NestJS API (:3001)
+  server           # NestJS API (:9200)
   media-gen        # Media generation (:3456)
-  recommendation   # Recommendation + Celery
-  vision           # Moderation / vision (:8001)
-  rag              # RAG Q&A (:8002)
+  recommendation   # Recommendation + Celery (:8100)
+  vision           # Moderation / vision (:8110)
+  rag              # RAG Q&A (:8120)
 packages/
   shared-types     # Shared TypeScript types and consts
   im               # IM / RTC client module
@@ -165,8 +165,8 @@ cd ../..
 Run apps (from repo root):
 
 ```bash
-pnpm start:server          # Nest API — http://localhost:3001
-pnpm start:web             # Web — http://localhost:4000
+pnpm start:server          # Nest API — http://localhost:9200
+pnpm start:web             # Web — http://localhost:4220
 pnpm start:admin           # Admin — http://localhost:4001
 pnpm start:mobile:ios      # Expo iOS (or start:mobile / start:mobile:android)
 
@@ -174,13 +174,15 @@ pnpm start:mobile:ios      # Expo iOS (or start:mobile / start:mobile:android)
 pnpm dev
 ```
 
+Canonical local ports: [`@explore/dev-ports`](../packages/dev-ports).
+
 | Service                  | Default URL                         |
 | ------------------------ | ----------------------------------- |
-| Web                      | http://localhost:4000               |
+| Web                      | http://localhost:4220               |
 | Admin                    | http://localhost:4001               |
-| API                      | http://localhost:3001               |
-| Health                   | http://localhost:3001/api/v1/health |
-| Swagger (non-production) | http://localhost:3001/api/docs      |
+| API                      | http://localhost:9200               |
+| Health                   | http://localhost:9200/api/v1/health |
+| Swagger (non-production) | http://localhost:9200/api/docs      |
 
 Stop helpers: `pnpm stop` (dev) / `pnpm stop:prod`.
 
@@ -194,7 +196,7 @@ Copy examples and adjust for your machine:
 | ------------- | ------------------------------------------------------------------------------------ |
 | Nest API      | [`services/server/.env.example`](services/server/.env.example)                       |
 | Mobile        | [`apps/mobile/.env.example`](apps/mobile/.env.example)                               |
-| Web           | `apps/web/.env.local` — typically `NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1` |
+| Web           | `apps/web/.env.local` — typically `NEXT_PUBLIC_API_URL=http://localhost:9200/api/v1` |
 | Admin         | `apps/admin/.env.local` — API URL + `ADMIN_EMAILS`                                   |
 
 Common server variables:
@@ -206,8 +208,8 @@ REDIS_URL=redis://localhost:6379
 JWT_SECRET=whatschat-dev-jwt-secret
 OLLAMA_BASE_URL=http://localhost:11434
 MEDIA_GENERATION_API_URL=http://localhost:3456
-VISION_SERVICE_URL=http://localhost:8001
-RAG_SERVICE_URL=http://localhost:8002
+VISION_SERVICE_URL=http://localhost:8110
+RAG_SERVICE_URL=http://localhost:8120
 ```
 
 Mobile physical devices should set `EXPO_PUBLIC_API_URL` to your LAN host (see `apps/mobile/.env.example`).

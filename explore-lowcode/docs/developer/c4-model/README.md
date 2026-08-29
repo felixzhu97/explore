@@ -9,7 +9,7 @@
 | `C1-Context.puml` | C1 | 系统上下文（开发者 / 设计师 / Vercel / CDN / Git） |
 | `C2-Container.puml` | C2 | 容器图（SPA + 业务域 folders + components/hooks/lib） |
 | `C3-Component-Frontend.puml` | C3 | 前端业务域组件图（canvas / component / template / … colocated） |
-| `C4-Deployment.puml` | C4 | 本地开发（`pnpm dev` → `:3000`） |
+| `C4-Deployment.puml` | C4 | 本地开发（`pnpm dev` → `:4250`） |
 | `C4-Deployment-Production.puml` | C4 | 生产部署（Vercel） |
 
 ---

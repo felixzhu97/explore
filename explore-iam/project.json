@@ -4,7 +4,7 @@
   "sourceRoot": "explore-iam",
   "projectType": "application",
   "tags": ["type:app", "scope:explore", "lang:java"],
-  "implicitDependencies": ["explore-bom"],
+  "implicitDependencies": ["explore-bom", "dev-ports"],
   "targets": {
     "lint": {
       "executor": "nx:run-commands",

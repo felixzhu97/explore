@@ -4,7 +4,7 @@
   "sourceRoot": "explore-ai",
   "projectType": "application",
   "tags": ["type:app", "scope:explore", "lang:java"],
-  "implicitDependencies": ["explore-bom", "contracts-ai"],
+  "implicitDependencies": ["explore-bom", "contracts-ai", "dev-ports"],
   "targets": {
     "lint": {
       "executor": "nx:run-commands",

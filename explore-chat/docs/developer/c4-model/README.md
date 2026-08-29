@@ -14,7 +14,7 @@
 | `C2-Container.puml`             | C2   | 容器（Web/Admin/Mobile、Nest API、Python 服务、数据存储） |
 | `C3-Component-Backend.puml`     | C3   | NestJS API 组件与 Clean Architecture 端口/适配器          |
 | `C3-Component-Frontend.puml`    | C3   | Web（Next.js）主要 UI / 状态 / 客户端；Mobile/Admin 见 C2 |
-| `C4-Deployment.puml`            | C4   | 本地开发（compose + Nest `:3001`）                        |
+| `C4-Deployment.puml`            | C4   | 本地开发（compose + Nest `:9200`）                        |
 | `C4-Deployment-Production.puml` | C4   | 生产目标 MVP（尚未宣称已上线）                            |
 
 ## 预览
@@ -52,7 +52,7 @@
 | API         | NestJS 10、Prisma、Socket.IO、GraphQL（Apollo）                        |
 | 必需数据    | PostgreSQL、Redis                                                      |
 | 可选数据    | Cassandra、MongoDB、Elasticsearch、Kafka、Qdrant                       |
-| 旁路服务    | recommendation `:8000`、vision `:8001`、rag `:8002`、media-gen `:3456` |
+| 旁路服务    | recommendation `:8100`、vision `:8110`、rag `:8120`、media-gen `:3456` |
 | AI          | 本地 Ollama；Explore AI 经 Nest BFF（`/api/v1/ai/explore/*`）          |
 
 ## 查看方式
