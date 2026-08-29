@@ -6,6 +6,8 @@ Cursor skills for **Public Docs** (`felixzhu97/public`). This directory is
 
 ## Layout
 
+Path formula: `.cursor/skills/{role}/{skill}/SKILL.md`
+
 ```text
 .cursor/
 ├── rules/                          # Project + vendored global rules
@@ -17,50 +19,59 @@ Cursor skills for **Public Docs** (`felixzhu97/public`). This directory is
 └── skills/
     ├── README.md                   # This file — meta-repo entry points
     ├── GLOBAL-SKILLS-INDEX.md      # ← ~/.cursor/skills/README.md (global copy)
-    ├── developer/                  # Meta-repo: sync, C4, gh stack, nested Git
-    ├── product-owner/              # Meta-repo: sync/C4 tickets
-    ├── scrum-team/                 # ← ~/.cursor/skills/scrum-team (global copy)
-    ├── stakeholders/               # ← ~/.cursor/skills/stakeholders
-    └── supporting/                 # ← ~/.cursor/skills/supporting
+    ├── developers/                 # Scrum Developers accountability
+    │   ├── public-docs/            # Meta-repo overlay (not in global rsync)
+    │   └── jira-delivery/          # Jira templates / MCP (global sync)
+    ├── product-owner/              # Scrum PO accountability
+    │   └── public-docs-backlog/    # Meta-repo overlay (not in global rsync)
+    ├── scrum-master/
+    ├── executive/ … compliance/ …  # Stakeholder roles (flat, no team layer)
+    └── architect/ … devops/ …      # Supporting roles (flat, no team layer)
 ```
 
 Cursor plugin skills stay under `~/.cursor/skills-cursor/` on each machine
 (not vendored here).
 
-## Meta-repo skills (this catalog)
+## Scrum roles
 
-| Skill | Use when |
-|-------|----------|
-| [developer](./developer/) | Nested Git, living docs, sync docs, C4, GitHub Stack, commit/PR |
-| [product-owner](./product-owner/) | Stories / AC / DoD for sync or C4 work |
+| Role | Index | Notes |
+|------|-------|-------|
+| Developers | [developers/SKILL.md](./developers/SKILL.md) | Build, quality, analysis skills |
+| Product Owner | [product-owner/SKILL.md](./product-owner/SKILL.md) | Backlog, AC, iteration value |
+| Scrum Master | [scrum-master/SKILL.md](./scrum-master/SKILL.md) | Process improvement |
 
-See [developer/SKILL.md](./developer/SKILL.md) and
-[product-owner/SKILL.md](./product-owner/SKILL.md).
+Stakeholders (Executive, Customer, Compliance, …) and supporting roles
+(Architect, DevOps, UX Designer, Researcher) are **flat** under `skills/` —
+see [GLOBAL-SKILLS-INDEX.md](./GLOBAL-SKILLS-INDEX.md).
 
-## Vendored global skills
+## Meta-repo skills
 
-Full copy of `~/.cursor/skills/` (excluding this repo's top-level
-`developer/` / `product-owner/` overlays):
+| Skill | Path | Use when |
+|-------|------|----------|
+| public-docs | [developers/public-docs/](./developers/public-docs/) | Nested Git, living docs, sync docs, C4, GitHub Stack, commit/PR |
+| public-docs-backlog | [product-owner/public-docs-backlog/](./product-owner/public-docs-backlog/) | Stories / AC / DoD for sync or C4 work |
 
-| Tree | Index |
-|------|-------|
-| Scrum Team | [scrum-team/SKILL.md](./scrum-team/SKILL.md) |
-| Stakeholders | [stakeholders/SKILL.md](./stakeholders/SKILL.md) |
-| Supporting | [supporting/SKILL.md](./supporting/SKILL.md) |
-
-Overview: [GLOBAL-SKILLS-INDEX.md](./GLOBAL-SKILLS-INDEX.md)
+See [public-docs/SKILL.md](./developers/public-docs/SKILL.md) and
+[public-docs-backlog/SKILL.md](./product-owner/public-docs-backlog/SKILL.md).
 
 When editing **nested project application source** (not meta whitelist paths),
-prefer `scrum-team/developers/` skills. When **syncing docs into this
-meta-repo**, prefer `./developer/`.
+prefer `developers/` skills. When **syncing docs into this meta-repo**, prefer
+[public-docs](./developers/public-docs/).
 
 ## Refresh from global (maintainers)
 
 ```bash
 cp ~/.cursor/rules/{architecture,java-standards,angular-standards}.mdc .cursor/rules/
 cp ~/.cursor/agents/*.md .cursor/agents/
-rsync -a ~/.cursor/skills/scrum-team/ .cursor/skills/scrum-team/
-rsync -a ~/.cursor/skills/stakeholders/ .cursor/skills/stakeholders/
-rsync -a ~/.cursor/skills/supporting/ .cursor/skills/supporting/
+for role in developers product-owner scrum-master \
+  executive compliance customer user sponsor business-owner subject-matter-expert \
+  architect devops ux-designer researcher; do
+  rsync -a ~/.cursor/skills/"$role"/ .cursor/skills/"$role"/
+done
 cp ~/.cursor/skills/README.md .cursor/skills/GLOBAL-SKILLS-INDEX.md
 ```
+
+**Note:** `rsync` without `--delete` preserves meta-only overlays
+`developers/public-docs/` and `product-owner/public-docs-backlog/`. After global
+refresh, verify `jira-delivery/` name matches global if the directory was
+renamed there too.
