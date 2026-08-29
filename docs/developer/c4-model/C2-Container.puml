@@ -1,0 +1,42 @@
+@startuml C2-Container
+!theme C4_blue_new from https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/themes
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 容器图 — Explore Platform（应用 + packages）
+
+Person(user, "终端用户", "使用目录产品")
+Person(dev, "开发者", "Nx / pnpm / 契约演进")
+
+System_Boundary(platform, "Explore Platform (public Nx root)") {
+  Container(chat_api, "Explore Chat API", "NestJS", "WhatsFeed BFF；Explore AI ACL")
+  Container(chat_web, "Explore Chat Web", "Web / Mobile", "信息流与聊天客户端")
+  Container(ai_api, "Explore AI Backend", "Spring Boot / Spring AI", "对话、会话、RAG；契约权威")
+  Container(ai_web, "Explore AI Web", "Angular", "AI 产品 UI")
+  Container(iam_api, "Explore IAM", "Spring / Java", "身份与策略")
+  Container(commerce_api, "Explore Commerce API", "Node", "电商 API")
+  Container(lowcode_web, "Explore Lowcode", "SPA", "页面搭建器")
+
+  ContainerDb(contracts, "@explore/contracts-ai", "OpenAPI JSON", "Published Language（chat → ai）")
+  ContainerDb(shared_types, "@explore/shared-types", "TypeScript", "Shared Kernel（服务标识）")
+  ContainerDb(bom, "@explore/explore-bom", "Gradle BOM", "Java / Spring 版本")
+  ContainerDb(eslint_ts, "eslint / tsconfig baselines", "Config packages", "工具链基线")
+}
+
+Rel(user, chat_web, "使用", "HTTPS")
+Rel(user, ai_web, "使用", "HTTPS")
+Rel(user, lowcode_web, "使用", "HTTPS")
+Rel(chat_web, chat_api, "API", "HTTPS / WS")
+Rel(ai_web, ai_api, "API", "HTTPS / SSE")
+Rel(chat_api, contracts, "conform to", "Published Language")
+Rel(ai_api, contracts, "owns / publishes", "OpenAPI")
+Rel(chat_api, ai_api, "调用", "HTTPS + ACL headers")
+Rel(chat_api, shared_types, "可选引用", "workspace / types")
+Rel(ai_api, bom, "版本平台", "Gradle")
+Rel(iam_api, bom, "版本平台", "Gradle")
+Rel(dev, contracts, "演进契约", "Git")
+Rel(dev, shared_types, "演进 Shared Kernel", "Git")
+Rel(dev, eslint_ts, "对齐工具链", "Git")
+
+@enduml
