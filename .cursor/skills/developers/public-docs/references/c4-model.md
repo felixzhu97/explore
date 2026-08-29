@@ -4,15 +4,16 @@ Architecture insight in this repo lives under each project's `docs/developer/c4-
 
 ## Paths
 
-| Project | Path |
-|---------|------|
+| Scope | Path |
+|-------|------|
+| **Platform** (Nx root) | [`docs/developer/c4-model/`](../../../../docs/developer/c4-model/) |
 | Explore AI | [`explore-ai/docs/developer/c4-model/`](../../../../explore-ai/docs/developer/c4-model/) |
 | Explore IAM | [`explore-iam/docs/developer/c4-model/`](../../../../explore-iam/docs/developer/c4-model/) |
 | Explore Chat | [`explore-chat/docs/developer/c4-model/`](../../../../explore-chat/docs/developer/c4-model/) |
 | Explore Commerce | [`explore-commerce/docs/developer/c4-model/`](../../../../explore-commerce/docs/developer/c4-model/) |
 | Explore Lowcode | [`explore-lowcode/docs/developer/c4-model/`](../../../../explore-lowcode/docs/developer/c4-model/) |
 
-New projects use: `<project>/docs/developer/c4-model/`.
+New projects use: `<project>/docs/developer/c4-model/`. Platform cross-app views live under root `docs/developer/c4-model/`.
 
 ## File naming (required)
 

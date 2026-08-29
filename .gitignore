@@ -20,6 +20,7 @@
 !.npmrc
 !renovate.json
 !packages/
+!docs/
 
 # Published project roots
 !explore-ai/
@@ -49,6 +50,14 @@
 # Shared packages (full tree) — after */** so they remain trackable
 !packages/
 !packages/**
+
+# Platform-level living docs (Explore Nx workspace root)
+!docs/
+!docs/**
+!docs/Glossary.md
+!docs/developer/
+!docs/developer/c4-model/
+!docs/developer/c4-model/**
 
 # After */** so Cursor skills / CI remain trackable
 !.cursor/
