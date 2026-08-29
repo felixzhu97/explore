@@ -18,7 +18,7 @@ Map XP to this repo. Do not invent a second process — reuse DDD / BDD / TDD / 
 
 | XP practice | Do this |
 |-------------|---------|
-| Planning Game | Shape work with [Product Owner](../../product-owner/SKILL.md); estimate SP; behavior first, design second |
+| Planning Game | Shape work with [Jira delivery](../../jira-delivery/SKILL.md); estimate SP; behavior first, design second |
 | Small Releases | One outcome per atomic Draft PR; GitHub Stack when dependent; no unrelated piles |
 | Metaphor | repo `docs/Glossary.md` (when present) as shared language |
 | Simple Design | Pass tests with the simplest structure; no speculative abstractions |
@@ -27,8 +27,8 @@ Map XP to this repo. Do not invent a second process — reuse DDD / BDD / TDD / 
 | Pair Programming | Sync decisions with the human when pairing or reviewing; no empty ceremony |
 | Collective Ownership | Improve any module needed for the ticket; stay in scope |
 | Continuous Integration | Run relevant tests locally; keep CI green on the PR |
-| On-site Customer | Use [`customer`](../../../agents/customer.md) for user-value feedback; PO for stories / AC |
-| Coding Standards | [architecture](../../../../../rules/architecture.mdc) + naming + this skill |
+| On-site Customer | Use [customer stakeholder](../../../customer/SKILL.md) for user-value feedback; PO for stories / AC |
+| Coding Standards | [architecture](../../../../rules/architecture.mdc) + naming + this skill |
 | Sustainable Pace | Do not overload a single PR; ship the next slice later |
 
 ## Rules of thumb

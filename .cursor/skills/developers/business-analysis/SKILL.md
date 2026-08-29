@@ -17,7 +17,7 @@ This skill is **Business Analysis**: building a shared understanding of how the 
 
 1. **Analysis model = communication medium** between software experts and business experts — useful for building software, not a thick handoff document.
 2. **Bridge, not ferry**: surface open questions; enable direct alignment between business and engineering. Do **not** sit as a permanent intermediary that blocks contact.
-3. Align with [architecture](../../../../rules/architecture.mdc): domain has no outward dependencies; Prefer rich domain models ([ddd-rich-model](../developer/references/ddd-rich-model.md)).
+3. Align with [architecture](../../../rules/architecture.mdc): domain has no outward dependencies; Prefer rich domain models ([ddd-rich-model](../developer/references/ddd-rich-model.md)).
 4. Prefer Glossary Preferred Terms in repo `docs/Glossary.md` (when present); new concepts and domain model land in **Phase 1** before developer implementation (see [living-docs](../developer/references/living-docs.md)).
 5. Keep output minimal: language, rules, boundaries, open questions — no slide-deck fluff.
 
@@ -32,9 +32,9 @@ This skill is **Business Analysis**: building a shared understanding of how the 
 | Need | Go to |
 |------|--------|
 | 商业动向 / 竞品 / GTM / 定价信号 | Agent `market-analyst` + [market-tech-analysis](../market-tech-analysis/SKILL.md) |
-| User stories / AC / Jira | [product-owner](../product-owner/SKILL.md) |
+| User stories / AC / Jira | [jira-delivery](../jira-delivery/SKILL.md) |
 | Implement code / tests / PR | [developer](../developer/SKILL.md) |
-| Papers / models / HF trending | Agent `tech-analyst` |
+| Papers / models / HF trending | Agent `ai-engineer` + [deepmind-research](../../researcher/deepmind-research/SKILL.md) |
 
 ## Workflow
 
@@ -70,5 +70,5 @@ Scope → Ubiquitous Language → Domain understanding → Model → Open questi
 ## References
 
 - [Conversational Stories](https://martinfowler.com/bliki/ConversationalStories.html)
-- [Architecture rule](../../../../rules/architecture.mdc)
+- [Architecture rule](../../../rules/architecture.mdc)
 - repo `docs/Glossary.md` (when present)

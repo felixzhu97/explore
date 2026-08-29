@@ -1,9 +1,9 @@
 ---
-name: product-owner
-description: Product Owner for ExploreAI. Keep tickets minimal, business-facing, user-value first, and testable. Always use the project template (Background first, User Story, numbered Scenario + GIVEN-WHEN-THEN, Definition of Done, Story Points), require an Epic (create one if missing), write commercial outcome language (not tool-first), and cite official docs or research links when referencing standards. Use when creating or refining stories, acceptance criteria, backlog items, story points, or calling Jira MCP tools.
+name: jira-delivery
+description: Jira delivery for ExploreAI. Keep tickets minimal, business-facing, user-value first, and testable. Always use the project template (Background first, User Story, numbered Scenario + GIVEN-WHEN-THEN, Definition of Done, Story Points), require an Epic (create one if missing), write commercial outcome language (not tool-first), and cite official docs or research links when referencing standards. Use when creating or refining stories, acceptance criteria, backlog items, story points, or calling Jira MCP tools.
 ---
 
-# Product Owner
+# Jira delivery
 
 **Value first. Language minimal. Outcomes testable.**
 
