@@ -3,15 +3,20 @@
 Single-repo view of who depends on whom. Nx `implicitDependencies` and
 `packages/` encode the same edges for tooling.
 
+Cross **bounded context** edges use a **Published Language** (OpenAPI), not
+shared domain types. Platform packages (eslint, tsconfig, BOM) are not domain
+models.
+
 | From | To | Kind |
 |------|-----|------|
-| explore-chat | shared-types | compile / types |
-| explore-chat | contracts-ai | OpenAPI contract |
-| explore-commerce | shared-types | compile / types |
-| explore-lowcode | shared-types | compile / types |
-| explore-ai | explore-bom | Java versions |
-| explore-ai | contracts-ai | publishes / owns API contract |
-| explore-iam | explore-bom | Java versions |
+| explore-chat | shared-types | Shared Kernel (service ids only) |
+| explore-chat | contracts-ai | Published Language / OpenAPI (consumer) |
+| explore-commerce | shared-types | Shared Kernel (service ids only) |
+| explore-lowcode | shared-types | Shared Kernel (service ids only) |
+| explore-ai | explore-bom | Java versions (platform) |
+| explore-ai | contracts-ai | Published Language owner / publisher |
+| explore-iam | explore-bom | Java versions (platform) |
 
-Runtime: explore-chat BFF → explore-ai (see Story Map E8); keep OpenAPI in
-`packages/contracts-ai` in sync with the provider.
+Runtime: explore-chat **Explore AI BFF** (ACL) → explore-ai. Keep
+`@explore/contracts-ai` OpenAPI in sync with the provider; consumers must not
+import explore-ai domain types.

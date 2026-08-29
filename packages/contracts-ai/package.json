@@ -1,13 +1,20 @@
 {
-  "name": "contracts-ai",
-  "version": "0.0.1",
+  "name": "@explore/contracts-ai",
+  "version": "0.1.0",
   "private": true,
-  "description": "OpenAPI contract placeholder for explore-chat → explore-ai runtime dependency",
+  "description": "Published Language (OpenAPI) for explore-chat → explore-ai; owned by explore-ai BC",
   "type": "module",
   "exports": {
-    ".": "./openapi/explore-ai.openapi.json"
+    ".": "./openapi/explore-ai.openapi.json",
+    "./openapi/explore-ai.openapi.json": "./openapi/explore-ai.openapi.json"
   },
   "files": [
-    "openapi"
-  ]
+    "openapi",
+    "scripts"
+  ],
+  "scripts": {
+    "lint": "node ./scripts/validate-openapi.mjs",
+    "test": "node ./scripts/validate-openapi.mjs",
+    "validate": "node ./scripts/validate-openapi.mjs"
+  }
 }

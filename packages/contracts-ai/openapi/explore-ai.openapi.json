@@ -1,19 +1,447 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Explore AI API (contract stub)",
-    "version": "0.0.1",
-    "description": "Published contract for consumers (e.g. explore-chat BFF). Replace with generated OpenAPI from explore-ai CI."
+    "title": "Explore AI API (Published Language)",
+    "version": "0.1.0",
+    "description": "Published Language for consumers of the explore-ai bounded context (e.g. explore-chat Explore AI BFF / ACL). Owner: explore-ai. Paths mirror what the chat BFF calls today; keep in sync with explore-ai controllers under /api/text and /api/sessions."
   },
+  "servers": [
+    {
+      "url": "http://localhost:9000",
+      "description": "Local explore-ai"
+    }
+  ],
+  "tags": [
+    {
+      "name": "health",
+      "description": "Liveness probe"
+    },
+    {
+      "name": "text",
+      "description": "Streaming chat and provider catalog"
+    },
+    {
+      "name": "sessions",
+      "description": "Chat sessions owned by client identity"
+    }
+  ],
   "paths": {
     "/api/health": {
       "get": {
         "operationId": "health",
+        "tags": ["health"],
+        "summary": "Service health",
         "responses": {
           "200": {
-            "description": "Service is healthy"
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
           }
         }
+      }
+    },
+    "/api/text/chat/stream": {
+      "post": {
+        "operationId": "streamChat",
+        "tags": ["text"],
+        "summary": "Stream chat completion (SSE)",
+        "security": [
+          {
+            "ServiceKey": [],
+            "ClientId": [],
+            "RequestId": [],
+            "RequestedWith": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatStreamRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Server-sent events stream",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "description": "SSE frames; chat BFF normalizes message/token payloads"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/text/providers": {
+      "get": {
+        "operationId": "listProviders",
+        "tags": ["text"],
+        "summary": "List LLM providers",
+        "security": [
+          {
+            "ServiceKey": [],
+            "ClientId": [],
+            "RequestId": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Provider list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProviderInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/text/models": {
+      "get": {
+        "operationId": "listModels",
+        "tags": ["text"],
+        "summary": "List models for a provider",
+        "security": [
+          {
+            "ServiceKey": [],
+            "ClientId": [],
+            "RequestId": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Models for the resolved provider",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelsListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sessions": {
+      "get": {
+        "operationId": "listSessions",
+        "tags": ["sessions"],
+        "summary": "List sessions for the client",
+        "security": [
+          {
+            "ServiceKey": [],
+            "ClientId": [],
+            "RequestId": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SessionInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createSession",
+        "tags": ["sessions"],
+        "summary": "Create a chat session",
+        "security": [
+          {
+            "ServiceKey": [],
+            "ClientId": [],
+            "RequestId": [],
+            "RequestedWith": []
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sessions/{sessionId}": {
+      "get": {
+        "operationId": "getSession",
+        "tags": ["sessions"],
+        "summary": "Get session by id",
+        "security": [
+          {
+            "ServiceKey": [],
+            "ClientId": [],
+            "RequestId": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionInfo"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found or not owned by client"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteSession",
+        "tags": ["sessions"],
+        "summary": "Delete session",
+        "security": [
+          {
+            "ServiceKey": [],
+            "ClientId": [],
+            "RequestId": [],
+            "RequestedWith": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "404": {
+            "description": "Session not found or not owned by client"
+          }
+        }
+      }
+    },
+    "/api/sessions/{sessionId}/messages": {
+      "get": {
+        "operationId": "getSessionMessages",
+        "tags": ["sessions"],
+        "summary": "List messages in a session",
+        "security": [
+          {
+            "ServiceKey": [],
+            "ClientId": [],
+            "RequestId": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Message list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessageInfo"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found or not owned by client"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "SessionId": {
+        "name": "sessionId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "securitySchemes": {
+      "ServiceKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Service-Key",
+        "description": "Shared secret for service-to-service calls (BFF → explore-ai)"
+      },
+      "ClientId": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Client-Id",
+        "description": "Stable client identity (UUID) for owner-scoped data"
+      },
+      "RequestId": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Request-Id",
+        "description": "Correlation id"
+      },
+      "RequestedWith": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Requested-With",
+        "description": "Required by explore-ai CSRF filter on state-changing /api/* calls (e.g. XMLHttpRequest)"
+      }
+    },
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "UP"
+          }
+        }
+      },
+      "ChatMessage": {
+        "type": "object",
+        "required": ["role", "content"],
+        "properties": {
+          "role": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "ChatStreamRequest": {
+        "type": "object",
+        "required": ["messages"],
+        "properties": {
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChatMessage"
+            }
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "toolsEnabled": {
+            "type": "boolean"
+          },
+          "skillIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ProviderInfo": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "ModelsListResponse": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "CreateSessionRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 100
+          }
+        }
+      },
+      "SessionInfo": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "messageCount": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastActivityAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MessageInfo": {
+        "type": "object",
+        "additionalProperties": true
       }
     }
   }
