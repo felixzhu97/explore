@@ -50,6 +50,7 @@ that app’s Glossary and C4 Code domain model.
 | Explore AI BFF | Explore AI 代理 | Nest proxy in Explore Chat for Explore AI (no browser secrets) | Integration | `explore-chat` → explore-ai | Headers: `X-Service-Key`, `X-Client-Id` |
 | Client Identity | 客户端身份 | Stable UUID mapped to Explore AI owner scoping | Technical | `X-Client-Id` | See Explore AI Glossary for Owner Key |
 | Dependency Catalog | 依赖目录 | Who depends on whom (Nx implicits + runtime) | Catalog | `packages/DEPENDENCIES.md` | Keep in sync with `implicitDependencies` |
+| Dev Port Map | 开发端口表 | Canonical local listen ports for all catalogued apps | Technical | `@explore/dev-ports` | Bands: UI `42xx` (+10), API `9xxx` (+100), sidecars `81xx`/`82xx`, infra `85xx` |
 
 ---
 
@@ -59,6 +60,7 @@ that app’s Glossary and C4 Code domain model.
 | ------------------------ | ---- | ---- |
 | `@explore/shared-types` | 共享类型 | Shared Kernel: `ExploreServiceId`, `ExploreServiceRef` |
 | `@explore/contracts-ai` | AI 契约 | Published Language OpenAPI for chat → ai |
+| `@explore/dev-ports` | 开发端口 | Dev Port Map: `ports.json` + `getPort` helpers |
 | `@explore/explore-bom` | Java BOM | Spring Boot / Spring AI version platform |
 | `@explore/eslint-config` | ESLint 基线 | Shared ESLint flat config |
 | `@explore/tsconfig-baselines` | TS 基线 | Shared TypeScript baselines |

@@ -77,7 +77,8 @@ pnpm exec nx affected -t lint,test,build
 
 Shared packages: [`packages/README.md`](packages/README.md).  
 Platform glossary: [`docs/Glossary.md`](docs/Glossary.md).  
-Platform C4: [`docs/developer/c4-model/`](docs/developer/c4-model/).
+Platform C4: [`docs/developer/c4-model/`](docs/developer/c4-model/).  
+Local Dev Port Map: [`packages/dev-ports`](packages/dev-ports) (UI `42xx`, API `9xxx` — avoid collisions when running several apps).
 
 ## Quick Start
 
