@@ -38,6 +38,7 @@ Prefer the specific child skill when the task is clear.
 
 ### Build
 - [`developer`](./developer/) — XP / DDD / BDD / TDD / Commit·PR (primary delivery skill)
+- [`public-docs`](./public-docs/) — meta-repo sync, nested Git, C4, GitHub Stack, commit/PR
 - [`frontend-engineering`](./frontend-engineering/)
 - [`fullstack-ddd`](./fullstack-ddd/)
 - [`tdd-ddd-refactor`](./tdd-ddd-refactor/)
@@ -48,14 +49,12 @@ Prefer the specific child skill when the task is clear.
 ### Analysis (under Developers hub)
 - [`business-analysis`](./business-analysis/)
 - [`market-tech-analysis`](./market-tech-analysis/)
-- [`product-owner`](./product-owner/) — story templates / Jira MCP (not the Scrum PO role router)
+- [`jira-delivery`](./jira-delivery/) — story templates / Jira MCP (not the Scrum PO role router)
 
 ### Quality (owned by Developers in Scrum)
 - [`tdd-unit-testing`](./tdd-unit-testing/)
 - [`code-review`](./code-review/)
 - [`cybersecurity`](./cybersecurity/) — threat modeling, security architecture, incident/vuln (subagent: `security-architect`)
-
-Moved Explore-AI skills index: [`EXPLORE_SKILLS.md`](./EXPLORE_SKILLS.md)
 
 ## Reference policy (required)
 
