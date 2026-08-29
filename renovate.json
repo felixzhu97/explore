@@ -1,0 +1,14 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "nx": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "matchFileNames": ["package.json", "packages/**/package.json"],
+      "groupName": "explore workspace npm"
+    }
+  ]
+}
