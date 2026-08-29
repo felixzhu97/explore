@@ -16,7 +16,7 @@ Guidance under this role should cite **engineering practice**, **product domain 
 |------|------|
 | Role policy: prefer host framework built-ins | [`framework-first.md`](./framework-first.md) |
 | Role policy: Google Checkstyle + AIP | [`checkstyle-aip.md`](./checkstyle-aip.md) |
-| Role policy: atomic Draft PRs / GitHub Stack / pre-submit checks | [`delivery-github-stack.md`](./delivery-github-stack.md) |
+| Role policy: fine-grained Draft PRs / GitHub Stack / pre-submit checks | [`delivery-github-stack.md`](./delivery-github-stack.md) |
 | How to build/test/review/operate software well | [`engineering.md`](./engineering.md) |
 | How a **product domain** is designed at scale (marketplace, feed, identity, …) | [`product-domain-design.md`](./product-domain-design.md) |
 | End-to-end **system / platform / AI** solution shape | [`solution-design.md`](./solution-design.md) |
@@ -38,7 +38,7 @@ Source: Amazon Builders’ Library — https://aws.amazon.com/builders-library/s
 ### Role policies
 - [`framework-first.md`](./framework-first.md) — Framework-first implementation  
 - [`checkstyle-aip.md`](./checkstyle-aip.md) — Checkstyle + AIP  
-- [`delivery-github-stack.md`](./delivery-github-stack.md) — Atomic **Draft** PRs / `gh stack` / validate before submit  
+- [`delivery-github-stack.md`](./delivery-github-stack.md) — Fine-grained **Draft** PRs / `gh stack` / validate before submit  
 
 ### Big-tech citation hubs
 - [`engineering.md`](./engineering.md) — architecture, API, testing, code review, observability, performance, security  

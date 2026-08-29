@@ -19,7 +19,7 @@ Map XP to this repo. Do not invent a second process — reuse DDD / BDD / TDD / 
 | XP practice | Do this |
 |-------------|---------|
 | Planning Game | Shape work with [Jira delivery](../../jira-delivery/SKILL.md); estimate SP; behavior first, design second |
-| Small Releases | One outcome per atomic Draft PR; GitHub Stack when dependent; no unrelated piles |
+| Small Releases | One outcome per fine-grained Draft PR; GitHub Stack when dependent; no unrelated piles |
 | Metaphor | repo `docs/Glossary.md` (when present) as shared language |
 | Simple Design | Pass tests with the simplest structure; no speculative abstractions |
 | Test-First / TDD | [testing](testing.md) — Red → Green → Refactor |

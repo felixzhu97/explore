@@ -1,6 +1,6 @@
 ---
 name: developer
-description: Feature development for this repo — XP, DDD, BDD, TDD, Glossary naming, Apple HIG minimal UX, living docs sync (C4 / Glossary / User Story Map), and mandatory commit/PR standards (why body + References from official docs and research). Submit atomic Draft PRs via GitHub Stack (gh stack). Use when implementing features, writing tests, committing, opening PRs, UI work, or DDD/TDD/BDD/XP/clean-code tasks.
+description: Feature development for this repo — XP, DDD, BDD, TDD, Glossary naming, Apple HIG minimal UX, living docs sync (C4 / Glossary / User Story Map), and mandatory commit/PR standards (why body + References from official docs and research). Submit fine-grained Draft PRs via GitHub Stack (gh stack). Use when implementing features, writing tests, committing, opening PRs, UI work, or DDD/TDD/BDD/XP/clean-code tasks.
 ---
 
 # Developer
@@ -16,7 +16,7 @@ description: Feature development for this repo — XP, DDD, BDD, TDD, Glossary n
 3. Tests: `should expected result when condition` (spaces; Java methods: camelCase)
 4. Names: Glossary Preferred Term in repo `docs/Glossary.md` (when present) + [clean-code-naming](references/clean-code-naming.md)
 5. UI: Apple HIG + [apple-minimal-ux](references/apple-minimal-ux.md)
-6. **Commit / PR / Jira / branches**: always reuse §6 + [Jira delivery](../jira-delivery/SKILL.md); branch `<slug>` (no prefix); submit **atomic Draft PRs via GitHub Stack** (`gh stack`); commit subject = PR title (imperative, no type prefix); body why → References → JIRA; prose ≤72 cols; References = official docs + research
+6. **Commit / PR / Jira / branches**: always reuse §6 + [Jira delivery](../jira-delivery/SKILL.md); branch `<slug>` (no prefix); submit **fine-grained Draft PRs via GitHub Stack** (`gh stack`); commit subject = PR title (imperative, no type prefix); body why → References → JIRA; prose ≤72 cols; References = official docs + research
 7. **XP**: follow [extreme-programming](references/extreme-programming.md) — Simple Design / YAGNI, CI green, small releases, customer / AC feedback
 8. **Living docs (phased)**: **before code** — Glossary → `C4-Code-Domain-Model.puml`; **after code (CI green)** — other C4 + User Story Map; same feature branch — see §4 and [living-docs](references/living-docs.md)
 
@@ -146,9 +146,9 @@ Rules:
 - Do **not** embed `AI-<key>` in new branch names
 - Long-lived integration lines: `main`, `java-angular` (do not push work directly to these except via PR)
 
-#### Branch / PR flow (GitHub Stack — atomic Draft PRs)
+#### Branch / PR flow (GitHub Stack — fine-grained Draft PRs)
 
-Do **not** open one large Draft PR. Deliver dependent work as a **stack of atomic Draft PRs** with [`gh stack`](https://docs.github.com/en/pull-requests/get-started/stacked-prs-quickstart). Full delivery rules: [`delivery-github-stack`](../references/delivery-github-stack.md).
+Do **not** open one large Draft PR. Deliver dependent work as a **stack of fine-grained Draft PRs** with [`gh stack`](https://docs.github.com/en/pull-requests/get-started/stacked-prs-quickstart). Full delivery rules: [`delivery-github-stack`](../references/delivery-github-stack.md).
 
 ```
 main
@@ -164,10 +164,10 @@ main
       └── validation-api
 ```
 
-1. First layer: `gh stack init` from `main` (or current trunk); one atomic concern
+1. First layer: `gh stack init` from `main` (or current trunk); one fine-grained concern
 2. Next layers: `gh stack add` on top of the previous branch; one concern each
 3. Submit: `gh stack submit` (or `gh stack submit --auto` for non-interactive) — keep PRs as **Draft**; do **not** use `--open` until ready for review
-4. Standalone work with no dependency: still prefer a single atomic Draft via the stack workflow (or one Draft PR off trunk)
+4. Standalone work with no dependency: still prefer a single fine-grained Draft via the stack workflow (or one Draft PR off trunk)
 5. After feedback / trunk updates: `gh stack rebase` / `gh stack sync` — keep the stack linear
 
 #### Commit message
@@ -325,7 +325,7 @@ same official/research priority.
 - [ ] Phase 3 living docs: other C4 + User Story Map **after** implementation, CI green (or N/A)
 - [ ] Domain model reconciled with code if implementation drifted
 - [ ] UI (if any): HIG + minimal
-- [ ] Branch: `<slug>` (no prefix); atomic Draft PRs via `gh stack` (no single mega-Draft)
+- [ ] Branch: `<slug>` (no prefix); fine-grained Draft PRs via `gh stack` (no single mega-Draft)
 - [ ] Commit: subject = PR title; why + References (official/research); no type prefix
 - [ ] Each References link maps to a claim in the why text (or N/A with note)
 - [ ] PR title: business summary, imperative verb (commit-style); no `feat:`/`fix:` prefix
