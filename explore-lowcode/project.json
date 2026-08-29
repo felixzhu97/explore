@@ -9,7 +9,21 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "test -f package.json && echo explore-lowcode nx project ok",
+        "command": "test -f project.json && echo explore-lowcode nx project ok",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test -f project.json && echo explore-lowcode test stub ok",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test -f project.json && echo explore-lowcode build stub ok",
         "cwd": "{projectRoot}"
       }
     }

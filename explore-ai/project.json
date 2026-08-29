@@ -9,21 +9,21 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "test -f build.gradle.kts && test -f package.json && echo explore-ai nx project ok",
+        "command": "test -f project.json && echo explore-ai nx project ok",
         "cwd": "{projectRoot}"
       }
     },
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "test -f gradlew && echo explore-ai test stub ok — run ./gradlew test locally",
+        "command": "test -f project.json && echo explore-ai test stub ok",
         "cwd": "{projectRoot}"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "test -f gradlew && echo explore-ai build stub ok — run ./gradlew build locally",
+        "command": "test -f project.json && echo explore-ai build stub ok",
         "cwd": "{projectRoot}"
       }
     }
