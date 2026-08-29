@@ -261,7 +261,7 @@ Architecture diagrams live under [docs/developer/c4-model/](docs/developer/c4-mo
 
 ## Contributing
 
-1. Use branch names `<type>/<slug>` (for example `feat/…`, `fix/…`, `docs/…`, `refactor/…`).
+1. Use branch names as English kebab-case slugs only (for example `glossary-update`, `input-validation`) — no `feat/`, `docs/`, `eng/`, or other prefix.
 2. Prefer small PRs with a clear why, References, and linked Jira when applicable.
 3. Keep Glossary Preferred Terms and architecture docs in sync when package layout or APIs change.
 
