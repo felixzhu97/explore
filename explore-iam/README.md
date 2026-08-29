@@ -161,7 +161,7 @@ Cursor / Claude Code conventions align with [explore-ai](https://github.com/feli
 | Resource | Location |
 |----------|----------|
 | Rules | `~/.cursor/rules/` |
-| Skills | `~/.cursor/skills/scrum-team/developers/EXPLORE_SKILLS.md` |
+| Skills | `~/.cursor/skills/developers/SKILL.md` |
 | Agents | [`.cursor/agents/`](.cursor/agents/) |
 | Claude Code | Regenerate [`CLAUDE.md`](CLAUDE.md) with `./.claude/generate-rules.sh` after global rule changes |
 | Delivery gates | Husky pre-commit (`pnpm typecheck`, `./gradlew checkstyleMain checkstyleTest`); [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |

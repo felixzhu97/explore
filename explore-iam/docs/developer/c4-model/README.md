@@ -4,7 +4,7 @@ PlantUML ([C4-PlantUML](https://github.com/plantuml-stdlib/C4-PlantUML)) living 
 **Source of truth:** `.puml` files in this directory. Regenerate PNG when PlantUML is available.
 
 Official C4: [c4model.com](https://c4model.com/).  
-Style standards: global [c4-model](~/.cursor/skills/scrum-team/developers/developer/references/c4-model.md) skill.
+Style standards: global [c4-model](~/.cursor/skills/developers/developer/references/c4-model.md) skill.
 
 ## Visual tracks (do not mix)
 
