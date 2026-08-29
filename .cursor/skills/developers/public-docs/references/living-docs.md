@@ -7,6 +7,15 @@ does not.
 
 Do **not** sync new business semantics before Phase 1 is done (or marked N/A).
 
+<<<<<<< HEAD
+Cross-app / cross-repo **runtime** edges use Published Language + ACL — see
+[cross-context-integration](cross-context-integration.md) (do not share domain
+DTOs across `explore-*`).
+
+Paths below are under each published project root (`explore-ai/`, `explore-iam/`,
+`explore-chat/`, …) in this meta-repo. Platform-level Glossary / C4 (when
+present) live under root `docs/`.
+=======
 **Two levels of living docs:**
 
 | Level | Path | Owns |
@@ -18,6 +27,7 @@ Platform docs must not duplicate app aggregates; link to project Glossaries / C4
 
 Paths below under **project** roots (`explore-ai/`, `explore-iam/`,
 `explore-chat/`, …) unless marked platform.
+>>>>>>> origin/main
 
 ## Documents
 
@@ -80,6 +90,7 @@ Deliver Phase 1–3 meta sync as stacked Draft PRs —
 | New feature module, UI surface, cross-app wiring | `C3-Component.puml` | **3** |
 | Deploy topology, ports, hosting | `C4-Deployment.puml` | **3** |
 | New/changed critical runtime path | `C4-Dynamic-{Flow}.puml` (+ `style-zinc.puml` if styles change) | **3** |
+| New/changed cross-BC contract or runtime edge | `packages/contracts-*` + consumer ACL — [cross-context-integration](cross-context-integration.md) | **1–3** |
 | New user-visible capability, nav change, delivery status | User Story Map + matching `E*.md` | **3** |
 | Pure tests/formatting/deps with no product/architecture semantics | None (N/A) | — |
 

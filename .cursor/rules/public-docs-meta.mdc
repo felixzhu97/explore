@@ -38,6 +38,8 @@ Do not restructure `explore-*` into `apps/` / `libs/`; share via `packages/`.
   see [delivery-github-stack](../skills/developers/public-docs/references/delivery-github-stack.md)
 - Living docs order: Glossary → domain model → other C4 → story map —
   see [living-docs](../skills/developers/public-docs/references/living-docs.md)
+- Cross-app calls: Published Language + ACL (basic) —
+  see [cross-context-integration](../skills/developers/public-docs/references/cross-context-integration.md)
 
 ## Catalog changes
 
