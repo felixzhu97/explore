@@ -6,13 +6,16 @@
 A collection of **architecture diagrams** for public projects — primarily [C4 Model](https://c4model.com/) views — to help developers understand system boundaries, containers, and core components.
 
 > **Scope:** Catalogued projects listed in [Projects](#projects) below.  
-> This repository publishes C4 models, project READMEs, Glossaries, and User Story Maps — not full application source trees.
+> This repository is an **Nx workspace** at the root: it publishes C4 models,
+> READMEs, Glossaries, User Story Maps, and shared `packages/` (types, configs,
+> BOM). Full app source under `explore-*` stays mostly local unless un-ignored.
 
 ## Table of Contents
 
 - [About](#about)
 - [Projects](#projects)
 - [Repository Layout](#repository-layout)
+- [Nx workspace](#nx-workspace)
 - [Quick Start](#quick-start)
 - [Suggested Learning Path](#suggested-learning-path)
 - [Contributing](#contributing)
@@ -43,24 +46,33 @@ Diagrams are written in **PlantUML**. Some directories also include pre-rendered
 ## Repository Layout
 
 ```text
-public-docs/
-├── README.md
-├── explore-ai/
+public/
+├── package.json / nx.json / pnpm-workspace.yaml
+├── packages/                 # shared types, eslint, contracts, Java BOM
+├── .github/workflows/ci.yml  # nx affected
+├── explore-ai/               # in-place (unchanged internal layout)
+│   ├── project.json          # Nx registration
 │   ├── README.md
 │   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
 ├── explore-iam/
-│   ├── README.md
-│   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
 ├── explore-chat/
-│   ├── README.md
-│   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
 ├── explore-commerce/
-│   ├── README.md
-│   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
 └── explore-lowcode/
-    ├── README.md
-    └── docs/{Glossary.md,product-owner/,developer/c4-model/}
 ```
+
+## Nx workspace
+
+Cross-project dependencies and duplicate declarations are managed with **Nx**
+at this repo root (directories under `explore-*` are **not** renamed to
+`apps/` / `libs/`).
+
+```bash
+pnpm install
+pnpm exec nx graph
+pnpm exec nx affected -t lint,test,build
+```
+
+Shared packages: [`packages/README.md`](packages/README.md).
 
 ## Quick Start
 
