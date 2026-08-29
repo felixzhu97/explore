@@ -6,7 +6,7 @@ description: >-
   (unit/E2E testing and code review). Prefer the host framework’s built-in
   capabilities over reinventing or unnecessary third-party stacks. API design
   follows AIP; Java style follows Google Checkstyle; validate before submit.
-  Deliver via atomic **Draft** PRs submitted as a GitHub Stack (gh stack). Use when
+  Deliver via fine-grained **Draft** PRs submitted as a GitHub Stack (gh stack). Use when
   writing code, refactoring, testing, reviewing implementation quality, or
   proposing product-domain / solution designs grounded in big-tech references.
 ---
@@ -30,7 +30,7 @@ Prefer the specific child skill when the task is clear.
 
 - **Framework-first** → [`references/framework-first.md`](./references/framework-first.md)
 - **Checkstyle + AIP** → [`references/checkstyle-aip.md`](./references/checkstyle-aip.md)
-- **Delivery (atomic Draft PRs + GitHub Stack + validate)** → [`references/delivery-github-stack.md`](./references/delivery-github-stack.md)
+- **Delivery (fine-grained Draft PRs + GitHub Stack + validate)** → [`references/delivery-github-stack.md`](./references/delivery-github-stack.md)
   - Commit/PR format: [`developer`](./developer/SKILL.md) §6
 - **Living docs order** → [`developer`](./developer/SKILL.md) §4 + [`living-docs`](./developer/references/living-docs.md): Glossary → domain model → implement → C4 + User Story Map
 
