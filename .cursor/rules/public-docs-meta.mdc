@@ -29,7 +29,7 @@ Project `.cursor/skills/` live in **project repos**, not this meta-repo.
 ## Delivery
 
 - Branch: `<slug>` (no prefix) per [commit-pr](../skills/developers/public-docs/references/commit-pr.md)
-- Dependent work: atomic **Draft PRs via GitHub Stack** (`gh stack`) —
+- Dependent work: fine-grained **Draft PRs via GitHub Stack** (`gh stack`) —
   see [delivery-github-stack](../skills/developers/public-docs/references/delivery-github-stack.md)
 - Living docs order: Glossary → domain model → other C4 → story map —
   see [living-docs](../skills/developers/public-docs/references/living-docs.md)

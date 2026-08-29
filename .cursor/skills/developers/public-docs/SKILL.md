@@ -14,7 +14,7 @@ description: Manage nested project Git, sync architecture docs into this meta-re
 3. Architecture / domain language changes follow [living-docs](references/living-docs.md) phased order before sync
 4. Architecture boundary changes must update C4 `.puml` in the same PR — see [c4-model](references/c4-model.md)
 5. Every commit and PR must follow [commit-pr](references/commit-pr.md)
-6. Dependent work ships as atomic **Draft PRs via GitHub Stack** — see [delivery-github-stack](references/delivery-github-stack.md)
+6. Dependent work ships as fine-grained **Draft PRs via GitHub Stack** — see [delivery-github-stack](references/delivery-github-stack.md)
 7. Stage only whitelist paths per [sync-repo](references/sync-repo.md) — never `git add -A`
 
 ## Workflow
