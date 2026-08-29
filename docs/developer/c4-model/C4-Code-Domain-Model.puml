@@ -1,0 +1,73 @@
+@startuml C4-Code-Domain-Model
+!include style-zinc.puml
+
+title 代码级领域概念 — Explore Platform（共享内核 / 发布语言）
+
+legend right
+  |= 图例 |
+  | <#ECFDF5> Shared Kernel |
+  | <#EFF6FF> Published Language |
+  | <#FFF7ED> Anti-Corruption Layer |
+  | <#F4F4F5> Platform package |
+endlegend
+
+package "packages/shared-types\nShared Kernel" <<Shared Kernel>> {
+  class ExploreServiceId <<ValueObject>> {
+    explore-ai | explore-iam | explore-chat
+    explore-commerce | explore-lowcode
+  }
+  class ExploreServiceRef <<ValueObject>> {
+    +id: ExploreServiceId
+    +openApiUrl?: string
+  }
+  ExploreServiceRef --> ExploreServiceId
+}
+
+package "packages/contracts-ai\nPublished Language" <<Published Language>> {
+  class ExploreAiOpenApi <<Contract>> {
+    openapi/explore-ai.openapi.json
+    +paths: /api/text/* /api/sessions*
+    +headers: X-Service-Key X-Client-Id
+  }
+}
+
+package "explore-chat ACL" <<Anti-Corruption Layer>> {
+  class ExploreAiPublishedLanguage <<Vocabulary>> {
+    +ExploreAiPaths
+    +ExploreAiHeaders
+  }
+  class ExploreAiClientService <<Gateway>> {
+    +listProviders()
+    +streamChat()
+    +sessions CRUD
+  }
+  ExploreAiClientService --> ExploreAiPublishedLanguage
+}
+
+package "Platform packages" <<Platform package>> {
+  class ExploreBom <<BOM>> {
+    @explore/explore-bom
+    Spring Boot / Spring AI versions
+  }
+  class EslintConfig <<Config>> {
+    @explore/eslint-config
+  }
+  class TsconfigBaselines <<Config>> {
+    @explore/tsconfig-baselines
+  }
+}
+
+ExploreAiPublishedLanguage ..> ExploreAiOpenApi : "conform to"
+note right of ExploreAiOpenApi
+  Owner: Explore AI BC.
+  Consumers must not import
+  explore-ai domain types.
+end note
+
+note bottom of ExploreServiceId
+  Thin Shared Kernel only.
+  App aggregates stay in
+  explore-*/docs/… C4-Code.
+end note
+
+@enduml

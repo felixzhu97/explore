@@ -1,0 +1,36 @@
+@startuml C1-Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 系统上下文图 — Explore Platform
+
+Person(developer, "开发者 / 维护者", "阅读架构文档、演进 packages 与目录应用")
+Person(end_user, "终端用户", "使用 Chat / Commerce / Lowcode 等产品面")
+
+System_Boundary(explore, "Explore Platform") {
+  System(ai, "Explore AI", "对话、RAG、工具与评估（Spring AI）")
+  System(iam, "Explore IAM", "身份、策略与服务凭证")
+  System(chat, "Explore Chat", "社交与即时通讯；Explore AI BFF（ACL）")
+  System(commerce, "Explore Commerce", "电商 Web / Admin / API")
+  System(lowcode, "Explore Lowcode", "可视化页面搭建")
+}
+
+System_Ext(packages, "packages/*", "Shared Kernel、Published Language、BOM、ESLint/TS 基线")
+System_Ext(idp, "外部 IdP / OAuth", "可选 Google / GitHub 等登录")
+System_Ext(llm, "LLM / 本地模型", "云厂商 API 或 Ollama")
+
+Rel(developer, explore, "维护文档与契约", "Git / Nx")
+Rel(end_user, chat, "使用", "HTTPS / WebSocket")
+Rel(end_user, commerce, "购物", "HTTPS")
+Rel(end_user, lowcode, "搭建页面", "HTTPS")
+Rel(end_user, ai, "直接使用 AI 产品面", "HTTPS")
+Rel(chat, ai, "Published Language / BFF", "OpenAPI + X-Service-Key")
+Rel(chat, iam, "身份（如配置）", "HTTPS")
+Rel(ai, iam, "身份（如配置）", "HTTPS")
+Rel(commerce, iam, "身份（如配置）", "HTTPS")
+Rel(ai, llm, "推理 / 嵌入", "HTTPS / 本地")
+Rel(ai, idp, "可选 OAuth", "HTTPS")
+Rel(explore, packages, "共享声明与契约", "workspace / file / OpenAPI")
+
+@enduml

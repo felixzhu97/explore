@@ -17,8 +17,10 @@ Allowed to stage and commit:
 
 | Path | Role |
 |------|------|
-| `*/docs/developer/c4-model/` | Flat C1–C4 PlantUML (and optional PNG) |
-| `*/docs/Glossary.md` | Domain ubiquitous language |
+| `docs/Glossary.md` | **Platform** ubiquitous language (Explore Nx workspace) |
+| `docs/developer/c4-model/` | **Platform** C4 (cross-app context / containers / shared concepts) |
+| `*/docs/developer/c4-model/` | Per-app flat C1–C4 PlantUML (and optional PNG) |
+| `*/docs/Glossary.md` | Per-app (bounded context) ubiquitous language |
 | `*/docs/product-owner/` | User Story Map + epic story files |
 | `*/README.md` | Project README (un-ignored via `!*/README.md`) |
 | `*/project.json` | Nx project registration (in-place apps) |
@@ -52,6 +54,7 @@ Stage **only** whitelist paths. Do **not** use `git add -A`.
 ```bash
 git add .gitignore README.md package.json pnpm-lock.yaml pnpm-workspace.yaml nx.json .npmrc renovate.json
 git add packages/ .github/workflows/
+git add docs/Glossary.md docs/developer/c4-model/
 git add .cursor/skills/
 git add explore-ai/README.md explore-ai/docs/Glossary.md explore-ai/docs/product-owner/ explore-ai/docs/developer/c4-model/ explore-ai/project.json
 git add explore-iam/README.md explore-iam/docs/Glossary.md explore-iam/docs/product-owner/ explore-iam/docs/developer/c4-model/ explore-iam/project.json

@@ -17,6 +17,7 @@ Stage **only** paths in [sync-repo](../skills/developers/public-docs/references/
 - `README.md`, `.gitignore`, `.cursor/skills/**`
 - `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `nx.json`, `.npmrc`
 - `packages/**`, `.github/workflows/**`
+- `docs/Glossary.md`, `docs/developer/c4-model/**` (platform living docs)
 - `*/README.md`, `*/project.json`, `*/docs/Glossary.md`, `*/docs/product-owner/**`
 - `*/docs/developer/c4-model/**`
 

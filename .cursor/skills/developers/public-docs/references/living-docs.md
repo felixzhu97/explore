@@ -7,6 +7,7 @@ does not.
 
 Do **not** sync new business semantics before Phase 1 is done (or marked N/A).
 
+<<<<<<< HEAD
 Cross-app / cross-repo **runtime** edges use Published Language + ACL — see
 [cross-context-integration](cross-context-integration.md) (do not share domain
 DTOs across `explore-*`).
@@ -14,11 +15,26 @@ DTOs across `explore-*`).
 Paths below are under each published project root (`explore-ai/`, `explore-iam/`,
 `explore-chat/`, …) in this meta-repo. Platform-level Glossary / C4 (when
 present) live under root `docs/`.
+=======
+**Two levels of living docs:**
+
+| Level | Path | Owns |
+|-------|------|------|
+| **Platform** (this Nx root) | `docs/Glossary.md`, `docs/developer/c4-model/` | Cross-app language, Shared Kernel / Published Language, catalog topology |
+| **Bounded context** (each app) | `<project>/docs/…` | App Preferred Terms, rich domain model, per-app C1–C4 |
+
+Platform docs must not duplicate app aggregates; link to project Glossaries / C4 instead.
+
+Paths below under **project** roots (`explore-ai/`, `explore-iam/`,
+`explore-chat/`, …) unless marked platform.
+>>>>>>> origin/main
 
 ## Documents
 
 | Document | Path | Owns |
 |----------|------|------|
+| Platform Glossary | `docs/Glossary.md` | Platform Preferred Terms (Nx, packages, BC names) |
+| Platform C4 | `docs/developer/c4-model/` | Explore catalog C1/C2 + shared-concept Code/Dynamic |
 | Domain Glossary | `<project>/docs/Glossary.md` | Preferred Terms, modules, routes, API prefixes |
 | C4 model | `<project>/docs/developer/c4-model/` | Structural C4 + Code + Dynamic (`.puml` source of truth) — [c4-model](./c4-model.md) |
 | User Story Map | `<project>/docs/product-owner/User-Story-Map.md` | Journey / Backbone / Epic index |
