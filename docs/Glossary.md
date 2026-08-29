@@ -60,7 +60,7 @@ that app’s Glossary and C4 Code domain model.
 | ------------------------ | ---- | ---- |
 | `@explore/shared-types` | 共享类型 | Shared Kernel: `ExploreServiceId`, `ExploreServiceRef` |
 | `@explore/contracts-ai` | AI 契约 | Published Language OpenAPI for chat → ai |
-| `@explore/dev-ports` | 开发端口 | Dev Port Map: `ports.json` + uniqueness lint |
+| `@explore/dev-ports` | 开发端口 | Dev Port Map: `ports.json` + `getPort` helpers |
 | `@explore/explore-bom` | Java BOM | Spring Boot / Spring AI version platform |
 | `@explore/eslint-config` | ESLint 基线 | Shared ESLint flat config |
 | `@explore/tsconfig-baselines` | TS 基线 | Shared TypeScript baselines |
