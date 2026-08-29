@@ -265,7 +265,7 @@ Architecture diagrams live under [docs/developer/c4-model/](docs/developer/c4-mo
 2. Prefer small PRs with a clear why, References, and linked Jira when applicable.
 3. Keep Glossary Preferred Terms and architecture docs in sync when package layout or APIs change.
 
-See [.cursor/skills/developer/SKILL.md](.cursor/skills/developer/SKILL.md) for project commit and PR conventions.
+See [.cursor/skills/developers/public-docs/SKILL.md](.cursor/skills/developers/public-docs/SKILL.md) for project commit and PR conventions.
 
 ## License
 

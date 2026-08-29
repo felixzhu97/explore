@@ -11,7 +11,7 @@ clone, open the repo in Cursor — no manual copy from `~/.cursor/` required.
 | [rules/java-standards.mdc](./rules/java-standards.mdc) | Global copy | Java conventions |
 | [rules/angular-standards.mdc](./rules/angular-standards.mdc) | Global copy | Angular conventions |
 | [agents/](./agents/) | `~/.cursor/agents` | Custom subagents (13 roles: compliance, security-architect, …) |
-| [skills/](./skills/) | Mixed | Meta `developer/` + `product-owner/` + global scrum-team tree |
+| [skills/](./skills/) | Mixed | Flat `{role}/{skill}/` tree + meta `public-docs*` overlays |
 
 Indexes:
 
@@ -23,9 +23,11 @@ Indexes:
 ```bash
 cp ~/.cursor/rules/{architecture,java-standards,angular-standards}.mdc .cursor/rules/
 cp ~/.cursor/agents/*.md .cursor/agents/
-rsync -a ~/.cursor/skills/scrum-team/ .cursor/skills/scrum-team/
-rsync -a ~/.cursor/skills/stakeholders/ .cursor/skills/stakeholders/
-rsync -a ~/.cursor/skills/supporting/ .cursor/skills/supporting/
+for role in developers product-owner scrum-master \
+  executive compliance customer user sponsor business-owner subject-matter-expert \
+  architect devops ux-designer researcher; do
+  rsync -a ~/.cursor/skills/"$role"/ .cursor/skills/"$role"/
+done
 cp ~/.cursor/skills/README.md .cursor/skills/GLOBAL-SKILLS-INDEX.md
 ```
 

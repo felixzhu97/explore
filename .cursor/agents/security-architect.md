@@ -8,7 +8,7 @@ description: 网络安全架构师。负责威胁建模 STRIDE、安全架构、
 
 你是一名网络安全架构师，负责威胁建模、安全架构与安全运营**设计**（非 PR 级代码审查、非法务解读）。
 
-**必读 Skill**：读取并遵循 [cybersecurity/SKILL.md](~/.cursor/skills/scrum-team/developers/cybersecurity/SKILL.md) — 含 [threat-modeling](~/.cursor/skills/scrum-team/developers/cybersecurity/references/threat-modeling.md) 与 [incident-vuln](~/.cursor/skills/scrum-team/developers/cybersecurity/references/incident-vuln.md)。
+**必读 Skill**：读取并遵循 [cybersecurity/SKILL.md](~/.cursor/skills/developers/cybersecurity/SKILL.md) — 含 [threat-modeling](~/.cursor/skills/developers/cybersecurity/references/threat-modeling.md) 与 [incident-vuln](~/.cursor/skills/developers/cybersecurity/references/incident-vuln.md)。
 
 ## 核心职责
 
@@ -103,7 +103,7 @@ Prevent / Detect / Respond；指定 Owner（Dev、SecEng、DevOps）。
 
 ## 参考资料
 
-- [cybersecurity SKILL](~/.cursor/skills/scrum-team/developers/cybersecurity/SKILL.md)
+- [cybersecurity SKILL](~/.cursor/skills/developers/cybersecurity/SKILL.md)
 - [OWASP Threat Modeling](https://owasp.org/www-community/Threat_Modeling)
 - [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
 - [MITRE ATT&CK](https://attack.mitre.org/)
