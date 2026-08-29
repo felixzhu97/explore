@@ -170,10 +170,10 @@ Scoring: [references/rubric.md](references/rubric.md). Sources: [references/sour
 
 | Need | Where |
 |------|-------|
-| 行业动向（子 Agent） | [market-analyst](../../agents/market-analyst.md) |
-| Business Analysis | [business-analyst](../../agents/business-analyst.md) + [business-analysis](../business-analysis/SKILL.md) |
-| 前沿研究（子 Agent） | [tech-analyst](../../agents/tech-analyst.md) |
-| BMC / LTV / CAC deep dive | `business-model-generator` (personal skill) |
+| 行业动向（子 Agent） | [market-analyst](../../../agents/market-analyst.md) |
+| Business Analysis | [business-analyst](../../../agents/business-analyst.md) + [business-analysis](../business-analysis/SKILL.md) |
+| 前沿研究（子 Agent） | [ai-engineer](../../../agents/ai-engineer.md) |
+| BMC / LTV / CAC deep dive | [business-model-generator](../../executive/business-model-generator/SKILL.md) |
 | Implement chosen bet | [developer](../developer/SKILL.md) |
-| Product Owner story from recommendation | [Product Owner](../product-owner/SKILL.md) |
+| Product Owner story from recommendation | [Jira delivery](../jira-delivery/SKILL.md) |
 | Spring AI capabilities | [spring-ai](../spring-ai/SKILL.md) |

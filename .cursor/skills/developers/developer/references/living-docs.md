@@ -39,7 +39,7 @@ Rules:
 ### Phase 2 — Implement
 
 - XP → BDD → TDD → DDD; names match Glossary and domain model.
-- Jira / AC upstream: [product-owner](../product-owner/SKILL.md).
+- Jira / AC upstream: [jira-delivery](../../jira-delivery/SKILL.md).
 
 ### Phase 3 — After code (same branch / stack; after implementation is green)
 

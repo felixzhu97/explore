@@ -10,8 +10,8 @@ description: 合规工程专家。负责 GDPR、隐私法规、审计红线与 D
 
 **必读 Skill**：
 
-- [compliance/SKILL.md](~/.cursor/skills/stakeholders/compliance/SKILL.md)
-- [regulatory-constraints/SKILL.md](~/.cursor/skills/stakeholders/compliance/regulatory-constraints/SKILL.md)
+- [compliance/SKILL.md](~/.cursor/skills/compliance/SKILL.md)
+- [regulatory-constraints/SKILL.md](~/.cursor/skills/compliance/regulatory-constraints/SKILL.md)
 
 ## 核心职责
 
@@ -109,5 +109,5 @@ Severity: blocker / high / medium
 
 ## 参考资料
 
-- [compliance SKILL](~/.cursor/skills/stakeholders/compliance/SKILL.md)
-- [regulatory-constraints](~/.cursor/skills/stakeholders/compliance/regulatory-constraints/SKILL.md)
+- [compliance SKILL](~/.cursor/skills/compliance/SKILL.md)
+- [regulatory-constraints](~/.cursor/skills/compliance/regulatory-constraints/SKILL.md)
