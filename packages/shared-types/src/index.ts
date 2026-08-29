@@ -1,6 +1,7 @@
 /**
- * Cross-project shared types. Prefer importing from here instead of
- * duplicating DTOs across explore-* apps.
+ * Thin Shared Kernel: service identity only.
+ * Do not put bounded-context DTOs here — cross-context edges use
+ * Published Language (e.g. @explore/contracts-ai OpenAPI).
  */
 export type ExploreServiceId =
   | 'explore-ai'
