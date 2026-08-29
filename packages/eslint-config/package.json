@@ -1,0 +1,13 @@
+{
+  "name": "@explore/eslint-config",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Shared ESLint baseline for Explore JS/TS projects",
+  "type": "module",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js"
+  ]
+}

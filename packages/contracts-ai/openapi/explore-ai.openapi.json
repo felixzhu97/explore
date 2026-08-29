@@ -1,0 +1,20 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Explore AI API (contract stub)",
+    "version": "0.0.1",
+    "description": "Published contract for consumers (e.g. explore-chat BFF). Replace with generated OpenAPI from explore-ai CI."
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Service is healthy"
+          }
+        }
+      }
+    }
+  }
+}

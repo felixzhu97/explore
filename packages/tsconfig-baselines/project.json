@@ -1,0 +1,16 @@
+{
+  "name": "@explore/tsconfig-baselines",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/tsconfig-baselines",
+  "projectType": "library",
+  "tags": ["type:config", "scope:explore"],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node -e \"JSON.parse(require('fs').readFileSync('base.json','utf8')); console.log('tsconfig-baselines ok')\"",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

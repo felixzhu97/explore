@@ -1,0 +1,6 @@
+{
+  "name": "@explore/explore-bom",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Java/Spring dependency BOM for Explore services (version single source)"
+}

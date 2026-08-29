@@ -1,0 +1,13 @@
+{
+  "name": "contracts-ai",
+  "version": "0.0.1",
+  "private": true,
+  "description": "OpenAPI contract placeholder for explore-chat → explore-ai runtime dependency",
+  "type": "module",
+  "exports": {
+    ".": "./openapi/explore-ai.openapi.json"
+  },
+  "files": [
+    "openapi"
+  ]
+}

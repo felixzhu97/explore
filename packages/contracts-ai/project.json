@@ -1,0 +1,24 @@
+{
+  "name": "contracts-ai",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/contracts-ai",
+  "projectType": "library",
+  "tags": ["type:contract", "scope:explore"],
+  "implicitDependencies": ["shared-types"],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node -e \"JSON.parse(require('fs').readFileSync('openapi/explore-ai.openapi.json','utf8')); console.log('contracts-ai ok')\"",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node -e \"const s=require('./openapi/explore-ai.openapi.json'); if(!s.openapi) process.exit(1); console.log('contracts-ai test ok')\"",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}
