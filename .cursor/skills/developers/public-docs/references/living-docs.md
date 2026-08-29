@@ -7,13 +7,24 @@ does not.
 
 Do **not** sync new business semantics before Phase 1 is done (or marked N/A).
 
-Paths below are under each published project root (`explore-ai/`, `explore-iam/`,
-`explore-chat/`, …) in this meta-repo.
+**Two levels of living docs:**
+
+| Level | Path | Owns |
+|-------|------|------|
+| **Platform** (this Nx root) | `docs/Glossary.md`, `docs/developer/c4-model/` | Cross-app language, Shared Kernel / Published Language, catalog topology |
+| **Bounded context** (each app) | `<project>/docs/…` | App Preferred Terms, rich domain model, per-app C1–C4 |
+
+Platform docs must not duplicate app aggregates; link to project Glossaries / C4 instead.
+
+Paths below under **project** roots (`explore-ai/`, `explore-iam/`,
+`explore-chat/`, …) unless marked platform.
 
 ## Documents
 
 | Document | Path | Owns |
 |----------|------|------|
+| Platform Glossary | `docs/Glossary.md` | Platform Preferred Terms (Nx, packages, BC names) |
+| Platform C4 | `docs/developer/c4-model/` | Explore catalog C1/C2 + shared-concept Code/Dynamic |
 | Domain Glossary | `<project>/docs/Glossary.md` | Preferred Terms, modules, routes, API prefixes |
 | C4 model | `<project>/docs/developer/c4-model/` | Structural C4 + Code + Dynamic (`.puml` source of truth) — [c4-model](./c4-model.md) |
 | User Story Map | `<project>/docs/product-owner/User-Story-Map.md` | Journey / Backbone / Epic index |
@@ -69,6 +80,7 @@ Deliver Phase 1–3 meta sync as stacked Draft PRs —
 | New feature module, UI surface, cross-app wiring | `C3-Component.puml` | **3** |
 | Deploy topology, ports, hosting | `C4-Deployment.puml` | **3** |
 | New/changed critical runtime path | `C4-Dynamic-{Flow}.puml` (+ `style-zinc.puml` if styles change) | **3** |
+| New/changed cross-BC runtime or contract edge | OpenAPI in `packages/contracts-*` + ACL; platform/app Dynamic as needed — [cross-context-integration](cross-context-integration.md) | **1** terms; **2–3** contract + C4 |
 | New user-visible capability, nav change, delivery status | User Story Map + matching `E*.md` | **3** |
 | Pure tests/formatting/deps with no product/architecture semantics | None (N/A) | — |
 
