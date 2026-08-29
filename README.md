@@ -48,6 +48,9 @@ Diagrams are written in **PlantUML**. Some directories also include pre-rendered
 ```text
 public/
 ├── package.json / nx.json / pnpm-workspace.yaml
+├── docs/
+│   ├── Glossary.md           # platform ubiquitous language
+│   └── developer/c4-model/   # platform C1 / C2 / Code / Dynamic
 ├── packages/                 # shared types, eslint, contracts, Java BOM
 ├── .github/workflows/ci.yml  # nx affected
 ├── explore-ai/               # in-place (unchanged internal layout)
@@ -72,7 +75,9 @@ pnpm exec nx graph
 pnpm exec nx affected -t lint,test,build
 ```
 
-Shared packages: [`packages/README.md`](packages/README.md).
+Shared packages: [`packages/README.md`](packages/README.md).  
+Platform glossary: [`docs/Glossary.md`](docs/Glossary.md).  
+Platform C4: [`docs/developer/c4-model/`](docs/developer/c4-model/).
 
 ## Quick Start
 
@@ -84,11 +89,14 @@ Shared packages: [`packages/README.md`](packages/README.md).
 
 ```bash
 brew install plantuml   # macOS
+plantuml docs/developer/c4-model/C1-Context.puml
 plantuml explore-ai/docs/developer/c4-model/C1-Context.puml
 ```
 
 Useful entry points:
 
+- [Platform system context](docs/developer/c4-model/C1-Context.puml)
+- [Platform containers + packages](docs/developer/c4-model/C2-Container.puml)
 - [Explore AI system context](explore-ai/docs/developer/c4-model/C1-Context.puml)
 - [Explore IAM system context](explore-iam/docs/developer/c4-model/C1-Context.puml)
 - [Explore Chat system context](explore-chat/docs/developer/c4-model/C1-Context.puml)
@@ -97,12 +105,13 @@ Useful entry points:
 
 ## Suggested Learning Path
 
-1. Read [Explore AI C4](explore-ai/docs/developer/c4-model/) for Spring AI + Angular container and deployment boundaries
-2. Read [Explore IAM C4](explore-iam/docs/developer/c4-model/) for AWS IAM–style identity, policy, STS, and SSO boundaries
-3. Read [Explore Chat C4](explore-chat/docs/developer/c4-model/) for Nest API, clients, and Python service boundaries
-4. Read [Explore Commerce C4](explore-commerce/docs/developer/c4-model/) for Web / Admin / API container split
-5. Read [Explore Lowcode C4](explore-lowcode/docs/developer/c4-model/) for SPA canvas / domain layout and Vercel deploy
-6. Compare how frontend shells, BFF/API containers, and external systems are drawn across these projects
+1. Read [Platform Glossary](docs/Glossary.md) and [Platform C4](docs/developer/c4-model/) for catalog topology and Published Language
+2. Read [Explore AI C4](explore-ai/docs/developer/c4-model/) for Spring AI + Angular container and deployment boundaries
+3. Read [Explore IAM C4](explore-iam/docs/developer/c4-model/) for AWS IAM–style identity, policy, STS, and SSO boundaries
+4. Read [Explore Chat C4](explore-chat/docs/developer/c4-model/) for Nest API, clients, and Python service boundaries
+5. Read [Explore Commerce C4](explore-commerce/docs/developer/c4-model/) for Web / Admin / API container split
+6. Read [Explore Lowcode C4](explore-lowcode/docs/developer/c4-model/) for SPA canvas / domain layout and Vercel deploy
+7. Compare how frontend shells, BFF/API containers, and external systems are drawn across these projects
 
 ## Contributing
 

@@ -1,0 +1,28 @@
+@startuml C4-Dynamic-Explore-Ai-Bff
+!include style-zinc.puml
+
+title 动态图 — Explore AI BFF（Published Language）
+
+actor "终端用户" as User <<ui>>
+participant "Explore Chat Web" as Web <<ui>>
+participant "ExploreAiController\n(Nest BFF)" as Bff <<java>>
+participant "ExploreAiClientService\n(ACL)" as Client <<java>>
+participant "@explore/contracts-ai\nOpenAPI" as Contract <<external>>
+participant "Explore AI\n/api/text|sessions" as Ai <<java>>
+
+User -> Web : 触发 AI 能力
+Web -> Bff : HTTPS /api/v1/ai/explore/*
+note right of Bff
+  客户端不携带上游
+  X-Service-Key
+end note
+
+Bff -> Client : listProviders / streamChat / sessions
+Client -> Contract : 路径与头对齐 Published Language
+Client -> Ai : GET/POST + X-Service-Key\nX-Client-Id X-Request-Id
+Ai --> Client : JSON / SSE
+Client --> Bff : 防腐后的响应
+Bff --> Web : WhatsFeed API 形状
+Web --> User : UI
+
+@enduml
