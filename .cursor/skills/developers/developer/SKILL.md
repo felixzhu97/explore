@@ -16,7 +16,7 @@ description: Feature development for this repo — XP, DDD, BDD, TDD, Glossary n
 3. Tests: `should expected result when condition` (spaces; Java methods: camelCase)
 4. Names: Glossary Preferred Term in repo `docs/Glossary.md` (when present) + [clean-code-naming](references/clean-code-naming.md)
 5. UI: Apple HIG + [apple-minimal-ux](references/apple-minimal-ux.md)
-6. **Commit / PR / Jira / branches**: always reuse §6 + [Jira delivery](../jira-delivery/SKILL.md); branch `<type>/<slug>`; submit **atomic Draft PRs via GitHub Stack** (`gh stack`); PR title = business summary with **imperative** verb (commit-style; no type prefix); body why → References → JIRA; prose ≤72 cols; References = official docs + research
+6. **Commit / PR / Jira / branches**: always reuse §6 + [Jira delivery](../jira-delivery/SKILL.md); branch `<slug>` (no prefix); submit **atomic Draft PRs via GitHub Stack** (`gh stack`); commit subject = PR title (imperative, no type prefix); body why → References → JIRA; prose ≤72 cols; References = official docs + research
 7. **XP**: follow [extreme-programming](references/extreme-programming.md) — Simple Design / YAGNI, CI green, small releases, customer / AC feedback
 8. **Living docs (phased)**: **before code** — Glossary → `C4-Code-Domain-Model.puml`; **after code (CI green)** — other C4 + User Story Map; same feature branch — see §4 and [living-docs](references/living-docs.md)
 
@@ -117,7 +117,7 @@ Detail: [apple-minimal-ux](references/apple-minimal-ux.md)
 
 | Artifact                          | Language                                                                   |
 | --------------------------------- | -------------------------------------------------------------------------- |
-| Branch name                       | English kebab-case (`feat/minimal-clean-prompts`)                          |
+| Branch name                       | English kebab-case (`glossary-update`)                                     |
 | Commit subject + why + References | English                                                                    |
 | PR title + body                   | English                                                                    |
 | Jira **summary**                  | English (`As a … I want … so that …`)                                  |
@@ -127,26 +127,22 @@ Jira tickets follow [Jira delivery](../jira-delivery/SKILL.md): business-facing,
 
 #### Branch naming
 
-**Prefix = change type**. Do **not** default every branch to `feat`.
+Use a single English **kebab-case** slug — **no** directory prefix.
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| feat | `feat/<slug>` | `feat/minimal-clean-prompts` |
-| fix | `fix/<slug>` | `fix/prompt-style-typo` |
-| refactor | `refactor/<slug>` | `refactor/chat-session-model` |
-| docs | `docs/<slug>` | `docs/branch-naming-slug` |
-| test | `test/<slug>` | `test/rag-prompt-builder` |
-| chore | `chore/<slug>` | `chore/update-deps` |
-| perf | `perf/<slug>` | `perf/vector-search` |
-| ci | `ci/<slug>` | `ci/codeql-paths` |
+```
+<slug>
+```
 
-Allowed types: `feat` | `fix` | `refactor` | `docs` | `test` | `chore` | `perf` | `ci`
+Examples: `glossary-update`, `domain-model-diagram`, `input-validation`.
+
+**Do not** use these branch prefixes: `feat/`, `fix/`, `refactor/`, `docs/`,
+`test/`, `chore/`, `perf/`, `ci/`, `eng/`, `dev/`, `feature/`.
 
 Rules:
 
-- Always use `<type>/<slug>` with a kebab-case slug that describes the change
-- With a Jira ticket: still use `<type>/<slug>` — put the issue key only in commit/PR body (`JIRA: https://…/AI-xxx`), not in the branch name
-- Do **not** use `feature/` for new branches (legacy only; CI still accepts it)
+- Slug describes the change in plain English
+- With a Jira ticket: still use `<slug>` only — put the issue key only in
+  commit/PR body (`JIRA: https://…/AI-xxx`), not in the branch name
 - Do **not** embed `AI-<key>` in new branch names
 - Long-lived integration lines: `main`, `java-angular` (do not push work directly to these except via PR)
 
@@ -156,8 +152,16 @@ Do **not** open one large Draft PR. Deliver dependent work as a **stack of atomi
 
 ```
 main
- └── feat/resume-chat-session      # Draft PR #1 → base: main
-      └── feat/chat-session-api    # Draft PR #2 → base: previous branch
+ └── glossary-update              # Draft PR #1 → base: main
+      └── domain-model-diagram    # Draft PR #2 → base: previous branch
+```
+
+Optional feature stack:
+
+```
+main
+ └── input-validation
+      └── validation-api
 ```
 
 1. First layer: `gh stack init` from `main` (or current trunk); one atomic concern
@@ -189,8 +193,8 @@ Prefer **specific** pages, not homepages. Search the web in real time when neede
 
 **Corroborate the why (required):** each Reference URL must support a **concrete claim** in the commit/PR why paragraph (latency, reliability, cost, naming, review quality, UI system, etc.). Prefer the page that states the practice. Do not paste org/product homepages as decoration. Pick rows from [dependency-docs](references/dependency-docs.md) whose **Claim in why** matches the why text.
 
-- Bad: why says “reduce cold-start latency for chat UX” + link to a marketing landing page with no latency guidance.
-- Good: why says “treat latency as a golden signal and avoid idle scale-to-zero for interactive chat” + [SRE Book — Monitoring Distributed Systems](https://sre.google/sre-book/monitoring-distributed-systems/).
+- Bad: why says “reduce cold-start latency for interactive UX” + link to a marketing landing page with no latency guidance.
+- Good: why says “treat latency as a golden signal and avoid idle scale-to-zero for interactive flows” + [SRE Book — Monitoring Distributed Systems](https://sre.google/sre-book/monitoring-distributed-systems/).
 
 Avoid: random blogs, undated tweets, marketing landing pages (unless no primary source exists — then note why).
 
@@ -205,7 +209,7 @@ When these source types exist, include all of them in both the commit and the PR
 3. One official **vendor blog**, release note, or announcement page
 4. The upstream **GitHub repository** or official implementation docs when they are the implementation source
 
-For framework or dependency-only changes, keep using official docs first. For AI / model changes, prefer the full reference set above over a single docs link.
+For framework or dependency-only changes, keep using official docs first. For AI / model changes, prefer the full reference set above over a single docs link. Pick URLs from [market-tech-analysis sources](../market-tech-analysis/references/sources.md) — do not paste a fixed long example block in every commit.
 
 #### PR title (required — Apple / WebKit style)
 
@@ -223,18 +227,17 @@ Rules:
    command form — *Allow*, *Stop*, *Fix*, *Add*, *Remove*, *Make*… — not
    past tense, gerunds, or descriptive sentences (*Users can…*, *Letting…*,
    *Fixed…*).
-3. **No** Conventional Commits prefix (`feat:`, `fix:`, …). Branch still
-   uses `<type>/<slug>`.
-4. **No** class, package, framework, or API jargon as the headline.
-5. No trailing period; no Jira key in the title (`JIRA:` stays in the body).
+3. **No** Conventional Commits prefix (`feat:`, `fix:`, …). **Commit subject = PR title** (same line).
+4. Branch uses `<slug>` only (no prefix).
+5. **No** class, package, framework, or API jargon as the headline.
+6. No trailing period; no Jira key in the title (`JIRA:` stays in the body).
 
-Examples:
-
-- Bad: `feat: Wire ChatMapper and infra ChatRepository`
-- Bad: `Users can resume an interrupted chat session`
-- Bad: `Fixed empty-session chat save failures`
-- Good: `Allow users to resume interrupted chat sessions`
-- Good: `Stop chat save failing when the session is empty`
+| Bad | Good |
+|-----|------|
+| `docs: align domain model` | `Align domain model diagram with glossary terms` |
+| `Updated branch naming rules` | `Update branch naming documentation` |
+| `Users can submit valid forms` | `Reject empty input on form submit` |
+| `Fixed validation on empty input` | `Add validation for required fields` |
 
 Reference: [WebKit Pull Requests](https://docs.webkit.org/Deep%20Dive/GitHub/PullRequests.html).
 
@@ -265,19 +268,14 @@ References:
 Example:
 
 ```
-Add Qwen3-ASR reference guidance to PR skill
+Align domain model diagram with glossary terms
 
-Contributors need a consistent citation set for
-model-related changes so commits and PRs point to
-the paper, release notes, distribution page, and
-upstream implementation.
+Diagram labels must match the glossary before later
+layers reference those names.
 
 References:
 
-- https://arxiv.org/abs/2601.21337
-- https://huggingface.co/collections/Qwen/qwen3-asr
-- https://qwen.ai/blog?id=qwen3asr
-- https://github.com/QwenLM/Qwen3-ASR
+- https://c4model.com/
 ```
 
 #### PR body layout (required — fixed order)
@@ -303,19 +301,14 @@ Order (fixed):
 Example:
 
 ```
-Contributors need a consistent citation set for
-model-related changes so commits and PRs point to
-the paper, release notes, distribution page, and
-upstream implementation.
+Diagram labels must match the glossary before later
+layers reference those names.
 
 References:
 
-- https://arxiv.org/abs/2601.21337
-- https://huggingface.co/collections/Qwen/qwen3-asr
-- https://qwen.ai/blog?id=qwen3asr
-- https://github.com/QwenLM/Qwen3-ASR
+- https://c4model.com/
 
-JIRA: https://felixzhu.atlassian.net/browse/AI-XXX
+JIRA: https://example.atlassian.net/browse/PROJ-123
 ```
 
 PR **References** must match the commit References (same URLs). Use the
@@ -332,8 +325,8 @@ same official/research priority.
 - [ ] Phase 3 living docs: other C4 + User Story Map **after** implementation, CI green (or N/A)
 - [ ] Domain model reconciled with code if implementation drifted
 - [ ] UI (if any): HIG + minimal
-- [ ] Branch: `<type>/<slug>`; atomic Draft PRs via `gh stack` (no single mega-Draft)
-- [ ] Commit: subject + why + References (official/research)
+- [ ] Branch: `<slug>` (no prefix); atomic Draft PRs via `gh stack` (no single mega-Draft)
+- [ ] Commit: subject = PR title; why + References (official/research); no type prefix
 - [ ] Each References link maps to a claim in the why text (or N/A with note)
 - [ ] PR title: business summary, imperative verb (commit-style); no `feat:`/`fix:` prefix
 - [ ] PR body: why → References → JIRA (bottom); ≤72 cols; no title echo; CI green
