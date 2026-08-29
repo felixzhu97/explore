@@ -7,16 +7,16 @@ description: Feature development for this repo — XP, DDD, BDD, TDD, Glossary n
 
 **XP + DDD + BDD + TDD + minimal Clean Code.** Smallest correct change. UI: Apple HIG + minimal.
 
-**Every** commit and PR must follow §6 (project standards). **Every** Jira ticket must follow [Product Owner](../product-owner/SKILL.md). Do not invent alternate formats.
+**Every** commit and PR must follow §6 (project standards). **Every** Jira ticket must follow [Jira delivery](../jira-delivery/SKILL.md). Do not invent alternate formats.
 
 ## Hard constraints
 
-1. Layers: [architecture](../../../../rules/architecture.mdc) — per feature `controller → service → domain ← infra` (+ `mapper`)
+1. Layers: [architecture](../../../rules/architecture.mdc) — per feature `controller → service → domain ← infra` (+ `mapper`)
 2. No `domain/port`, `adapter/in|out`, `*Port` in new code
 3. Tests: `should expected result when condition` (spaces; Java methods: camelCase)
 4. Names: Glossary Preferred Term in repo `docs/Glossary.md` (when present) + [clean-code-naming](references/clean-code-naming.md)
 5. UI: Apple HIG + [apple-minimal-ux](references/apple-minimal-ux.md)
-6. **Commit / PR / Jira / branches**: always reuse §6 + [Product Owner](../product-owner/SKILL.md); branch `<type>/<slug>`; submit **atomic Draft PRs via GitHub Stack** (`gh stack`); PR title = business summary with **imperative** verb (commit-style; no type prefix); body why → References → JIRA; prose ≤72 cols; References = official docs + research
+6. **Commit / PR / Jira / branches**: always reuse §6 + [Jira delivery](../jira-delivery/SKILL.md); branch `<type>/<slug>`; submit **atomic Draft PRs via GitHub Stack** (`gh stack`); PR title = business summary with **imperative** verb (commit-style; no type prefix); body why → References → JIRA; prose ≤72 cols; References = official docs + research
 7. **XP**: follow [extreme-programming](references/extreme-programming.md) — Simple Design / YAGNI, CI green, small releases, customer / AC feedback
 8. **Living docs (phased)**: **before code** — Glossary → `C4-Code-Domain-Model.puml`; **after code (CI green)** — other C4 + User Story Map; same feature branch — see §4 and [living-docs](references/living-docs.md)
 
@@ -123,7 +123,7 @@ Detail: [apple-minimal-ux](references/apple-minimal-ux.md)
 | Jira **summary**                  | English (`As a … I want … so that …`)                                  |
 | Jira description                  | English (headings, prefixes, body, Definition of Done)                 |
 
-Jira tickets follow [Product Owner](../product-owner/SKILL.md): business-facing, short descriptions.
+Jira tickets follow [Jira delivery](../jira-delivery/SKILL.md): business-facing, short descriptions.
 
 #### Branch naming
 
@@ -338,7 +338,7 @@ same official/research priority.
 - [ ] PR title: business summary, imperative verb (commit-style); no `feat:`/`fix:` prefix
 - [ ] PR body: why → References → JIRA (bottom); ≤72 cols; no title echo; CI green
 - [ ] Stack submitted as Drafts (`gh stack submit` / `--auto`; no `--open` until ready)
-- [ ] Jira (if any): [Product Owner](../product-owner/SKILL.md) template followed
+- [ ] Jira (if any): [Jira delivery](../jira-delivery/SKILL.md) template followed
 
 ## Related
 
@@ -346,7 +346,7 @@ same official/research priority.
 |------|-------|
 | Extreme Programming | [extreme-programming](references/extreme-programming.md) |
 | Living docs sync | [living-docs](references/living-docs.md) |
-| Architecture | [architecture rule](../../../../rules/architecture.mdc) |
+| Architecture | [architecture rule](../../../rules/architecture.mdc) |
 | Glossary | repo `docs/Glossary.md` (when present) |
 | C4 model | repo `docs/developer/c4-model/` (when present) — [c4-model](references/c4-model.md) |
 | User Story Map | repo `docs/product-owner/User-Story-Map.md` (when present) |
@@ -357,4 +357,4 @@ same official/research priority.
 | Business Analysis | [business-analysis](../business-analysis/SKILL.md) |
 | Market / tech strategy | [market-tech-analysis](../market-tech-analysis/SKILL.md) |
 | Research / OSS watchlist | [sources.md](../market-tech-analysis/references/sources.md) |
-| Product Owner | [Product Owner](../product-owner/SKILL.md) |
+| Product Owner | [Jira delivery](../jira-delivery/SKILL.md) |

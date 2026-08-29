@@ -1,6 +1,6 @@
 # DDD Rich Model
 
-Aligned with [architecture rule](../../../../../rules/architecture.mdc). C4: [c4-model](./c4-model.md).
+Aligned with [architecture rule](../../../../rules/architecture.mdc). C4: [c4-model](./c4-model.md).
 
 ## Rich vs anemic
 

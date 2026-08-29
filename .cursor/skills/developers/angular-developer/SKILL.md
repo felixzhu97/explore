@@ -8,7 +8,7 @@ lastUpdated: "2026-07-18"
 
 # Angular Developer Guidelines
 
-> **本仓库**：前端深度指南用本 skill；无独立 angular rule。项目硬约束见 [architecture rule](../../../../rules/architecture.mdc)。本仓库为 **Angular 22**；ESLint / schematics 已锁定现代写法（见根目录 `eslint.config.js`、`angular.json`）。
+> **本仓库**：前端深度指南用本 skill；无独立 angular rule。项目硬约束见 [architecture rule](../../../rules/architecture.mdc)。本仓库为 **Angular 22**；ESLint / schematics 已锁定现代写法（见根目录 `eslint.config.js`、`angular.json`）。
 
 ## ExploreAI — 现代写法硬约束（必须遵守）
 

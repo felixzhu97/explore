@@ -14,7 +14,7 @@ Threat modeling, security architecture, and security operations **design** —
 not line-by-line OWASP PR review (→ `security-engineer`) or legal/regulatory
 DoD (→ `compliance-engineer`).
 
-Subagent: [`security-architect`](../../agents/security-architect.md).
+Subagent: [`security-architect`](../../../agents/security-architect.md).
 
 ## When to run
 
@@ -97,10 +97,10 @@ What remains after controls; severity; accept vs transfer vs fix.
 
 | Need | Where |
 |------|-------|
-| Subagent | [security-architect](../../agents/security-architect.md) |
-| PR OWASP / secrets / CVE | [security-engineer](../../agents/security-engineer.md) |
-| GDPR / audit / DoD | [compliance-engineer](../../agents/compliance-engineer.md) |
-| C4 / DDD layers | [architect](../../agents/architect.md) |
+| Subagent | [security-architect](../../../agents/security-architect.md) |
+| PR OWASP / secrets / CVE | [security-engineer](../../../agents/security-engineer.md) |
+| GDPR / audit / DoD | [compliance-engineer](../../../agents/compliance-engineer.md) |
+| C4 / DDD layers | [architect](../../../agents/architect.md) |
 | Threat modeling detail | [references/threat-modeling.md](references/threat-modeling.md) |
 | Incident / vuln detail | [references/incident-vuln.md](references/incident-vuln.md) |
 
