@@ -42,7 +42,7 @@ main
       └── validation-api
 ```
 
-1. First layer: `gh stack init` from `main`; one atomic concern per branch
+1. First layer: `gh stack init` from `main`; one fine-grained concern per branch
 2. Next layers: `gh stack add`; PR **base** = previous branch
 3. Submit: `gh stack submit --auto` (Draft); no `--open` until ready for review
 4. Standalone work with no dependency: one branch from `main`, one Draft PR
