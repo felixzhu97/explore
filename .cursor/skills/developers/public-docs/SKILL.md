@@ -1,9 +1,9 @@
 ---
-name: developer
+name: public-docs
 description: Manage nested project Git, sync architecture docs into this meta-repo, update C4 models, living docs, and follow GitHub Stack branch/commit/PR standards. Use when preparing nested Git, syncing the repo, editing C4 PlantUML, staging docs, committing, or opening PRs.
 ---
 
-# Developer
+# Public docs
 
 **Nested Git → living docs (when needed) → update C4 → sync repo → commit/PR (GitHub Stack).** Whitelist docs only — never publish full source trees.
 
@@ -32,7 +32,7 @@ nested-git → living-docs (Phase 1–3) → c4-model → sync-repo → gh stack
 | Stack of Draft PRs | [delivery-github-stack](references/delivery-github-stack.md) |
 | Branch / commit / PR title & body | [commit-pr](references/commit-pr.md) |
 
-Tickets for sync or C4 work follow [Product Owner](../product-owner/SKILL.md).
+Tickets for sync or C4 work follow [public-docs-backlog](../../product-owner/public-docs-backlog/SKILL.md).
 
 ## Checklist
 
@@ -55,4 +55,4 @@ Tickets for sync or C4 work follow [Product Owner](../product-owner/SKILL.md).
 | Update C4 | [c4-model](references/c4-model.md) |
 | GitHub Stack delivery | [delivery-github-stack](references/delivery-github-stack.md) |
 | Commit / PR | [commit-pr](references/commit-pr.md) |
-| Stories / AC / DoD | [Product Owner](../product-owner/SKILL.md) |
+| Stories / AC / DoD | [public-docs-backlog](../../product-owner/public-docs-backlog/SKILL.md) |
