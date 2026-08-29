@@ -75,7 +75,9 @@ flowchart TB
 | Cover URL                       | 封面 URL         | 视频帖封面图地址；与 mediaUrls 分离                                                              |
 | Feed Entry                      | 信息流条目       | Feed 中的一条 Post 引用                                                                          |
 | Engagement                      | 互动             | 点赞、收藏及计数                                                                                 |
-| Explore AI BFF                  | Explore AI BFF   | Nest 服务间代理；`X-Service-Key` + `X-Client-Id`                                                 |
+| Explore AI BFF                  | Explore AI BFF   | Nest 服务间代理（防腐层 ACL）；路径/头绑定 `@explore/contracts-ai`；`X-Service-Key` + `X-Client-Id`；客户端勿直连 Explore AI |
+| Anti-Corruption Layer           | 防腐层           | BFF 将 WhatsFeed 身份与 API 适配为 Explore AI Published Language，隔离上游模型                   |
+| Published Language              | 发布语言         | 跨限界上下文契约；Explore AI 侧为 `@explore/contracts-ai` OpenAPI（`/api/text`、`/api/sessions`） |
 | Client Identity                 | 客户端身份       | 映射到 Explore AI 的稳定客户端 ID（UUID）                                                        |
 | Primary Destination             | 主目的地         | 跨端规范导航身份：`feed` / `chat` / `reels` / `explore` / `user` / `search`；path/tab 由各端映射 |
 | Search Scope                    | 搜索范围         | Nest `type`：`posts` / `users` / `hashtags`；UI `all` 仅客户端聚合，勿作为 API type              |
