@@ -10,7 +10,7 @@ description: >-
 
 # Executive（CEO / 业务高管）
 
-**不是** Scrum 三人组角色，而是 [`stakeholders`](../) 中的 **企业战略干系人**（可与 Sponsor 兼任）：定公司级方向与资源边界，通过 Scrum Team 的 Product Owner 对齐进交付。
+**不是** Scrum 三人组角色，而是 **企业战略干系人**（可与 Sponsor 兼任）：定公司级方向与资源边界，通过 Scrum Team 的 Product Owner 对齐进交付。
 
 Prefer the specific child skill when the task is clear.
 
