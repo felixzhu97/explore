@@ -1,0 +1,23 @@
+{
+  "name": "dev-ports",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/dev-ports",
+  "projectType": "library",
+  "tags": ["type:lib", "scope:explore", "kind:dev-ports"],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node -e \"require('fs').accessSync('ports.json'); console.log('dev-ports ok')\"",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node -e \"require('fs').accessSync('ports.json'); console.log('dev-ports ok')\"",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

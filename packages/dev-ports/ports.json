@@ -1,0 +1,27 @@
+{
+  "explore-ai": {
+    "api": 9000,
+    "web": 4200
+  },
+  "explore-iam": {
+    "api": 9100,
+    "web": 4210
+  },
+  "explore-chat": {
+    "api": 9200,
+    "web": 4220,
+    "recommendation": 8100,
+    "vision": 8110,
+    "rag": 8120,
+    "minio": 8500
+  },
+  "explore-commerce": {
+    "api": 9300,
+    "web": 4230,
+    "admin": 4240,
+    "crawler": 8200
+  },
+  "explore-lowcode": {
+    "web": 4250
+  }
+}

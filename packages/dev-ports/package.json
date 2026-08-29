@@ -1,0 +1,26 @@
+{
+  "name": "@explore/dev-ports",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Canonical local development port map for Explore catalogued apps",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "default": "./index.js"
+    },
+    "./ports.json": "./ports.json"
+  },
+  "files": [
+    "ports.json",
+    "index.js",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "lint": "node -e \"require('fs').accessSync('ports.json'); console.log('dev-ports ok')\"",
+    "test": "node -e \"require('fs').accessSync('ports.json'); console.log('dev-ports ok')\""
+  }
+}

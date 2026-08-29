@@ -9,6 +9,7 @@ apps under `explore-*` do **not** re-declare the same versions or copy DTOs.
 | `@explore/tsconfig-baselines` | Shared TypeScript baselines (platform) |
 | `@explore/shared-types` | Thin Shared Kernel: service ids / refs only |
 | `@explore/contracts-ai` | Published Language (OpenAPI) for chat → ai |
+| `@explore/dev-ports` | Canonical local Dev Port Map (no collisions) |
 | `@explore/explore-bom` | Java/Spring version BOM (`build.gradle.kts`) |
 
 ## Rules
