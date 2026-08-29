@@ -4,7 +4,7 @@ When shipping work under the Developers role, do **not** open one large catch-al
 
 1. **Atomic Draft PR**: one reviewable concern per PR (e.g. types/contracts → domain → API → UI → tests/docs). Each layer is a **Draft** until explicitly marked ready. Prefer self-contained layers that can land once lower layers merge.
 2. **Plan the stack before coding** when the change spans multiple concerns: list ordered layers (foundation → consumers). Ask for approval of the slice plan when the split is non-obvious or the user has not already approved stacking.
-   - **Living docs order** (when the feature changes domain language or architecture): `docs/glossary-and-domain-model` (Phase 1) → implementation layers (Phase 2) → `docs/c4-and-story-map` (Phase 3 — must not precede implementation commits). See [living-docs](../developer/references/living-docs.md).
+   - **Living docs order** (when the feature changes domain language or architecture): `glossary-update` → `domain-model-diagram` (Phase 1) → implementation layers (Phase 2) → C4 and story map (Phase 3 — must not precede implementation commits). See [living-docs](../developer/references/living-docs.md).
 3. **Pre-submit validation (fail closed)** — before commit/push/`gh stack submit`:
    - Detect project check commands from CI/build files (e.g. `./gradlew checkstyleMain checkstyleTest`, `spotlessCheck`, `api-linter` if configured)
    - Run those validators on touched scope when possible; otherwise the project’s standard check targets

@@ -33,9 +33,9 @@ gh stack submit --auto
 
 ```bash
 git checkout main
-gh stack init docs/my-first-slice
+gh stack init glossary-update
 # edit, commit
-gh stack add docs/my-second-slice
+gh stack add domain-model-diagram
 # edit, commit
 gh stack submit --auto
 ```
