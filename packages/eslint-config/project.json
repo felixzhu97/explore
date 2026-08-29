@@ -1,0 +1,16 @@
+{
+  "name": "@explore/eslint-config",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/eslint-config",
+  "projectType": "library",
+  "tags": ["type:config", "scope:explore"],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node -e \"require('./index.js'); console.log('eslint-config ok')\"",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

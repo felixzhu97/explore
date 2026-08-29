@@ -1,0 +1,10 @@
+{
+  "name": "@explore/tsconfig-baselines",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Shared TypeScript baselines for Explore JS/TS projects",
+  "files": [
+    "base.json",
+    "library.json"
+  ]
+}
