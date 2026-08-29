@@ -7,6 +7,9 @@
 
 Explore Commerce brings commerce into everyday life. Our mission is to make buying and selling effortless — for people, every day.
 
+
+Local listen ports follow [`@explore/dev-ports`](../packages/dev-ports) (API **9300**, Web **4230**, Admin **4240**, crawler **8200**).
+
 ## Table of Contents
 
 - [Features](#features)

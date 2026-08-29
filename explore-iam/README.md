@@ -83,10 +83,11 @@ pnpm build             # Angular → src/main/resources/static
 ./gradlew bootRun      # http://localhost:9100
 ```
 
-Local Angular (proxies login POST / OAuth to `:9100`; avoids Explore AI on `:4200`):
+Local Angular (proxies login POST / OAuth to `:9100`; avoids Explore AI on `:4200`).
+Ports follow [`@explore/dev-ports`](../packages/dev-ports) (IAM web **4210**).
 
 ```bash
-pnpm start             # http://127.0.0.1:4201/login
+pnpm start             # http://127.0.0.1:4210/login
 ```
 
 OpenID discovery: `GET http://localhost:9100/.well-known/openid-configuration`

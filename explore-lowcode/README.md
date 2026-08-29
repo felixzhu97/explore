@@ -68,7 +68,9 @@ pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:4250](http://localhost:4250).
+
+Local port is defined in [`@explore/dev-ports`](../packages/dev-ports) (`explore-lowcode.web` = **4250**).
 
 More detail: [docs/developer/QUICKSTART.md](docs/developer/QUICKSTART.md).
 

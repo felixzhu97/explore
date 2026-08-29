@@ -4,7 +4,7 @@
   "sourceRoot": "explore-commerce",
   "projectType": "application",
   "tags": ["type:app", "scope:explore", "lang:typescript"],
-  "implicitDependencies": ["shared-types"],
+  "implicitDependencies": ["shared-types", "dev-ports"],
   "targets": {
     "lint": {
       "executor": "nx:run-commands",

@@ -100,6 +100,9 @@ pnpm start
 # → http://localhost:4200
 ```
 
+Local ports follow [`@explore/dev-ports`](../packages/dev-ports)
+(API **9000**, Web **4200**).
+
 More detail: [docs/developer/QUICKSTART.md](docs/developer/QUICKSTART.md).
 
 ## Configuration

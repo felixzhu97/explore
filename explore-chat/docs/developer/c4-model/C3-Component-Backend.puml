@@ -28,7 +28,7 @@ ContainerDb_Ext(mongodb, "MongoDB", "可选", "文档")
 Container_Ext(es, "Elasticsearch", "可选", "搜索")
 Container_Ext(explore_ai, "Explore AI", "外部", "BFF 上游")
 Container_Ext(media_gen, "Media Gen", "Python", ":3456")
-Container_Ext(vision, "Vision", "Python", ":8001")
+Container_Ext(vision, "Vision", "Python", ":8110")
 
 Rel(web_app, controllers, "REST / WS")
 Rel(web_app, graphql_api, "GraphQL")

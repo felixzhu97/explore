@@ -7,10 +7,10 @@ title 部署图 (C4) - 本地开发
 
 Deployment_Node(dev_machine, "开发机", "macOS / Linux") {
   Deployment_Node(browser, "浏览器", "Chrome / Safari") {
-    Container(web, "Web 应用", "Next.js", "pnpm start:web，:4000")
+    Container(web, "Web 应用", "Next.js", "pnpm start:web，:4220")
   }
   Deployment_Node(node_api, "Node 进程", "NestJS") {
-    Container(api, "API 服务", "NestJS", "HOST=0.0.0.0 PORT=3001")
+    Container(api, "API 服务", "NestJS", "HOST=0.0.0.0 PORT=9200")
   }
   Deployment_Node(compose, "Docker Compose", "services/server/docker-compose.yml") {
     ContainerDb(pg, "PostgreSQL", "postgres:18", "主机 :5433 → 5432")
@@ -18,18 +18,18 @@ Deployment_Node(dev_machine, "开发机", "macOS / Linux") {
     ContainerDb(kafka, "Kafka", "可选", ":9092")
     ContainerDb(cassandra, "Cassandra", "可选", ":9042")
     ContainerDb(mongo, "MongoDB", "可选", ":27017")
-    ContainerDb(es, "Elasticsearch", "可选", ":9200")
+    ContainerDb(es, "Elasticsearch", "可选", "host :9520")
     ContainerDb(qdrant, "Qdrant", "可选", ":6333")
   }
   Deployment_Node(py_svcs, "Python 服务（可选）", "venv") {
-    Container(rec, "Recommendation", "FastAPI/Celery", ":8000")
-    Container(vision, "Vision", "FastAPI", ":8001")
-    Container(rag, "RAG", "FastAPI", ":8002")
+    Container(rec, "Recommendation", "FastAPI/Celery", ":8100")
+    Container(vision, "Vision", "FastAPI", ":8110")
+    Container(rag, "RAG", "FastAPI", ":8120")
     Container(media, "Media Gen", "FastAPI", ":3456")
   }
 }
 
-Rel(web, api, "REST / GraphQL / WS", "localhost:3001")
+Rel(web, api, "REST / GraphQL / WS", "localhost:9200")
 Rel(api, pg, "DATABASE_URL")
 Rel(api, redis, "REDIS_URL")
 Rel(api, rec, "HTTP", "可选")
