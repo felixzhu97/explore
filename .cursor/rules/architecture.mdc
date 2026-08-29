@@ -123,7 +123,7 @@ should expected result when condition
 
 ## Hard constraints (delivery)
 
-When **creating a Jira ticket**, **branching**, **committing**, or **opening a PR**: always follow [developer](../skills/developers/developer/SKILL.md) §6 (`<type>/<slug>`, Chain PRs, commit/PR templates, prose ≤72 cols) and [Jira delivery](../skills/developers/jira-delivery/SKILL.md). **References** must prefer official documentation and research links ([dependency-docs](../skills/developers/developer/references/dependency-docs.md), [sources](../skills/developers/market-tech-analysis/references/sources.md), arXiv).
+When **creating a Jira ticket**, **branching**, **committing**, or **opening a PR**: always follow [developer](../skills/developers/developer/SKILL.md) §6 (`<slug>` branches, commit subject = PR title, Chain PRs, commit/PR templates, prose ≤72 cols) and [Jira delivery](../skills/developers/jira-delivery/SKILL.md). **References** must prefer official documentation and research links ([dependency-docs](../skills/developers/developer/references/dependency-docs.md), [sources](../skills/developers/market-tech-analysis/references/sources.md), arXiv).
 
 **Living docs delivery order** (features with new domain language or architecture): Glossary → domain model (`C4-Code-Domain-Model.puml`) → implement → other C4 + User Story Map — see [living-docs](../skills/developers/developer/references/living-docs.md).
 

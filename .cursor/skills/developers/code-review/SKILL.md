@@ -516,9 +516,9 @@ src/
 ### Git 提交规范
 
 ```
-□ 提交信息是否清晰描述改动
+□ 提交消息是否清晰描述改动（祈使句 subject，与 PR title 同句，无 feat:/fix: 前缀）
 □ 是否是小而独立的提交
-□ 提交消息是否符合 Conventional Commits
+□ 分支名是否为纯 kebab-case slug（无 feat/、docs/、eng/ 等前缀）
 □ 是否包含必要的测试
 ```
 
