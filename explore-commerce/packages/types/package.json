@@ -1,0 +1,22 @@
+{
+  "name": "types",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist && rm -rf node_modules"
+  },
+  "dependencies": {
+    "@explore/shared-types": "file:../../../packages/shared-types",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.2",
+    "eslint": "^8.48.0"
+  }
+}
