@@ -1,0 +1,197 @@
+plugins {
+    java
+    checkstyle
+    id("org.springframework.boot") version "4.1.0"
+    id("io.spring.dependency-management") version "1.1.7"
+    id("jacoco")
+    id("com.diffplug.spotless") version "8.9.0"
+}
+
+group = "com.ai"
+version = "0.0.1-SNAPSHOT"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url = uri("https://repo.spring.io/milestone") }
+    maven { url = uri("https://maven.aliyun.com/repository/public") }
+    maven { url = uri("https://maven.aliyun.com/repository/spring") }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("me.paulschwarz:spring-dotenv-bom:5.1.0")
+    }
+}
+
+dependencies {
+    implementation(platform("com.explore:explore-bom:0.1.0"))
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("org.latencyutils:LatencyUtils:2.0.3")
+    implementation("org.springframework.ai:spring-ai-starter-model-openai")
+    implementation("org.springframework.ai:spring-ai-starter-model-ollama")
+    implementation("org.springframework.ai:spring-ai-client-chat")
+    implementation("org.springframework.retry:spring-retry:2.0.10")
+    implementation("org.springframework.ai:spring-ai-starter-model-chat-memory")
+    implementation("org.springframework.ai:spring-ai-starter-model-chat-memory-repository-jdbc")
+    implementation("org.springframework.ai:spring-ai-vector-store")
+    implementation("org.springframework.ai:spring-ai-rag")
+    implementation("org.springframework.ai:spring-ai-vector-store-advisor")
+    implementation("org.springframework.ai:spring-ai-starter-model-anthropic")
+    implementation("org.springframework.ai:spring-ai-starter-mcp-server-webmvc")
+    implementation("org.springframework.ai:spring-ai-starter-mcp-client")
+    implementation("org.springaicommunity:spring-ai-agent-utils:0.10.0")
+    implementation("org.springframework.ai:spring-ai-tool-search-advisor")
+    implementation("com.launchdarkly:launchdarkly-java-server-sdk:7.14.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
+
+    // PDF Processing
+    implementation("org.apache.pdfbox:pdfbox:3.0.3")
+
+    // Vision: ONNX Runtime + Tess4J
+    implementation("com.microsoft.onnxruntime:onnxruntime:1.20.0")
+    implementation("net.sourceforge.tess4j:tess4j:5.13.0")
+
+    // dotenv support
+    developmentOnly("me.paulschwarz:springboot4-dotenv")
+
+    // Database: H2 embedded + Liquibase migrations
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-liquibase")
+    runtimeOnly("com.h2database:h2")
+
+    // Automation result emails: Markdown → HTML
+    implementation("org.commonmark:commonmark:0.24.0")
+
+    // Test
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
+    testImplementation("org.springframework.boot:spring-boot-webmvc-test")
+    testImplementation("org.springframework.boot:spring-boot-test")
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.springframework.ai:spring-ai-test")
+    testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation("io.projectreactor:reactor-test")
+    testImplementation("com.tngtech.archunit:archunit-junit5:1.4.1")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    systemProperty("org.gradle.internal.test.binary.results-store", "false")
+    doFirst {
+        file("${layout.buildDirectory.get()}/jacoco").mkdirs()
+        file("${layout.buildDirectory.get()}/test-results/test/binary").mkdirs()
+    }
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform {
+        excludeTags("integration")
+    }
+}
+
+tasks.register<Test>("integrationTest") {
+    description = "Runs integration-tagged tests (@Tag(\"integration\"))."
+    group = "verification"
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+    useJUnitPlatform {
+        includeTags("integration")
+    }
+    shouldRunAfter(tasks.named("test"))
+}
+
+jacoco {
+    toolVersion = "0.8.13"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    classDirectories.setFrom(files(classDirectories.files.map { f ->
+        fileTree(f) {
+            exclude("com/ai/config/**", "com/ai/domain/repository/**")
+        }
+    }))
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn(tasks.jacocoTestReport)
+
+    violationRules {
+        rule {
+            element = "PACKAGE"
+            excludes = listOf(
+                "com.ai.config.*",
+                "com.ai.domain.repository.*",
+                "com.ai.*"
+            )
+        }
+        rule {
+            element = "BUNDLE"
+            limit {
+                counter = "LINE"
+                value = "COVEREDRATIO"
+                minimum = BigDecimal("0.60")
+            }
+            limit {
+                counter = "BRANCH"
+                value = "COVEREDRATIO"
+                minimum = BigDecimal("0.55")
+            }
+        }
+    }
+}
+
+// Docker / Render deployment: ensure bootJar produces app.jar
+tasks.bootJar {
+    archiveFileName.set("app.jar")
+}
+
+// Disable plain jar to prevent conflicts
+tasks.named<Jar>("jar") {
+    enabled = false
+}
+
+checkstyle {
+    toolVersion = "10.21.4"
+    configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+    isIgnoreFailures = false
+    maxWarnings = 0
+    configProperties = mapOf(
+        "org.checkstyle.google.severity" to "error",
+        "org.checkstyle.google.suppressionfilter.config" to
+            rootProject.file("config/checkstyle/suppressions.xml").absolutePath,
+        "org.checkstyle.google.suppressionxpathfilter.config" to
+            rootProject.file("config/checkstyle/suppressions-xpath.xml").absolutePath,
+    )
+}
+
+spotless {
+    java {
+        target("src/*/java/**/*.java")
+        googleJavaFormat("1.28.0")
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
