@@ -53,3 +53,30 @@ import ports from '@explore/dev-ports/ports.json' with { type: 'json' };
 
 App scripts should hard-code the same numbers as this table (and point
 README / QUICKSTART here). Prefer env defaults that match `ports.json`.
+
+## Smoke checks
+
+After wiring an app, confirm bind and client targets:
+
+```bash
+# Package present
+node -e "require('fs').accessSync('packages/dev-ports/ports.json')"
+
+# explore-ai — api 9000, web 4200
+curl -sf http://localhost:9000/actuator/health
+
+# explore-iam — api 9100, web 4210
+curl -sf http://localhost:9100/.well-known/openid-configuration
+
+# explore-chat — api 9200, web 4220
+curl -sf http://localhost:9200/api/v1/health
+
+# explore-commerce — api 9300, web 4230
+curl -sf http://localhost:9300/health
+
+# explore-lowcode — web 4250
+curl -sf -o /dev/null -w '%{http_code}' http://localhost:4250
+```
+
+Parallel dev: AI **9000** + IAM **9100** + Chat **9200** + Commerce **9300**
++ Lowcode **4250** should start without `EADDRINUSE`.
