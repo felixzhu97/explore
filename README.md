@@ -3,9 +3,9 @@
 [![License](https://img.shields.io/badge/license-Public%20Learning-blue.svg)](#license)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
-Nx workspace root for catalogued **Explore** projects. It publishes living
-docs ([C4 Model](https://c4model.com/), Glossaries, User Story Maps), shared
-`packages/`, and catalogued app source under `explore-*`.
+A workspace for cataloguing and running Explore apps from one Git root.
+It is an Nx monorepo, and organized around living [C4](https://c4model.com/)
+docs and shared packages.
 
 > **Scope:** Projects in [Projects](#projects). Secrets (`.env`),
 > `node_modules`, and build outputs stay ignored. Nested GitHub remotes
@@ -26,8 +26,9 @@ docs ([C4 Model](https://c4model.com/), Glossaries, User Story Maps), shared
 
 ## About
 
-This workspace is the single Git root for Explore. Architecture views live
-next to the apps they describe so that:
+A workspace for cataloguing and running Explore apps from one Git root.
+It is an Nx monorepo, and organized around living C4 docs and shared
+packages. Architecture views sit next to the apps they describe so that:
 
 - Newcomers can build a mental model (C1 → C2 → C3) and then run the app
 - Teams can discuss trade-offs against the same source that ships
