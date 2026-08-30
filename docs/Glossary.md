@@ -1,7 +1,7 @@
 # Glossary | 平台术语表
 
 > Explore Platform — Ubiquitous Language（统一语言）  
-> Scope: **Nx workspace root** (`felixzhu97/public`). Per-app terms live in
+> Scope: **Nx workspace root** (`felixzhu97/explore`). Per-app terms live in
 > `explore-*/docs/Glossary.md`.
 
 ---

@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Public Docs Meta-Repo
 
-This repository (`felixzhu97/public`) is the **Nx workspace root** for
+This repository (`felixzhu97/explore`) is the **Nx workspace root** for
 catalogued Explore projects. It publishes architecture/living docs and shared
 `packages/` (types, eslint, contracts, Java BOM). Prefer this single Git root
 over nested remotes for new work.

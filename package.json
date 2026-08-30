@@ -1,5 +1,5 @@
 {
-  "name": "@explore/public",
+  "name": "explore",
   "private": true,
   "description": "A workspace for cataloguing and running Explore apps from one Git root. It is an Nx monorepo, and organized around living C4 docs and shared packages.",
   "scripts": {
