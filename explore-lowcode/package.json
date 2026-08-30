@@ -13,12 +13,18 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@explore/ui": "file:../packages/ui",
+    "@hookform/resolvers": "^3.9.1",
     "@types/hoist-non-react-statics": "latest",
     "@vercel/analytics": "^1.5.0",
     "autoprefixer": "^10.4.20",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "1.0.4",
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.1",
     "input-otp": "1.4.1",
+    "lucide-react": "^0.454.0",
     "next": "16.2.6",
     "next-themes": "^0.4.4",
     "react": "^19",
@@ -26,10 +32,15 @@
     "react-dnd": "latest",
     "react-dnd-html5-backend": "latest",
     "react-dom": "^19",
+    "react-hook-form": "^7.54.1",
     "react-resizable-panels": "^2.1.7",
     "recharts": "latest",
-    "zustand": "^5.0.8",
-    "@explore/ui": "file:../packages/ui"
+    "sonner": "^1.7.1",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss-animate": "^1.0.7",
+    "vaul": "^0.9.6",
+    "zod": "^3.24.1",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
