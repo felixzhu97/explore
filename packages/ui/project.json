@@ -1,0 +1,23 @@
+{
+  "name": "ui",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/ui",
+  "projectType": "library",
+  "tags": ["type:lib", "scope:explore", "kind:ui"],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test -f package.json && echo ui ok",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test -f package.json && echo ui ok",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}
