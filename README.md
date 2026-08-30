@@ -1,4 +1,10 @@
-# Explore
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/explore-logo-dark.svg">
+    <img alt="Explore logo" src="docs/assets/explore-logo.svg" width="70" valign="middle">
+  </picture>
+  &nbsp;Explore
+</h1>
 
 A workspace for cataloguing and running Explore apps from one Git root.
 It is an Nx monorepo, and organized around living [C4](https://c4model.com/)
