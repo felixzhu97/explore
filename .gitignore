@@ -47,6 +47,13 @@
 # Nx project registration (keep explore-* internal layouts; track only Nx project.json)
 !*/project.json
 
+# Catalogued app source (unified repo; .env / node_modules / dist still ignored above)
+!explore-ai/**
+!explore-iam/**
+!explore-chat/**
+!explore-commerce/**
+!explore-lowcode/**
+
 # Shared packages (full tree) — after */** so they remain trackable
 !packages/
 !packages/**
