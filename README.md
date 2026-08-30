@@ -3,12 +3,13 @@
 [![License](https://img.shields.io/badge/license-Public%20Learning-blue.svg)](#license)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
-A collection of **architecture diagrams** for public projects — primarily [C4 Model](https://c4model.com/) views — to help developers understand system boundaries, containers, and core components.
+A workspace for cataloguing and running Explore apps from one Git root.
+It is an Nx monorepo, and organized around living [C4](https://c4model.com/)
+docs and shared packages.
 
-> **Scope:** Catalogued projects listed in [Projects](#projects) below.  
-> This repository is an **Nx workspace** at the root: it publishes C4 models,
-> READMEs, Glossaries, User Story Maps, and shared `packages/` (types, configs,
-> BOM). Full app source under `explore-*` stays mostly local unless un-ignored.
+> **Scope:** Projects in [Projects](#projects). Secrets (`.env`),
+> `node_modules`, and build outputs stay ignored. Nested GitHub remotes
+> (`felixzhu97/explore-*`) are legacy mirrors — prefer this repo.
 
 ## Table of Contents
 
@@ -25,23 +26,27 @@ A collection of **architecture diagrams** for public projects — primarily [C4 
 
 ## About
 
-Architecture insight in application codebases is often scattered across source and ad-hoc docs. This repository brings reusable architecture views together so that:
+A workspace for cataloguing and running Explore apps from one Git root.
+It is an Nx monorepo, and organized around living C4 docs and shared
+packages. Architecture views sit next to the apps they describe so that:
 
-- Newcomers can build a clear mental model (C1 → C2 → C3)
-- Teams can discuss trade-offs against real projects
-- Contributors can improve PlantUML models and explanations
+- Newcomers can build a mental model (C1 → C2 → C3) and then run the app
+- Teams can discuss trade-offs against the same source that ships
+- Contributors can improve PlantUML models, packages, and app code together
 
-Diagrams are written in **PlantUML**. Some directories also include pre-rendered PNGs for quick browsing.
+Diagrams are **PlantUML**. Some directories include pre-rendered PNGs. Local
+listen ports follow [`@explore/dev-ports`](packages/dev-ports) (UI `42xx`,
+API `9xxx`).
 
 ## Projects
 
-| Project | Type | Path | Description |
-|---------|------|------|-------------|
-| [Explore AI](https://github.com/felixzhu97/explore-ai) | C4 | [`explore-ai/docs/developer/c4-model/`](explore-ai/docs/developer/c4-model/) | Conversational AI platform: Chat, RAG, tools, eval (Spring AI + Angular) |
-| [Explore IAM](explore-iam/README.md) | C4 | [`explore-iam/docs/developer/c4-model/`](explore-iam/docs/developer/c4-model/) | AWS IAM–style identity, policy, STS, and SSO for sibling apps |
-| [Explore Chat](https://github.com/felixzhu97/explore-chat) | C4 | [`explore-chat/docs/developer/c4-model/`](explore-chat/docs/developer/c4-model/) | Social + messaging: feed, chat/calls, Nest API, optional AI |
-| [Explore Commerce](https://github.com/felixzhu97/explore-commerce) | C4 | [`explore-commerce/docs/developer/c4-model/`](explore-commerce/docs/developer/c4-model/) | E-commerce monorepo: Web shop, admin, API |
-| [Explore Lowcode](https://github.com/felixzhu97/explore-lowcode) | C4 | [`explore-lowcode/docs/developer/c4-model/`](explore-lowcode/docs/developer/c4-model/) | Visual page builder: canvas, components, themes, export |
+| Project | Path | Description |
+|---------|------|-------------|
+| [Explore AI](explore-ai/README.md) | [`explore-ai/`](explore-ai/) | Conversational AI: Chat, RAG, tools, eval (Spring AI + Angular). API **9000**, web **4200** |
+| [Explore IAM](explore-iam/README.md) | [`explore-iam/`](explore-iam/) | AWS IAM–style identity, policy, STS, and SSO. API **9100**, web **4210** |
+| [Explore Chat](explore-chat/README.md) | [`explore-chat/`](explore-chat/) | Social + messaging: feed, chat/calls, Nest API, optional AI. API **9200**, web **4220** |
+| [Explore Commerce](explore-commerce/README.md) | [`explore-commerce/`](explore-commerce/) | Web shop, admin, API, crawler. API **9300**, web **4230**, admin **4240** |
+| [Explore Lowcode](explore-lowcode/README.md) | [`explore-lowcode/`](explore-lowcode/) | Visual page builder: canvas, components, themes, export. Web **4250** |
 
 ## Repository Layout
 
@@ -51,12 +56,9 @@ public/
 ├── docs/
 │   ├── Glossary.md           # platform ubiquitous language
 │   └── developer/c4-model/   # platform C1 / C2 / Code / Dynamic
-├── packages/                 # shared types, eslint, contracts, Java BOM
+├── packages/                 # types, eslint, contracts, BOM, ui, dev-ports
 ├── .github/workflows/ci.yml  # nx affected
 ├── explore-ai/               # in-place (unchanged internal layout)
-│   ├── project.json          # Nx registration
-│   ├── README.md
-│   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
 ├── explore-iam/
 ├── explore-chat/
 ├── explore-commerce/
@@ -124,7 +126,7 @@ Issues and pull requests are welcome. You can help by adding models, fixing mist
 - [ ] Diagram layers are clear (C1 → C2 → C3)
 - [ ] Include a short README or index (overview, diagram list, how to render)
 - [ ] Prefer PlantUML sources; PNGs are optional
-- [ ] Submit architecture docs only — no full source trees, secrets, or build artifacts
+- [ ] Stage whitelist paths only (never `git add -A`); no secrets or build artifacts
 
 ### Adding a project
 
@@ -134,12 +136,11 @@ Issues and pull requests are welcome. You can help by adding models, fixing mist
 
 ### Commit messages
 
-Use clear conventional-style messages, for example:
+Imperative subject (no type prefix); subject equals the PR title. Fine-grained
+Draft PRs via [GitHub Stack](https://docs.github.com/en/pull-requests/get-started/stacked-prs-quickstart).
 
 ```text
-docs(<project>): refine architecture diagram
-docs(<project>): clarify container boundaries
-docs(<project>): update deployment view
+Align domain model diagram with glossary terms
 ```
 
 ## Code of Conduct
