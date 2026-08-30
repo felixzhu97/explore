@@ -1,7 +1,7 @@
 {
   "name": "@explore/public",
   "private": true,
-  "description": "Nx workspace root for catalogued Explore projects under public/",
+  "description": "Nx workspace for Explore living docs, shared packages, and catalogued explore-* apps",
   "scripts": {
     "graph": "nx graph",
     "affected": "nx affected -t lint,test,build",
