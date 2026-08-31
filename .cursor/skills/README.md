@@ -1,6 +1,6 @@
 # Skills
 
-Cursor skills for **Public Docs** (`felixzhu97/public`). This directory is
+Cursor skills for **Explore** (`felixzhu97/explore`). This directory is
 **self-contained** — clone the repo on another machine and point Cursor at
 `.cursor/` (rules + skills) without copying from `~/.cursor/`.
 
