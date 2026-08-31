@@ -1,6 +1,8 @@
 ' Shared zinc look for Code domain model + Dynamic sequence diagrams.
 ' Do NOT use with structural C4 New Style diagrams (C1–C3 / Deployment).
-' Canonical tokens aligned with Academic / explore-portfolio style-zinc.puml.
+' Tokens: developer/references/c4-model.md (do not invent a second palette).
+' Plan delta (GitHub Primer diff fg, light): add #1A7F37 · remove #CF222E
+' Render: white body + colored border; header text matches border color.
 
 !theme plain
 
@@ -44,6 +46,8 @@
 
     class {
       BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #18181B
       BorderColor #D4D4D8
       FontColor #18181B
       FontSize 12
@@ -52,19 +56,25 @@
       Shadowing 0
     }
     interface {
-      BackgroundColor #F4F4F5
-      BorderColor #A1A1AA
-      FontColor #3F3F46
+      BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #71717A
+      BorderColor #71717A
+      FontColor #18181B
       FontStyle italic
       RoundCorner 12
       Padding 8
+      BorderThickness 1.5
     }
     enum {
-      BackgroundColor #FFFBEB
+      BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #F59E0B
       BorderColor #F59E0B
-      FontColor #78350F
+      FontColor #18181B
       RoundCorner 12
       Padding 8
+      BorderThickness 1.5
     }
     package {
       BackgroundColor #FFFFFF
@@ -84,33 +94,96 @@
     }
 
     .AggregateRoot {
-      BackgroundColor #ECFDF5
+      BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #10B981
       BorderColor #10B981
-      FontColor #064E3B
-      BorderThickness 1.5
+      FontColor #18181B
+      BorderThickness 2
     }
     .Entity {
-      BackgroundColor #EFF6FF
+      BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #3B82F6
       BorderColor #3B82F6
-      FontColor #1E3A8A
-      BorderThickness 1.5
+      FontColor #18181B
+      BorderThickness 2
     }
     .ValueObject {
-      BackgroundColor #FFF7ED
+      BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #FB923C
       BorderColor #FB923C
-      FontColor #7C2D12
+      FontColor #18181B
+      BorderThickness 1.5
+    }
+    .Abstract {
+      BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #A1A1AA
+      BorderColor #A1A1AA
+      FontColor #18181B
+      BorderThickness 1.5
+    }
+    .DomainEvent {
+      BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #8B5CF6
+      BorderColor #8B5CF6
+      FontColor #18181B
+      BorderThickness 1.5
     }
     .DomainService {
-      BackgroundColor #EEF2FF
+      BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #6366F1
       BorderColor #6366F1
-      FontColor #312E81
+      FontColor #18181B
       FontStyle italic
+      BorderThickness 1.5
     }
     .Repository {
-      BackgroundColor #F4F4F5
+      BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #71717A
       BorderColor #71717A
-      FontColor #27272A
+      FontColor #18181B
       FontStyle italic
+      BorderThickness 1.5
+    }
+    .Enum {
+      BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #F59E0B
+      BorderColor #F59E0B
+      FontColor #18181B
+      BorderThickness 1.5
+    }
+    .Configuration {
+      BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #64748B
+      BorderColor #64748B
+      FontColor #18181B
+      FontStyle italic
+      BorderThickness 1.5
+    }
+    interface<<Repository>> {
+      BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #71717A
+      BorderColor #71717A
+      FontColor #18181B
+      FontStyle italic
+      BorderThickness 1.5
+    }
+    interface<<ValueObject>> {
+      BackgroundColor #FFFFFF
+      HeaderBackgroundColor #FFFFFF
+      HeaderFontColor #FB923C
+      BorderColor #FB923C
+      FontColor #18181B
+      BorderThickness 1.5
     }
   }
   sequenceDiagram {
@@ -216,6 +289,10 @@ skinparam shadowing false
 skinparam sequenceMessageAlign center
 skinparam ParticipantPadding 20
 skinparam BoxPadding 12
+skinparam stereotypeCBackgroundColor #FFFFFF
+skinparam stereotypeABackgroundColor #FFFFFF
+skinparam stereotypeIBackgroundColor #FFFFFF
+skinparam stereotypeEBackgroundColor #FFFFFF
 
 skinparam participant {
   BackgroundColor<<ui>> #F8FAFC
@@ -241,4 +318,105 @@ skinparam database {
   BackgroundColor<<db>> #FFFBEB
   BorderColor<<db>> #F59E0B
   FontColor<<db>> #78350F
+}
+
+skinparam class<<Abstract>> {
+  BackgroundColor #FFFFFF
+  HeaderBackgroundColor #FFFFFF
+  HeaderFontColor #A1A1AA
+  BorderColor #A1A1AA
+  FontColor #18181B
+  BorderThickness 1.5
+}
+skinparam class<<AggregateRoot>> {
+  BackgroundColor #FFFFFF
+  HeaderBackgroundColor #FFFFFF
+  HeaderFontColor #10B981
+  BorderColor #10B981
+  FontColor #18181B
+  BorderThickness 2
+}
+skinparam class<<Entity>> {
+  BackgroundColor #FFFFFF
+  HeaderBackgroundColor #FFFFFF
+  HeaderFontColor #3B82F6
+  BorderColor #3B82F6
+  FontColor #18181B
+  BorderThickness 2
+}
+skinparam class<<ValueObject>> {
+  BackgroundColor #FFFFFF
+  HeaderBackgroundColor #FFFFFF
+  HeaderFontColor #FB923C
+  BorderColor #FB923C
+  FontColor #18181B
+  BorderThickness 1.5
+}
+skinparam class<<DomainEvent>> {
+  BackgroundColor #FFFFFF
+  HeaderBackgroundColor #FFFFFF
+  HeaderFontColor #8B5CF6
+  BorderColor #8B5CF6
+  FontColor #18181B
+  BorderThickness 1.5
+}
+skinparam class<<DomainService>> {
+  BackgroundColor #FFFFFF
+  HeaderBackgroundColor #FFFFFF
+  HeaderFontColor #6366F1
+  BorderColor #6366F1
+  FontColor #18181B
+  FontStyle italic
+  BorderThickness 1.5
+}
+skinparam class<<Repository>> {
+  BackgroundColor #FFFFFF
+  HeaderBackgroundColor #FFFFFF
+  HeaderFontColor #71717A
+  BorderColor #71717A
+  FontColor #18181B
+  FontStyle italic
+  BorderThickness 1.5
+}
+skinparam interface<<Repository>> {
+  BackgroundColor #FFFFFF
+  HeaderBackgroundColor #FFFFFF
+  HeaderFontColor #71717A
+  BorderColor #71717A
+  FontColor #18181B
+  FontStyle italic
+  BorderThickness 1.5
+}
+skinparam interface<<ValueObject>> {
+  BackgroundColor #FFFFFF
+  HeaderBackgroundColor #FFFFFF
+  HeaderFontColor #FB923C
+  BorderColor #FB923C
+  FontColor #18181B
+  BorderThickness 1.5
+}
+skinparam class<<Enum>> {
+  BackgroundColor #FFFFFF
+  HeaderBackgroundColor #FFFFFF
+  HeaderFontColor #F59E0B
+  BorderColor #F59E0B
+  FontColor #18181B
+  BorderThickness 1.5
+}
+skinparam class<<Configuration>> {
+  BackgroundColor #FFFFFF
+  HeaderBackgroundColor #FFFFFF
+  HeaderFontColor #64748B
+  BorderColor #64748B
+  FontColor #18181B
+  FontStyle italic
+  BorderThickness 1.5
+}
+skinparam enum {
+  BackgroundColor #FFFFFF
+  HeaderBackgroundColor #FFFFFF
+  HeaderFontColor #F59E0B
+  BorderColor #F59E0B
+  FontColor #18181B
+  BorderThickness 1.5
 }
