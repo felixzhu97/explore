@@ -1,0 +1,502 @@
+@startuml C4-Code-Domain-Model-Plan
+!include style-zinc.puml
+
+title Code diagram (C4) — Domain model plan (optimize vs as-built)
+' Baseline: C4-Code-Domain-Model.puml · Code: src/main/java/com/ai/**/domain
+' Mark deltas: <color:#1A7F37>add</color> · <color:#CF222E>remove</color> (GitHub Primer diff fg)
+
+legend bottom right
+  |= 类型 |= 图例 |
+  | <color:#A1A1AA>██</color> | «Abstract» 抽象基类 |
+  | <color:#10B981>██</color> | «AggregateRoot» 聚合根 |
+  | <color:#3B82F6>██</color> | «Entity» 实体 |
+  | <color:#FB923C>██</color> | «ValueObject» 值对象 |
+  | <color:#F59E0B>██</color> | «Enum» 枚举 |
+  | <color:#8B5CF6>██</color> | «DomainEvent» 领域事件 |
+  | <color:#6366F1>██</color> | «DomainService» 领域服务 |
+  | <color:#71717A>██</color> | «Repository» 仓储端口 |
+  | <color:#64748B>██</color> | «Configuration» 配置 |
+  | | |
+  |= 变更 |= 图例 |
+  | <color:#1A7F37>██</color> | 新增属性 / 方法（GitHub diff） |
+  | <color:#CF222E>██</color> | 删除属性 / 方法（GitHub diff） |
+  | 默认色 | 与 as-built 一致 |
+endlegend
+
+note as N_PLAN
+  **Plan** — align diagram with code + DDD hygiene.
+  **P1** ChatMessage role model · RunStatus values · WeatherReport as service
+  **P2** Missing enums (ScheduleKind, McpSessionStatus) · SavedAgentDefinition
+  **P3** Repository contracts · richer event/run fields on diagram
+  Merge into as-built after review; then clear color marks.
+end note
+
+note as N_LAYERS
+  controller → service → domain ← infra
+  Aggregates encapsulate invariants; application orchestrates use cases.
+  ChatMessage bodies persist via Spring AI ChatMemory bridge.
+  Kernel: com.ai.base + com.ai.common.domain (see packages below).
+end note
+
+' ── domain kernel (com.ai.base) ─────────────────────────────
+package "com.ai.base" as pkg_base {
+  interface EntityId <<ValueObject>> {
+    +value()
+  }
+  class AbstractUuidId <<ValueObject>> {
+    +value: String
+    --
+    +{static} generate()
+    +{static} of(uuid)
+  }
+  abstract class AbstractEntity <<Abstract>> {
+    +id: IdT
+    +createdAt: Instant
+    +updatedAt: Instant
+    +version: Long
+    --
+    +touchUpdatedAt()
+  }
+  abstract class AbstractImmutable <<Abstract>> {
+    +id: IdT
+    +createdAt: Instant
+  }
+  class BaseJpaConfig <<Configuration>> {
+    +EnableJpaAuditing
+    +EnableJpaRepositories
+  }
+}
+
+EntityId <|.. AbstractUuidId
+AbstractUuidId --> AbstractEntity : embedded id
+AbstractUuidId --> AbstractImmutable : embedded id
+
+' ── aggregate bases (com.ai.common.domain.model) ───────────
+package "com.ai.common.domain" as pkg_common_kernel {
+  abstract class AbstractOwnerKeyedEntity <<Abstract>> {
+    +ownerKey: OwnerKey
+    --
+    +belongsTo(ownerKey)
+    +belongsToClient(value)
+    +rebindOwnerKey(ownerKey)
+  }
+  abstract class AbstractNamedOwnerEntity <<Abstract>> {
+    +name: String
+    --
+    +rename(name)
+  }
+  abstract class AbstractDescribedOwnerEntity <<Abstract>> {
+    +description: String
+  }
+  abstract class AbstractEnableableDescribedOwnerEntity <<Abstract>> {
+    +enabled: boolean
+    --
+    +enable()
+    +disable()
+  }
+  abstract class AbstractTimedRunEntity <<Abstract>> {
+    +startedAt: Instant
+    +finishedAt: Instant
+    --
+    +markFinished(at)
+  }
+  abstract class AbstractAppendOnlyEvent <<Abstract>> {
+    +occurredAt: Instant
+  }
+  class OwnerKey <<ValueObject>> {
+    +value: String
+    --
+    +{static} forClient(id)
+    +{static} forAccount(id)
+    <color:#1A7F37>+{static} parse(raw)</color>
+    <color:#1A7F37>+isClient(): boolean</color>
+    <color:#1A7F37>+isAccount(): boolean</color>
+  }
+  interface ClientOwnedRepository <<Repository>> {
+    +findByIdAndOwnerKey(id, ownerKey)
+    +findAllByOwnerKey(ownerKey)
+    +deleteByIdAndOwnerKey(id, ownerKey)
+    <color:#1A7F37>+save(entity)</color>
+  }
+  interface ClientIdOwnedNamedRepository <<Repository>> {
+    +findByIdAndClientId(id, clientId)
+    +findAllByClientId(clientId)
+    +deleteByIdAndClientId(id, clientId)
+    +existsByClientIdAndNameIgnoringId(clientId, name, excludeId)
+  }
+}
+
+AbstractEntity <|-- AbstractOwnerKeyedEntity
+AbstractOwnerKeyedEntity <|-- AbstractNamedOwnerEntity
+AbstractNamedOwnerEntity <|-- AbstractDescribedOwnerEntity
+AbstractDescribedOwnerEntity <|-- AbstractEnableableDescribedOwnerEntity
+AbstractImmutable <|-- AbstractAppendOnlyEvent
+AbstractOwnerKeyedEntity --> OwnerKey
+
+' ── chat ───────────────────────────────────────────────────
+package "com.ai.chat.domain" as pkg_chat {
+  class ChatSession <<AggregateRoot>> {
+    +id: ChatSessionId
+    +ownerKey: OwnerKey
+    +title: String
+    --
+    +{static} create(title, clientId)
+    <color:#1A7F37>+{static} createWithId(id, title, clientId)</color>
+    +{static} reconstitute(...)
+    <color:#1A7F37>+{static} reconstituteOrphan(...)</color>
+    +rename(newTitle)
+    +addUserMessage(text)
+    +addAssistantMessage(text)
+    +getRecentMessages(count)
+    +clearMessages()
+    +replaceMessages(messages)
+    +belongsTo(clientId)
+    +isEmpty()
+    <color:#1A7F37>+getClientId(): String</color>
+    <color:#1A7F37>+hasDefaultTitle(): boolean</color>
+    <color:#1A7F37>+getMessageCount(): int</color>
+  }
+  class ChatMessage <<Entity>> {
+    +id: MessageId
+    +text: String
+    <color:#1A7F37>+role: String</color>
+    <color:#1A7F37>+timestamp: Instant</color>
+    <color:#CF222E>+messageType: ChatMessageType</color>
+    --
+    +{static} createUserMessage(text)
+    +{static} createAssistantMessage(text)
+    <color:#1A7F37>+{static} of(id, text, role, timestamp)</color>
+    +isFromUser()
+    +isFromAssistant()
+    +withText(newText)
+    <color:#1A7F37>+role(): String</color>
+  }
+  enum ChatMessageType <<Enum>> {
+    <color:#CF222E>USER</color>
+    <color:#CF222E>ASSISTANT</color>
+  }
+  note right of ChatMessageType : remove enum\nuse String role
+  class WebSource <<ValueObject>> {
+    +url: String
+    +title: String
+    <color:#1A7F37>+snippet: String</color>
+    <color:#1A7F37>+publishedAt: String</color>
+  }
+  interface ChatSessionRepository <<Repository>> {
+    +save(session)
+    +findById(id)
+    <color:#1A7F37>+findByIdAndClientId(id, clientId)</color>
+    <color:#1A7F37>+findByClientId(clientId)</color>
+    <color:#1A7F37>+delete(id)</color>
+  }
+  interface ChatWebSourcesRepository <<Repository>> {
+    <color:#1A7F37>+save(conversationId, content, query, sources)</color>
+    <color:#1A7F37>+findByConversationId(conversationId)</color>
+    <color:#1A7F37>+deleteByConversationId(conversationId)</color>
+    <color:#CF222E>+findByContentHash(hash)</color>
+  }
+}
+
+ChatSession "1" ..> "0..*" ChatMessage : transient / ChatMemory
+ChatMessage ..> ChatMessageType : <color:#CF222E>remove</color>
+
+' ── rag ────────────────────────────────────────────────────
+package "com.ai.rag.domain" as pkg_rag {
+  class Document <<AggregateRoot>> {
+    +id: DocumentId
+    +ownerKey: OwnerKey
+    +title: String
+    +status: DocumentStatus
+    <color:#1A7F37>+fileName: String</color>
+    <color:#1A7F37>+fileSize: Long</color>
+    --
+    +markProcessing()
+    +markReady()
+    +markFailed()
+    +updateTitle(newTitle)
+  }
+  class DocumentChunk <<Entity>> {
+    +id: ChunkId
+    +documentId: DocumentId
+    +content: String
+    <color:#1A7F37>+chunkIndex: int</color>
+    <color:#1A7F37>+embedding: float[]</color>
+    --
+    +{static} create(...)
+    +withEmbedding(vector)
+  }
+  enum DocumentStatus <<Enum>> {
+    UPLOADING
+    PROCESSING
+    READY
+    FAILED
+  }
+  class SourceDocument <<ValueObject>> {
+    +text: String
+    +score: double
+  }
+  interface IDocumentRepository <<Repository>> {
+    +save(document)
+    +findById(id)
+    <color:#1A7F37>+findAllByOwnerKey(ownerKey)</color>
+    <color:#1A7F37>+findByIdAndOwnerKey(id, ownerKey)</color>
+    <color:#1A7F37>+deleteByIdAndOwnerKey(id, ownerKey)</color>
+  }
+}
+
+Document "1" ..> "0..*" DocumentChunk : separate persistence
+Document --> DocumentStatus
+
+' ── pipeline + skill ───────────────────────────────────────
+package "com.ai.pipeline.domain" as pkg_pipeline {
+  class AgentPipeline <<AggregateRoot>> {
+    +nodes: List
+    +edges: List
+    --
+    +{static} create(nodes, edges)
+    +executionOrder()
+  }
+  class AgentDefinition <<Entity>> {
+    <color:#1A7F37>+name: String</color>
+    +type: AgentType
+    +systemPrompt: String
+    <color:#1A7F37>+toolKeys: Set<String></color>
+    <color:#1A7F37>+{static} create(...)</color>
+  }
+  class AgentType <<ValueObject>> {
+    <color:#1A7F37>+value: String</color>
+    --
+    <color:#1A7F37>+{static} of(value)</color>
+    <color:#1A7F37>+isSupervisor(): boolean</color>
+  }
+  class SavedWorkflowTemplate <<Entity>> {
+    +id: WorkflowTemplateId
+    +name: String
+    <color:#1A7F37>+description: String</color>
+    <color:#1A7F37>+enabled: boolean</color>
+    <color:#1A7F37>+agentTypes: List<String></color>
+    <color:#1A7F37>+{static} create(...)</color>
+    <color:#1A7F37>+update(...)</color>
+  }
+  class SavedAgentDefinition <<AggregateRoot>> {
+    +typeKey: String
+    +systemPrompt: String
+    +toolKeys: Set<String>
+    --
+    +{static} create(...)
+    +update(...)
+    +toAgentDefinition()
+  }
+  note right of SavedAgentDefinition : new aggregate
+  interface WorkflowTemplateRepository <<Repository>> {
+  }
+  interface AgentRegistry <<Repository>> {
+    <color:#CF222E>+findByType(type)</color>
+    <color:#1A7F37>+require(type, clientId, lang)</color>
+    <color:#1A7F37>+listAll(clientId, lang)</color>
+  }
+  interface SavedAgentRepository <<Repository>> {
+    +save(definition)
+    +findAllByClientId(clientId)
+    +findEnabledByClientId(clientId)
+  }
+  note right of SavedAgentRepository : new repository
+}
+
+AgentDefinition --> AgentType
+SavedAgentDefinition ..> AgentDefinition : toAgentDefinition()
+
+package "com.ai.skill.domain" as pkg_skill {
+  class Skill <<AggregateRoot>> {
+    +id: SkillId
+    +name: String
+    +enabled: boolean
+    <color:#1A7F37>+description: String</color>
+    <color:#1A7F37>+instructions: String</color>
+    <color:#1A7F37>+allowedTools: Set<String></color>
+    --
+    +{static} create(...)
+    <color:#CF222E>+update(name, instructions, tools)</color>
+    <color:#1A7F37>+update(name, description, instructions, allowedTools)</color>
+    +enable()
+    +disable()
+  }
+  interface SkillRepository <<Repository>> {
+    +findEnabledByClientIdAndIds(clientId, ids)
+  }
+}
+
+' ── automation ─────────────────────────────────────────────
+package "com.ai.automation.domain" as pkg_automation {
+  class AutomationSchedule <<AggregateRoot>> {
+    +id: ScheduleId
+    <color:#CF222E>+kind: ScheduleKind</color>
+    <color:#1A7F37>+scheduleKind: ScheduleKind</color>
+    +enabled: boolean
+    <color:#1A7F37>+cronExpression: String</color>
+    <color:#1A7F37>+actionType: AutomationActionType</color>
+    <color:#1A7F37>+workflowTemplateId: String</color>
+    +{static} create(...)
+    +{static} createOnce(...)
+    +update(...)
+    +enable(nextRunAt)
+    +disable()
+    +markExecuted(finishedAt, nextRunAt)
+    +completeOnce(finishedAt)
+    +isOnce()
+  }
+  class AutomationRun <<Entity>> {
+    +id: RunId
+    +status: RunStatus
+    <color:#1A7F37>+scheduleId: ScheduleId</color>
+    <color:#1A7F37>+errorMessage: String</color>
+    <color:#1A7F37>+resultExcerpt: String</color>
+    --
+    <color:#1A7F37>+{static} start(...)</color>
+    <color:#1A7F37>+succeed(...)</color>
+    <color:#1A7F37>+fail(...)</color>
+    <color:#1A7F37>+skip(...)</color>
+    <color:#1A7F37>+isFinished(): boolean</color>
+  }
+  enum ScheduleKind <<Enum>> {
+    <color:#1A7F37>CRON</color>
+    <color:#1A7F37>ONCE</color>
+  }
+  enum RunStatus <<Enum>> {
+    <color:#1A7F37>SUCCESS</color>
+    FAILED
+    <color:#1A7F37>SKIPPED</color>
+    <color:#CF222E>RUNNING</color>
+    <color:#CF222E>SUCCEEDED</color>
+  }
+  enum AutomationActionType <<Enum>> {
+    <color:#1A7F37>RUN_SAVED_WORKFLOW</color>
+  }
+}
+
+AutomationSchedule "1" ..> "0..*" AutomationRun : scheduleId FK
+
+' ── account ────────────────────────────────────────────────
+package "com.ai.account.domain" as pkg_account {
+  class AccountUser <<Entity>> {
+    +provider: String
+    +linkedClientId: String
+    <color:#1A7F37>+subject: String</color>
+    <color:#1A7F37>+email: String</color>
+    --
+    +{static} create(provider, subject, email, clientId)
+    +linkSession(email, clientId)
+    +unlinkBrowser()
+  }
+}
+
+' ── mcp ────────────────────────────────────────────────────
+package "com.ai.mcp.domain" as pkg_mcp {
+  class McpSession <<AggregateRoot>> {
+    +id: UUID
+    +status: McpSessionStatus
+    <color:#1A7F37>+serverName: String</color>
+    <color:#1A7F37>+toolCount: int</color>
+    --
+    +{static} open(serverName, toolCount)
+    +activate()
+    +close()
+    +isActive()
+  }
+  enum McpSessionStatus <<Enum>> {
+    <color:#1A7F37>ACTIVE</color>
+    <color:#1A7F37>CLOSED</color>
+  }
+  class McpSessionManager <<DomainService>> {
+    <color:#CF222E>+register(session)</color>
+    <color:#CF222E>+close(sessionId)</color>
+    <color:#1A7F37>+registerSession(serverName, toolCount)</color>
+    <color:#1A7F37>+closeSession(sessionId)</color>
+    <color:#1A7F37>+activeSessions()</color>
+  }
+}
+
+McpSession --> McpSessionStatus
+
+' ── metrics ────────────────────────────────────────────────
+package "com.ai.metrics.domain" as pkg_metrics {
+  class AiInvocationEvent <<DomainEvent>> {
+    +domain: AiDomain
+    +outcome: InvocationOutcome
+    +latencyMs: long
+    <color:#1A7F37>+operation: String</color>
+    <color:#1A7F37>+provider: String</color>
+    <color:#1A7F37>+model: String</color>
+    <color:#1A7F37>+sessionId: String</color>
+    <color:#1A7F37>+promptTokens: int</color>
+    <color:#1A7F37>+completionTokens: int</color>
+    <color:#1A7F37>+errorCode: String</color>
+    --
+    +{static} builder()
+    <color:#1A7F37>+assignOwnerKey(ownerKey)</color>
+  }
+  enum AiDomain <<Enum>> {
+    CHAT
+    RAG
+    AGENTS
+    TOOLS
+    VISION
+    <color:#1A7F37>WORKFLOW</color>
+  }
+  enum InvocationOutcome <<Enum>> {
+    <color:#1A7F37>SUCCESS</color>
+    <color:#1A7F37>ERROR</color>
+  }
+}
+
+' ── tools (sample) ─────────────────────────────────────────
+package "com.ai.tools.domain" as pkg_tools {
+  class "WeatherReport\n(Entity — remove)" as WeatherReportEntity <<Entity>> {
+    <color:#CF222E>+location: String</color>
+    <color:#CF222E>+current: WeatherInfo</color>
+  }
+  class WeatherReport <<DomainService>> {
+    +lookupCurrent(query): ToolResult
+    +generateForecast(forecast): ToolResult
+  }
+  class WeatherInfo <<ValueObject>> {
+    +cityName: String
+    +temperature: int
+    +condition: String
+    +humidity: int
+  }
+  WeatherReportEntity ..> WeatherReport : reclassify
+}
+
+' ── cross-cutting (kernel note) ─────────────────────────────
+note as KERNEL_NOTE
+  OwnerKey and aggregate bases are defined in
+  **com.ai.common.domain** (pkg_common_kernel above).
+end note
+
+AbstractEntity <|-- ChatSession : metadata only
+AbstractOwnerKeyedEntity <|-- Document
+AbstractEnableableDescribedOwnerEntity <|-- Skill
+AbstractEnableableDescribedOwnerEntity <|-- SavedWorkflowTemplate
+AbstractEnableableDescribedOwnerEntity <|-- SavedAgentDefinition
+AbstractNamedOwnerEntity <|-- AutomationSchedule
+AbstractTimedRunEntity <|-- AutomationRun
+AbstractEntity <|-- AccountUser
+AbstractAppendOnlyEvent <|-- AiInvocationEvent
+
+ClientIdOwnedNamedRepository <|-- SkillRepository
+ClientIdOwnedNamedRepository <|-- WorkflowTemplateRepository
+ClientIdOwnedNamedRepository <|-- SavedAgentRepository
+
+ChatSession ..> OwnerKey : owned by
+Document ..> OwnerKey : owned by
+Skill ..> OwnerKey : owned by
+AccountUser ..> OwnerKey : links browser
+
+N_PLAN .. pkg_chat
+N_LAYERS .. pkg_chat
+N_LAYERS .. pkg_base
+N_LAYERS .. pkg_common_kernel
+KERNEL_NOTE .. pkg_common_kernel
+
+@enduml
