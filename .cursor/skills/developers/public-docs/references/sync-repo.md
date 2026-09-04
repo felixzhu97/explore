@@ -12,6 +12,7 @@ Allowed to stage and commit:
 
 | Path | Role |
 |------|------|
+| `docs/` | Workspace map (evolution / integration / migration) |
 | `*/docs/developer/c4-model/` | Flat C1–C4 PlantUML (and optional PNG) |
 | `*/docs/Glossary.md` | Domain ubiquitous language |
 | `*/docs/product-owner/` | User Story Map + epic story files |
@@ -38,6 +39,7 @@ Stage **only** whitelist paths. Do **not** use `git add -A`.
 
 ```bash
 git add .gitignore README.md
+git add docs/
 git add .cursor/skills/
 git add explore-ai/README.md explore-ai/docs/Glossary.md explore-ai/docs/product-owner/ explore-ai/docs/developer/c4-model/
 git add explore-iam/README.md explore-iam/docs/Glossary.md explore-iam/docs/product-owner/ explore-iam/docs/developer/c4-model/
