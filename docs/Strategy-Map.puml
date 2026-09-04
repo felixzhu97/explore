@@ -10,8 +10,6 @@ skinparam NoteBackgroundColor #F8FAFC
 skinparam NoteBorderColor #CBD5E1
 skinparam PackageBorderColor #E4E4E7
 skinparam PackageBackgroundColor #FFFFFF
-skinparam ranksep 40
-skinparam nodesep 30
 
 legend bottom right
   |= Lane |= Focus |
@@ -20,7 +18,7 @@ legend bottom right
   | Migration | Executable moves (git, brand, docs sync) |
 endlegend
 
-' Vertical stack: 1 → 2 → 3 (left-aligned via leftmost nodes)
+' ── Evolution ─────────────────────────────────────────────
 package "1. Evolution" as evo #FFFFFF {
   rectangle "**Past**\nIndependent remotes\nLegacy names (e.g. WhatsFeed)\nNested .git under apps" as past #F4F4F5
   rectangle "**Now**\nMeta repo **explore** (single Git root)\nLiving docs per project\n(C4 · Glossary · Story Map)" as now #ECFDF5
@@ -29,6 +27,7 @@ package "1. Evolution" as evo #FFFFFF {
   now -right-> next
 }
 
+' ── Integration ───────────────────────────────────────────
 package "2. Integration (catalogued products)" as integ #FFFFFF {
   rectangle "**Explore IAM**\nShared identity / policy / STS\nOIDC Relying Parties (planned multi-app)" as iam #EEF2FF
   rectangle "**Explore AI**\nChat · RAG · tools · eval\nPublished Language for peers" as ai #ECFDF5
@@ -36,31 +35,30 @@ package "2. Integration (catalogued products)" as integ #FFFFFF {
   rectangle "**Explore Commerce**\nShop · admin · API" as commerce #FFFBEB
   rectangle "**Explore Lowcode**\nCanvas · themes · export" as lowcode #FFF7ED
 
+  iam -[hidden]down- ai
   iam -down-> chat : OIDC / SSO
-  iam -down-> ai : OIDC / SSO
   iam -down-> commerce : OIDC / SSO
   iam -down-> lowcode : OIDC / SSO
+  iam -down-> ai : OIDC / SSO
   chat -right-> ai : BFF + ACL\nPublished Language
+  commerce -[hidden]right- lowcode
 }
-
-package "3. Migration checklist" as mig #FFFFFF {
-  rectangle "**Brand / remote**\npublic → **explore**\nProduct paths **explore-***" as m1 #FEF3C7
-  rectangle "**Nested Git**\nApp .git → **.git.local**\nbefore staging into meta" as m2 #FEF3C7
-  rectangle "**Docs sync**\nWhitelist only\n(README · Glossary · C4 · Story Map)" as m3 #FEF3C7
-  rectangle "**Uncatalogued local trees**\nDefault-deny until onboard\n(.gitignore + Projects table)" as m4 #FEF3C7
-  m1 -right[hidden]- m2
-  m2 -right[hidden]- m3
-  m3 -right[hidden]- m4
-}
-
-' Force 1 / 2 / 3 vertical order (anchor on leftmost boxes)
-past -[hidden]down- iam
-iam -[hidden]down- m1
 
 note as N_clients
   **Client rule:** browsers / mobile call the product API only.
   Do not call Python sidecars or Explore AI directly from the client.
 end note
+
+' ── Migration ─────────────────────────────────────────────
+package "3. Migration checklist" as mig #FFFFFF {
+  rectangle "**Brand / remote**\npublic → **explore**\nProduct paths **explore-***" as m1 #FEF3C7
+  rectangle "**Nested Git**\nApp .git → **.git.local**\nbefore staging into meta" as m2 #FEF3C7
+  rectangle "**Docs sync**\nWhitelist only\n(README · Glossary · C4 · Story Map)" as m3 #FEF3C7
+  rectangle "**Uncatalogued local trees**\nDefault-deny until onboard\n(.gitignore + Projects table)" as m4 #FEF3C7
+  m1 -[hidden]right- m2
+  m2 -[hidden]right- m3
+  m3 -[hidden]right- m4
+}
 
 note as N_candidates
   **Local / not catalogued (examples only):**
@@ -68,6 +66,8 @@ note as N_candidates
   Not a delivery commitment until whitelisted.
 end note
 
+evo -[hidden]down- integ
+integ -[hidden]down- mig
 N_clients .. integ
 N_candidates .. mig
 
