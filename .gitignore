@@ -8,6 +8,8 @@
 /*
 !.gitignore
 !README.md
+!docs/
+!docs/**
 
 # Published project roots
 !explore-ai/
@@ -27,6 +29,10 @@
 !*/docs/Glossary.md
 !*/docs/product-owner/
 !*/docs/product-owner/**
+
+# Re-allow workspace strategy docs after */**
+!docs/
+!docs/**
 
 # Optional project root README under any published project root
 !*/README.md
