@@ -1,6 +1,6 @@
-@startuml Explore-Strategy-Map
+@startuml Explore-Workspace-Map
 !theme plain
-title Explore workspace — Strategy Map (evolution, integration, migration)
+title Explore workspace — how the pieces fit together
 
 skinparam shadowing false
 skinparam backgroundColor #FAFAFA

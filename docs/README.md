@@ -1,14 +1,14 @@
-# Explore strategy docs
+# Explore workspace docs
 
-Workspace-level views for how catalogued Explore products **evolve**, **integrate**, and **migrate** into this meta repository (`felixzhu97/explore`).
+How catalogued Explore products **fit together** in this meta repository (`felixzhu97/explore`): timeline, connections, and how projects move into the catalog.
 
 Per-product software architecture stays under each project’s `docs/developer/c4-model/`. This folder does not replace those C4 models.
 
-## Strategy Map
+## Workspace Map
 
-![Strategy Map](png/Strategy-Map.png)
+![Workspace Map](png/Workspace-Map.png)
 
-Source: [`Strategy-Map.puml`](Strategy-Map.puml)
+Source: [`Workspace-Map.puml`](Workspace-Map.puml)
 
 ### How to read
 
@@ -34,7 +34,6 @@ Uncatalogued local trees (for example `explore-portfolio`) stay default-denied u
 
 ```bash
 brew install plantuml   # macOS
-plantuml docs/Strategy-Map.puml -o png
+plantuml docs/Workspace-Map.puml
+mv docs/Explore-Workspace-Map.png docs/png/Workspace-Map.png
 ```
-
-PNG output lands in `docs/png/` when using `-o png` from `docs/`, or move the generated file next to this README under `png/`.

@@ -12,7 +12,7 @@ Allowed to stage and commit:
 
 | Path | Role |
 |------|------|
-| `docs/` | Workspace strategy map (evolution / integration / migration) |
+| `docs/` | Workspace map (evolution / integration / migration) |
 | `*/docs/developer/c4-model/` | Flat C1–C4 PlantUML (and optional PNG) |
 | `*/docs/Glossary.md` | Domain ubiquitous language |
 | `*/docs/product-owner/` | User Story Map + epic story files |
