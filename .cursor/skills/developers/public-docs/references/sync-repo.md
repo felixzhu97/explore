@@ -32,6 +32,7 @@ Current published project roots:
 - `explore-chat/`
 - `explore-commerce/`
 - `explore-lowcode/`
+- `explore-ml/`
 
 ## Stage (required)
 
@@ -46,6 +47,7 @@ git add explore-iam/README.md explore-iam/docs/Glossary.md explore-iam/docs/prod
 git add explore-chat/README.md explore-chat/docs/Glossary.md explore-chat/docs/product-owner/ explore-chat/docs/developer/c4-model/
 git add explore-commerce/README.md explore-commerce/docs/Glossary.md explore-commerce/docs/product-owner/ explore-commerce/docs/developer/c4-model/
 git add explore-lowcode/README.md explore-lowcode/docs/Glossary.md explore-lowcode/docs/product-owner/ explore-lowcode/docs/developer/c4-model/
+git add explore-ml/README.md explore-ml/docs/Glossary.md explore-ml/docs/product-owner/ explore-ml/docs/developer/c4-model/
 git status --short
 ```
 
