@@ -48,6 +48,7 @@ Workspace-level view of how catalogued Explore products **evolve**, **integrate*
 | [Explore Chat](https://github.com/felixzhu97/explore-chat) | C4 | [`explore-chat/docs/developer/c4-model/`](explore-chat/docs/developer/c4-model/) | Social + messaging: feed, chat/calls, Nest API, optional AI |
 | [Explore Commerce](https://github.com/felixzhu97/explore-commerce) | C4 | [`explore-commerce/docs/developer/c4-model/`](explore-commerce/docs/developer/c4-model/) | E-commerce monorepo: Web shop, admin, API |
 | [Explore Lowcode](https://github.com/felixzhu97/explore-lowcode) | C4 | [`explore-lowcode/docs/developer/c4-model/`](explore-lowcode/docs/developer/c4-model/) | Visual page builder: canvas, components, themes, export |
+| [Explore ML](https://github.com/felixzhu97/explore-ml) | C4 | [`explore-ml/docs/developer/c4-model/`](explore-ml/docs/developer/c4-model/) | Optional Python FastAPI helpers: recommendation, vision, RAG, image-playground, speech, video |
 
 ## Repository Layout
 
@@ -67,7 +68,10 @@ explore/
 ├── explore-commerce/
 │   ├── README.md
 │   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
-└── explore-lowcode/
+├── explore-lowcode/
+│   ├── README.md
+│   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
+└── explore-ml/
     ├── README.md
     └── docs/{Glossary.md,product-owner/,developer/c4-model/}
 ```
