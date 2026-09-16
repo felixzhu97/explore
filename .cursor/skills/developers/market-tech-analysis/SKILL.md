@@ -2,12 +2,12 @@
 name: market-tech-analysis
 description: >-
   Performs business and technical analysis of market trends and recommends
-  technology–business strategy. Always starts from Google, Apple, Microsoft,
-  NVIDIA, Meta, OpenAI, DeepMind, Vercel, Anthropic, Cursor, Hugging Face
-  trending, and arXiv papers. Use when analyzing commercial dynamics, market
-  moves, competitive landscape, tech adoption, product strategy, or when the
-  user asks for 市场分析、技术分析、商业动向、技术商业建议、竞品、趋势研判.
-  Not for Business Analysis / domain modeling (use business-analysis + business-analyst).
+  technology–business strategy. Always starts from Apple, Google, and GitHub
+  (product/news + research/OSS hubs). Use when analyzing commercial dynamics,
+  market moves, competitive landscape, tech adoption, product strategy, or when
+  the user asks for 市场分析、技术分析、商业动向、技术商业建议、竞品、趋势研判.
+  Not for Business Analysis / domain modeling (use business-analysis +
+  business-analyst).
 ---
 
 # Market & Tech Analysis
@@ -24,10 +24,10 @@ Complementary skill: personal `business-model-generator` covers BMC / unit econo
 
 ## Hard rules
 
-1. **Mandatory first scan** of the watchlist in [references/sources.md](references/sources.md): Google, Apple, Microsoft, NVIDIA, Meta, OpenAI, DeepMind, Vercel, Anthropic, Cursor, **Hugging Face Trending**, **arXiv** papers — via real-time web search/fetch. Do not skip.
-2. **Cite sources** with title + URL + date; prefer primary sources (official blogs, changelogs, arXiv abs pages, HF model cards).
+1. **Mandatory first scan** of the watchlist in [references/sources.md](references/sources.md): **Apple, Google, GitHub** only for **vendor** industry signals — via real-time web search/fetch. Do not skip. Do not expand to other vendors. **Protocols, standards, papers, Hugging Face, and Qwen** (RFC / NIST / W3C / arXiv / HF cards / Qwen) stay allowed when the topic cites them.
+2. **Cite sources** with title + URL + date; prefer primary sources (official blogs, changelogs, developer docs, research pages) from those three orgs, plus primary protocol/standard/paper/HF documents when relevant.
 3. Separate **fact** (observed) from **inference** (your read) from **recommendation** (what to do).
-4. Tie advice to **this repo’s capabilities** when analyzing ai-explore (chat, RAG, agents, Spring AI, Angular) — or state clearly if the analysis is industry-generic.
+4. Tie advice to **this repo’s capabilities** when analyzing Explore products — or state clearly if the analysis is industry-generic.
 5. Stay **minimal**: one clear thesis, few options, concrete next actions — no slide-deck fluff.
 
 ## Workflow
@@ -48,25 +48,22 @@ Confirm in one line:
 
 Open [references/sources.md](references/sources.md) and scan **in this order**:
 
-1. Google · Apple · Microsoft · NVIDIA · Meta  
-2. OpenAI · DeepMind · Anthropic  
-3. Vercel · Cursor  
-4. **Each org’s research + open-source hubs** ([sources.md](references/sources.md) § Open-source & research hubs)  
-5. Hugging Face Trending (`https://huggingface.co/models?sort=trending`)  
-6. arXiv recent (cs.AI / cs.LG / cs.CL — and topic-specific search)
+1. Google · Apple · GitHub (product / news)
+2. **Each org’s research + open-source hubs** ([sources.md](references/sources.md) § Research & open-source hubs)
+3. **Protocols / standards / papers / Hugging Face / Qwen** when the scope needs them ([sources.md](references/sources.md) § Protocols, standards, papers, Hugging Face & Qwen)
 
-For each: capture **dated** moves (product, pricing, model, **paper+code**, DX) relevant to the scope. If nothing material, write `Org: no material signal (checked)`.
+For each vendor org: capture **dated** moves (product, pricing, model, **paper+code**, DX) relevant to the scope. If nothing material, write `Org: no material signal (checked)`. For protocols/standards/papers/HF: cite primary docs (RFC / NIST / W3C / arXiv abs / HF model or collection cards) that ground the recommendation.
 
 Then apply lenses:
 
 | Lens | Look for |
 |------|----------|
 | Demand | Adoption, usage, regulation, buyer pain |
-| Supply | New models/APIs, open-source, infra cost |
+| Supply | New APIs, open-source, infra cost |
 | Competition | Positioning, pricing, distribution |
 | Capital / policy | Funding, standards, compliance |
 
-Keep a compact signal list (prefer quality over volume; typically 5–12 items spanning the watchlist).
+Keep a compact signal list (prefer quality over volume; typically 3–9 items spanning the three orgs).
 
 ### 3. Business analysis
 
@@ -82,10 +79,10 @@ Summarize:
 For each relevant tech bet:
 
 - Maturity (experiment / early / production-ready)
-- Fit with existing stack (Java/Spring AI, Angular, RAG, agents)
+- Fit with existing stack (Java/Spring, Angular, IAM, RAG, agents)
 - Cost / latency / data / ops burden
 - Build vs buy vs integrate
-- Relevance of HF trending models / arXiv methods to this stack
+- Relevance of Apple / Google / GitHub platform moves to this stack
 
 ### 5. Tech–business recommendations
 
@@ -120,16 +117,7 @@ One paragraph.
 |--------|----------------|------|
 | Google | … | … |
 | Apple | … | … |
-| Microsoft | … | … |
-| NVIDIA | … | … |
-| Meta | … | … |
-| OpenAI | … | … |
-| DeepMind | … | … |
-| Anthropic | … | … |
-| Vercel | … | … |
-| Cursor | … | … |
-| HF Trending | … | … |
-| arXiv | paper id + title | … |
+| GitHub | … | … |
 
 ## Business read
 - …
@@ -159,10 +147,11 @@ One paragraph.
 | Avoid | Do instead |
 |-------|------------|
 | Skipping the watchlist | Complete sources.md checklist first |
+| Citing vendors outside Apple / Google / GitHub | Stay on the three-org **vendor** whitelist; keep RFC / NIST / W3C / arXiv / Hugging Face / Qwen when relevant |
 | Undated hype with no links | Dated signals + citations |
 | Feature laundry list | One thesis + ranked options |
 | Tech for tech’s sake | Map every tech move to a paying job-to-be-done |
-| Ignoring this codebase | Call out reuse of chat/RAG/agent vs greenfield |
+| Ignoring this codebase | Call out reuse vs greenfield |
 
 Scoring: [references/rubric.md](references/rubric.md). Sources: [references/sources.md](references/sources.md).
 
@@ -172,8 +161,8 @@ Scoring: [references/rubric.md](references/rubric.md). Sources: [references/sour
 |------|-------|
 | 行业动向（子 Agent） | [market-analyst](../../../agents/market-analyst.md) |
 | Business Analysis | [business-analyst](../../../agents/business-analyst.md) + [business-analysis](../business-analysis/SKILL.md) |
-| 前沿研究（子 Agent） | [ai-engineer](../../../agents/ai-engineer.md) |
-| BMC / LTV / CAC deep dive | [business-model-generator](../../executive/business-model-generator/SKILL.md) |
+| 前沿研究（子 Agent） | [tech-analyst](../../../agents/tech-analyst.md) |
+| BMC / LTV / CAC deep dive | `business-model-generator` (personal skill) |
 | Implement chosen bet | [developer](../developer/SKILL.md) |
-| Product Owner story from recommendation | [Jira delivery](../jira-delivery/SKILL.md) |
+| Product Owner story from recommendation | [Product Owner](../jira-delivery/SKILL.md) |
 | Spring AI capabilities | [spring-ai](../spring-ai/SKILL.md) |

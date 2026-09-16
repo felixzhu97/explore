@@ -4,29 +4,37 @@
 
 When adding a dependency: add a row with claim + deep link — never library name alone.
 
-For lab research / open-source hubs and open models, also use [market-tech-analysis sources](../../market-tech-analysis/references/sources.md) and arXiv abs pages.
+For industry **vendor** research and open-source hubs, use only
+[market-tech-analysis sources](../../market-tech-analysis/references/sources.md)
+(**Apple, Google, GitHub**). **Protocols, standards, papers, Hugging Face, and Qwen**
+(RFC / NIST / W3C / arXiv abs / HF model cards / qwen.ai) stay allowed whenever the claim
+needs them.
 
 ## AI / Model reference set
 
 For model-driven changes such as ASR, TTS, LLM, RAG, agent, benchmark, or algorithm updates, do not stop at a single docs link.
 
-When available, use this full reference set in both the commit and PR:
+When available, use this reference set in both the commit and PR:
 
-1. One **academic** source, preferably the arXiv abs page or official paper page
-2. One **Hugging Face** model, collection, or paper page
-3. One official **vendor blog**, release note, or announcement page
-4. The upstream **GitHub repository** or official implementation docs when they are the implementation source
+1. One **academic** source — preferably the arXiv abs page or official paper page
+2. One **Hugging Face** model, collection, dataset, or paper page
+3. One **Apple or Google research / docs** page for the method or platform capability (when available)
+4. One official **blog, release note, or changelog** from Apple, Google, or GitHub
+5. The upstream **GitHub repository** or official implementation docs when they are the implementation source
 
 Example (claims → URLs):
 
 | Claim in why | Artifact | Official doc |
 |--------------|----------|--------------|
-| Cite the ASR method paper for Qwen3-ASR work | Qwen3-ASR Technical Report | [arXiv:2601.21337](https://arxiv.org/abs/2601.21337) |
-| Point reviewers at model cards / collection | Qwen3-ASR HF collection | [Hugging Face collection](https://huggingface.co/collections/Qwen/qwen3-asr) |
-| Cite official release notes | Qwen3-ASR blog | [qwen.ai blog](https://qwen.ai/blog?id=qwen3asr) |
-| Point at upstream implementation | QwenLM/Qwen3-ASR | [GitHub](https://github.com/QwenLM/Qwen3-ASR) |
+| Cite the method paper for the algorithm change | Technical report / paper | [arXiv abs](https://arxiv.org/) (use the specific abs URL) |
+| Cite the open weights / model card | Hugging Face model or collection | [huggingface.co/models](https://huggingface.co/models) (use the specific card URL) |
+| Cite Qwen family model / report | Qwen blog / HF / GitHub | [qwen.ai](https://qwen.ai/) · [HF Qwen](https://huggingface.co/Qwen) · [QwenLM](https://github.com/QwenLM) |
+| Cite Google recommendation ranking lineage | YouTube DNN paper page | [research.google/pubs/pub45530](https://research.google/pubs/pub45530/) |
+| Cite Apple on-device ML guidance | Apple ML Research | [machinelearning.apple.com/research](https://machinelearning.apple.com/research) |
+| Point at upstream Actions delivery | GitHub Actions docs | [docs.github.com/en/actions](https://docs.github.com/en/actions) |
 
-Open models (Qwen / DeepSeek / 智谱 GLM / Intern / Llama / Gemma / Mistral): [Open models](../../market-tech-analysis/references/sources.md#open-models). Research hubs: [Open-source & research hubs](../../market-tech-analysis/references/sources.md#open-source--research-hubs-required). Speech & image: [Open-source speech & image](../../market-tech-analysis/references/sources.md#open-source-speech--image).
+Industry hubs: [sources.md](../../market-tech-analysis/references/sources.md).
+Protocols / standards / papers / HF / Qwen: same file § Protocols, standards, papers, Hugging Face & Qwen.
 
 ## Frontend
 
@@ -97,9 +105,9 @@ Open models (Qwen / DeepSeek / 智谱 GLM / Intern / Llama / Gemma / Mistral): [
 | Use evolutionary design / refactoring vocabulary | Martin Fowler | [martinfowler.com](https://martinfowler.com/) |
 | Cite Clean Code / craftsmanship practices | Robert C. Martin | [cleancoder.com](https://blog.cleancoder.com/) |
 | Cite XP / manifesto values for delivery trade-offs | Agile Manifesto | [agilemanifesto.org](https://agilemanifesto.org/) |
-| Cite academic papers (abs page) | arXiv | [arxiv.org](https://arxiv.org/) |
-| Cite model cards / collections / spaces | Hugging Face | [huggingface.co](https://huggingface.co/) |
 | Google eng / SRE / style / Cloud claim rows | Google Ecosystem | [§ Google Ecosystem](#google-ecosystem) below |
+| Apple HIG / identity / security claim rows | Apple Developer | [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/) |
+| GitHub Actions / security / PR delivery claim rows | GitHub Docs | [docs.github.com](https://docs.github.com/) |
 
 ## Google Ecosystem
 
@@ -130,12 +138,28 @@ Open models (Qwen / DeepSeek / 智谱 GLM / Intern / Llama / Gemma / Mistral): [
 | Android app architecture / quality | Android Developers | [Guide to app architecture](https://developer.android.com/topic/architecture) |
 | AOSP / Android Java conventions | AOSP | [Java code style](https://source.android.com/docs/setup/contribute/code-style) |
 
-### AI & research (complements arXiv / Hugging Face sets)
+### AI & research (Apple / Google / GitHub industry set + papers + HF)
 
 | Claim in why | Artifact | Official doc |
 |--------------|----------|--------------|
+| Cite academic method / result (abs page) | arXiv | [arxiv.org](https://arxiv.org/) |
+| Cite open weights / model or collection card | Hugging Face | [huggingface.co/models](https://huggingface.co/models) · [Papers](https://huggingface.co/papers) · [Trending](https://huggingface.co/models?sort=trending) |
+| Cite Qwen family models | Qwen | [qwen.ai](https://qwen.ai/) · [HF Qwen](https://huggingface.co/Qwen) · [QwenLM](https://github.com/QwenLM) |
 | Gemini / Google AI developer APIs | ai.google.dev | [Google AI for Developers](https://ai.google.dev/) |
 | Google Research publications | research.google | [research.google](https://research.google/) · [Publications](https://research.google/pubs/) |
+| Apple Machine Learning Research | machinelearning.apple.com | [Apple ML Research](https://machinelearning.apple.com/research) |
+| GitHub Copilot / AI on GitHub | Copilot docs | [GitHub Copilot](https://docs.github.com/en/copilot) |
+
+## Learning / protocol & standard references
+
+| Claim in why | Artifact | Official doc |
+|--------------|----------|--------------|
+| Cite academic papers (abs page) | arXiv | [arxiv.org](https://arxiv.org/) |
+| Cite open model / dataset / paper cards | Hugging Face | [huggingface.co](https://huggingface.co/) |
+| Cite IETF / RFC protocol text | RFC Editor | [rfc-editor.org](https://www.rfc-editor.org/) |
+| Cite IETF working-group drafts / RFCs | IETF Datatracker | [datatracker.ietf.org](https://datatracker.ietf.org/) |
+| Cite W3C technical reports | W3C TR | [w3.org/TR](https://www.w3.org/TR/) |
+| Cite NIST security / identity publications | NIST CSRC | [csrc.nist.gov/publications](https://csrc.nist.gov/publications) |
 
 ### Google Cloud (subset of ecosystem)
 

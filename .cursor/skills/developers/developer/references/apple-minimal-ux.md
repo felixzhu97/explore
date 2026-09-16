@@ -26,7 +26,6 @@ Foundations (read the page that matches the change):
 Secondary pattern reference (not a substitute for HIG):
 
 - [shadcn/ui — Apple](https://www.shadcn.io/design/apple)
-- [shadcn/ui — OpenAI](https://www.shadcn.io/design/openai)
 
 When citing UX in commits/PRs, prefer the specific HIG page above (see also [dependency-docs UX table](dependency-docs.md)).
 

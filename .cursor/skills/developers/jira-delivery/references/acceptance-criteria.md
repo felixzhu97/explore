@@ -22,7 +22,7 @@ Use **numbered scenarios** with **Scenario / GIVEN / WHEN / THEN** (and optional
 - No implementation details (APIs, DB, class, env, CLI, hook filenames, package names)
 - Prefer commercial outcomes in THEN (commit succeeds / blocked with feedback / less cross-repo rework / user sees result)
 - Present tense ("the user clicks", not "the user will click")
-- UI tickets: reference OpenAI-style interaction patterns where relevant
+- UI tickets: reference chat UI interaction patterns where relevant
 
 ## Good Examples
 
@@ -62,7 +62,7 @@ Use **numbered scenarios** with **Scenario / GIVEN / WHEN / THEN** (and optional
    **THEN** pnpm typecheck passes
 ```
 
-## OpenAI-Style Interaction Patterns
+## Chat UI interaction patterns
 
 When describing UI/UX acceptance criteria, reference these patterns:
 
@@ -82,4 +82,4 @@ When describing UI/UX acceptance criteria, reference these patterns:
 - [ ] At least 3 numbered scenarios with **Scenario** / GIVEN / WHEN / THEN
 - [ ] Acceptance criteria focus on business-observable behavior, not tooling
 - [ ] Edge cases and error states are covered
-- [ ] OpenAI-style interaction patterns referenced where applicable
+- [ ] Chat UI interaction patterns referenced where applicable

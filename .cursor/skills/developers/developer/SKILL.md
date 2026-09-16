@@ -1,6 +1,6 @@
 ---
 name: developer
-description: Feature development for this repo — XP, DDD, BDD, TDD, Glossary naming, Apple HIG minimal UX, root README on-ramp tone (Get started → Next steps), living docs sync (C4 / Glossary / User Story Map), and mandatory commit/PR standards (why body + References from official docs and research). Submit fine-grained Draft PRs via GitHub Stack (gh stack). Use when implementing features, writing tests, committing, opening PRs, UI work, README edits, or DDD/TDD/BDD/XP/clean-code tasks.
+description: Feature development for this repo — XP, DDD, BDD, TDD, Glossary naming, Apple HIG minimal UX, root README on-ramp tone (Get started → Next steps), living docs sync (C4 / Glossary / User Story Map), and mandatory commit/PR standards (why body + References from dependency docs and Apple / Google / GitHub). Submit fine-grained Draft PRs via GitHub Stack (gh stack). Use when implementing features, writing tests, committing, opening PRs, UI work, README edits, or DDD/TDD/BDD/XP/clean-code tasks.
 ---
 
 # Developer
@@ -16,7 +16,7 @@ description: Feature development for this repo — XP, DDD, BDD, TDD, Glossary n
 3. Tests: `should expected result when condition` (spaces; Java methods: camelCase)
 4. Names: Glossary Preferred Term in repo `docs/Glossary.md` (when present) + [clean-code-naming](references/clean-code-naming.md)
 5. UI: Apple HIG + [apple-minimal-ux](references/apple-minimal-ux.md)
-6. **Commit / PR / Jira / branches**: always reuse §6 + [Product Owner](../jira-delivery/SKILL.md); branch `<slug>` (no prefix); submit **fine-grained Draft PRs via GitHub Stack** (`gh stack`); commit subject = PR title (imperative, no type prefix); body why → References → JIRA; prose ≤72 cols; References = official docs + research
+6. **Commit / PR / Jira / branches**: always reuse §6 + [Product Owner](../jira-delivery/SKILL.md); branch `<slug>` (no prefix); submit **fine-grained Draft PRs via GitHub Stack** (`gh stack`); commit subject = PR title (imperative, no type prefix); body why → References → JIRA; prose ≤72 cols; References = dependency docs + Apple / Google / GitHub industry sources + protocols / standards / papers / Hugging Face / Qwen when cited
 7. **XP**: follow [extreme-programming](references/extreme-programming.md) — Simple Design / YAGNI, CI green, small releases, customer / AC feedback
 8. **Living docs (phased)**: **before code** — Glossary → `C4-Code-Domain-Model.puml`; **after code (CI green)** — other C4 + User Story Map (+ root README when boot/ports/Live change); same feature branch — see §4 and [living-docs](references/living-docs.md)
 9. Root `README.md` tone: short pitch, Get started → Next steps — [readme](references/readme.md)
@@ -189,33 +189,40 @@ main
 #### References priority (required)
 
 Prefer **specific** pages, not homepages. Search the web in real time when needed.
+**Industry vendor whitelist: Apple, Google, GitHub only.** Also keep
+**protocols, standards, papers, Hugging Face, and Qwen** (RFC / IETF / W3C /
+NIST / ISO, arXiv abs, HF cards, Qwen technical reports / blogs / weights /
+code) when the change cites them.
 
 | Priority | Source | Where to look |
 |----------|--------|----------------|
 | 1 | Project dependency official docs | [dependency-docs](references/dependency-docs.md) (**claim → URL** catalog; every row corroborates why) |
-| 2 | Vendor / lab **research** + open-source | [market-tech-analysis sources](../market-tech-analysis/references/sources.md) (research hubs + GitHub) |
-| 3 | **arXiv** papers (abs page) | [arXiv](https://arxiv.org/) — when the change cites a method/paper |
-| 4 | Standards / HIG / Google ecosystem | **UI design:** [Apple HIG](https://developer.apple.com/design/human-interface-guidelines/) only. **Google ecosystem** (eng practices, style guides, SRE, AI, Cloud Architecture — not Material UI) — [dependency-docs](references/dependency-docs.md) § Google Ecosystem |
+| 2 | Apple / Google / GitHub **research + open-source** | [market-tech-analysis sources](../market-tech-analysis/references/sources.md) |
+| 3 | **Protocols / standards** | RFC (rfc-editor / IETF), W3C, NIST, ISO, Apple HIG, Google eng/SRE/style when relevant — [dependency-docs](references/dependency-docs.md) § Learning / Google Ecosystem |
+| 4 | **Papers** (abs / official paper page) | [arXiv](https://arxiv.org/) or publisher page — when the change cites a method or result |
+| 5 | **Hugging Face** (models / collections / papers / spaces) | [huggingface.co](https://huggingface.co/) — when the change cites weights, datasets, or model cards |
+| 6 | **Qwen** | [qwen.ai](https://qwen.ai/) · [HF Qwen](https://huggingface.co/Qwen) · [QwenLM](https://github.com/QwenLM) — when citing Qwen family models |
 
-**Corroborate the why (required):** each Reference URL must support a **concrete claim** in the commit/PR why paragraph (latency, reliability, cost, naming, review quality, UI system, etc.). Prefer the page that states the practice. Do not paste org/product homepages as decoration. Pick rows from [dependency-docs](references/dependency-docs.md) whose **Claim in why** matches the why text.
+**Corroborate the why (required):** each Reference URL must support a **concrete claim** in the commit/PR why paragraph (latency, reliability, cost, naming, review quality, UI system, protocol conformance, etc.). Prefer the page that states the practice. Do not paste org/product homepages as decoration. Pick rows from [dependency-docs](references/dependency-docs.md) whose **Claim in why** matches the why text.
 
 - Bad: why says “reduce cold-start latency for interactive UX” + link to a marketing landing page with no latency guidance.
 - Good: why says “treat latency as a golden signal and avoid idle scale-to-zero for interactive flows” + [SRE Book — Monitoring Distributed Systems](https://sre.google/sre-book/monitoring-distributed-systems/).
 
-Avoid: random blogs, undated tweets, marketing landing pages (unless no primary source exists — then note why).
+Avoid: other **vendors** as industry cites, random blogs, undated tweets, marketing landing pages (unless no primary source exists — then note why). Do **not** drop protocol, standard, paper, Hugging Face, or Qwen cites to satisfy the vendor whitelist.
 
 #### AI / model reference set (required when relevant)
 
 For model, benchmark, ASR / TTS / LLM, RAG, agent, or algorithm-related changes, the reference set must be more specific than a generic docs link.
 
-When these source types exist, include all of them in both the commit and the PR:
+When these source types exist, include them in both the commit and the PR:
 
-1. One **academic** source, preferably the arXiv abs page or official paper page
-2. One **Hugging Face** model, collection, or paper page
-3. One official **vendor blog**, release note, or announcement page
-4. The upstream **GitHub repository** or official implementation docs when they are the implementation source
+1. One **academic** source — preferably the arXiv abs page or official paper page
+2. One **Hugging Face** model, collection, dataset, or paper page (use **Qwen** HF / blog / GitHub when the work cites Qwen)
+3. One **Apple or Google research / docs** page for the method or platform capability (when available)
+4. One official **blog, release note, or changelog** from Apple, Google, or GitHub
+5. The upstream **GitHub repository** or official implementation docs when they are the implementation source
 
-For framework or dependency-only changes, keep using official docs first. For AI / model changes, prefer the full reference set above over a single docs link. Pick URLs from [market-tech-analysis sources](../market-tech-analysis/references/sources.md) — do not paste a fixed long example block in every commit.
+For framework or dependency-only changes, keep using official dependency docs first. Industry vendor URLs stay on [market-tech-analysis sources](../market-tech-analysis/references/sources.md); papers / standards / Hugging Face / Qwen stay allowed — do not paste a fixed long example block in every commit.
 
 #### PR title (required — Apple / WebKit style)
 
@@ -333,7 +340,7 @@ same official/research priority.
 - [ ] UI (if any): HIG + minimal
 - [ ] Root README (if boot/ports/Live changed or rewriting front page): [readme](references/readme.md) tone
 - [ ] Branch: `<slug>` (no prefix); fine-grained Draft PRs via `gh stack` (no single mega-Draft)
-- [ ] Commit: subject = PR title; why + References (official/research); no type prefix
+- [ ] Commit: subject = PR title; why + References (deps + Apple/Google/GitHub); no type prefix
 - [ ] Each References link maps to a claim in the why text (or N/A with note)
 - [ ] PR title: business summary, imperative verb (commit-style); no `feat:`/`fix:` prefix
 - [ ] PR body: why → References → JIRA (bottom); ≤72 cols; no title echo; CI green

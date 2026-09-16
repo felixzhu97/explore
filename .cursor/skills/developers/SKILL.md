@@ -38,7 +38,6 @@ Prefer the specific child skill when the task is clear.
 
 ### Build
 - [`developer`](./developer/) — XP / DDD / BDD / TDD / Commit·PR (primary delivery skill)
-- [`public-docs`](./public-docs/) — meta-repo sync, nested Git, C4, GitHub Stack, commit/PR
 - [`frontend-engineering`](./frontend-engineering/)
 - [`fullstack-ddd`](./fullstack-ddd/)
 - [`tdd-ddd-refactor`](./tdd-ddd-refactor/)
@@ -56,6 +55,8 @@ Prefer the specific child skill when the task is clear.
 - [`code-review`](./code-review/)
 - [`cybersecurity`](./cybersecurity/) — threat modeling, security architecture, incident/vuln (subagent: `security-architect`)
 
+Moved Explore-AI skills index: [`EXPLORE_SKILLS.md`](./EXPLORE_SKILLS.md)
+
 ## Reference policy (required)
 
 When proposing **architecture**, **implementation practice**, **product-domain design**, or **end-to-end solution/platform shape**, cite from the central index:
@@ -70,4 +71,4 @@ Rules:
    - implementation / quality / ops practice → [`references/engineering.md`](./references/engineering.md)
    - how a product domain works at scale → [`references/product-domain-design.md`](./references/product-domain-design.md)
    - system / platform / AI solution shape → [`references/solution-design.md`](./references/solution-design.md)
-4. Whitelist: Google, Meta, Apple, Microsoft, Amazon, Netflix, Uber, Spotify, LinkedIn, Cloudflare (official eng blogs, design docs, published architectures).
+4. Whitelist for **industry vendors**: **Apple, Google, GitHub** (official eng blogs, design docs, published architectures). **Protocols, standards, papers, Hugging Face, and Qwen** (RFC / NIST / W3C / arXiv / HF / Qwen) stay allowed when cited.
