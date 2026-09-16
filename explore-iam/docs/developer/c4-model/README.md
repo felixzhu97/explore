@@ -4,14 +4,15 @@ PlantUML ([C4-PlantUML](https://github.com/plantuml-stdlib/C4-PlantUML)) living 
 **Source of truth:** `.puml` files in this directory. Regenerate PNG when PlantUML is available.
 
 Official C4: [c4model.com](https://c4model.com/).  
-Style standards: global [c4-model](~/.cursor/skills/developers/developer/references/c4-model.md) skill.
+Style standards: global [c4-model](~/.cursor/skills/scrum-team/developers/developer/references/c4-model.md) skill.
 
 ## Visual tracks (do not mix)
 
 | Track | Files | Style |
 |-------|-------|-------|
 | **Structural C4** | C1–C3, Deployment | `C4_blue_new` theme (wireframe) |
-| **Domain + Dynamics** | Code domain model, `C4-Dynamic-*` | `style-zinc.puml` (zinc palette) |
+| **Domain model** | `C4-Code-Domain-Model.puml` | 白底黑字黑边框（对齐 explore-chat Code 图） |
+| **Dynamics** | `C4-Dynamic-*` | [`style-zinc.puml`](style-zinc.puml) 或内联白底（见各文件） |
 
 ## File set
 
@@ -21,10 +22,11 @@ Style standards: global [c4-model](~/.cursor/skills/developers/developer/referen
 | `C2-Container.puml` | Container | IAM Application monolith (:9100), metadata database |
 | `C3-Component.puml` | Component | **Single** diagram: Angular Console + backend modules (`controller → service → domain ← infra`) |
 | `C4-Code-Domain-Model.puml` | Code | DDD class model with `AbstractEntity` / `AbstractImmutable` kernel |
-| `C4-Deployment.puml` | Deployment | **Single** view: local H2 dev + production target topology |
-| `C4-Dynamic-SSOLogin.puml` | Dynamic | OIDC Authorization Code + optional external IdP |
+| `C4-Deployment.puml` | Deployment | **Single** view: local H2 + Render Starter (Docker) |
+| `C4-Dynamic-SSOLogin.puml` | Dynamic | OIDC Authorization Code (confidential + public PKCE) |
+| `C4-Dynamic-NativePkceLogin.puml` | Dynamic | Native iOS ASWebAuthenticationSession + PKCE → RP Bearer |
 | `C4-Dynamic-PolicyEvaluation.puml` | Dynamic | AssumeRole + PolicyEngine (Deny > Allow > implicit Deny) |
-| `style-zinc.puml` | Shared | Zinc styles for Code + Dynamic diagrams only |
+| `style-zinc.puml` | Shared | Dynamic 序列图可选样式（Code 领域模型内联白底黑边框） |
 
 ## Stack & ports
 

@@ -1,0 +1,164 @@
+@startuml
+!ROUNDED_STYLE=1
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+' 样式内联自 style.puml（勿改为 !include）
+UpdateElementStyle("person", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_person", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("system", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_system", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("container", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_container", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("component", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_component", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("node", "#FFFFFF", "#000000", "#000000")
+UpdateBoundaryStyle("", $bgColor="#FFFFFF", $fontColor="#000000", $borderColor="#000000")
+UpdateRelStyle("#000000", "#000000")
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+LAYOUT_WITH_LEGEND()
+title [C4 Level 3] Chat - 组件图（Web / Expo / iOS / Spring）
+
+Person(user_web, "Web 用户", "浏览器")
+Person(user_mobile, "移动端用户", "Expo / 模拟器")
+Person(user_ios, "iOS 用户", "SwiftUI 客户端")
+
+System_Boundary(chat, "Chat") {
+
+  Container_Boundary(web_app, "Web 应用 (src/main/web)") {
+    Component(pages, "App Router 页面", "Next.js", "登录、主站、设置")
+    Component(feed_ui, "Feed / Reels / Explore", "React", "帖子、互动、评论")
+    Component(chat_ui, "聊天 UI", "React hooks", "薄 controller；读投影快照")
+    Component(chat_domain, "Chat 领域", "domain/", "ChatThread ChatCatalog Message VO 事件")
+    Component(chat_svc, "ChatProjectionService", "service/", "编排 + drain 领域事件")
+    Component(chat_mapper, "ChatProjectionMapper", "mapper/", "DTO ↔ domain / rows")
+    Component(chat_infra, "聊天投影仓储", "infra/", "MemoryChatProjectionRepository")
+    Component(web_rtc, "RTC CallManager", "calls/rtc/", "domain + impl/stub + use-call")
+    Component(state, "状态层", "Redux Toolkit", "auth-session、旁路缓存")
+    Component(api_client, "API 客户端", "Fetch", "REST /api/v1")
+    Component(ws_client, "WebSocket 客户端", "Socket.IO", "实时消息与通知")
+  }
+
+  Container_Boundary(mobile_app, "Expo mobile (src/main/mobile)") {
+    Component(m_screens, "Screens / routes", "Expo Router", "chat-detail、Feed、通话")
+    Component(m_chat_domain, "Chat 领域", "chat/domain/", "与 Web 同构（源码复制）")
+    Component(m_chat_svc, "ChatThreadService", "chat/service/", "单线程 hydrate / accept / 发送")
+    Component(m_chat_mapper, "ChatThreadMapper", "chat/mapper/", "DTO ↔ domain")
+    Component(m_chat_infra, "聊天投影仓储", "chat/infra/", "MemoryChatProjectionRepository")
+    Component(m_im_dto, "IM wire DTO", "core/im/", "手写对齐 im-contract")
+    Component(m_rtc, "RTC CallManager", "core/rtc/", "domain + impl/stub + use-call")
+    Component(m_api, "API / Socket", "Fetch + Socket.IO", "REST :9001 / WS :9002")
+  }
+
+  Container_Boundary(ios_app, "iOS 应用 (src/main/ios)") {
+    Component(ios_root, "App / RootView / Tabs", "SwiftUI", "鉴权门禁、主 Tab、Call 覆盖层")
+    Component(ios_features, "Features", "SwiftUI", "Auth Feed Reels Explore Chat Profile Calls")
+    Component(ios_iam, "IamAuthService", "Swift", "PKCE · ASWebAuthenticationSession · explore-chat-ios")
+    Component(ios_api, "APIClient", "URLSession", "REST /api/v1 + RpcStatus · Bearer")
+    Component(ios_socket, "ChatSocketClient", "Socket.IO", "消息与通话信令")
+    Component(ios_rtc, "WebRTCSession", "AVFoundation", "offer / answer / ICE")
+    Component(ios_session, "SessionStore", "Keychain", "Chat HS JWT 或 IAM access_token")
+  }
+
+  Container_Boundary(api_server, "API 服务 (com.chat)") {
+    Component(controllers, "REST 控制器", "Spring MVC", "auth users chats messages posts comments media search calls ai")
+    Component(websocket, "Socket.IO", "netty-socketio", "chat / message 事件；:9002")
+    Component(app_services, "应用服务", "@Service", "按 feature 编排；含 IamUserProvisioner")
+    Component(domain_model, "领域模型", "JPA entities / VOs", "ChatUser Chat Message SocialPost …")
+    Component(domain_repos, "仓储接口", "domain.repository", "UserRepository ChatRepository …")
+    Component(jwt_filter, "JwtAuthenticationFilter", "security", "双轨：Chat HS JWT 或 IAM JWT")
+    Component(infra_adapters, "基础设施", "infra/", "SpringData* Jwt SocketIoConfig WebClient IamJwtConfig")
+    ComponentDb(jpa_store, "持久化", "H2 / Postgres", "Liquibase；ddl-auto validate")
+  }
+
+  Container(im_contract, "IM Contract", "OpenAPI YAML", "src/main/im-contract/openapi.yaml；无 codegen / 无共享 npm")
+}
+
+Container_Ext(admin_app, "管理端", "Next.js", ":4001")
+Container_Ext(explore_iam, "Explore IAM", "OIDC / JWKS", ":9100")
+Container_Ext(image_playground, "Image Playground", "explore-ml", ":8003 可选")
+Container_Ext(speech_svc, "Speech", "explore-ml", ":8004 可选")
+Container_Ext(video_svc, "Video", "explore-ml", ":8005 可选")
+Container_Ext(vision, "Vision", "explore-ml", ":8001 可选")
+Container_Ext(recommendation, "Recommendation", "explore-ml", ":8000 可选")
+Container_Ext(ollama, "Ollama", "LLM", ":11434 可选")
+
+Rel(user_web, pages, "使用", "HTTPS")
+Rel(user_mobile, m_screens, "使用")
+Rel(user_ios, ios_root, "使用")
+Rel(pages, feed_ui, "渲染")
+Rel(pages, chat_ui, "渲染")
+Rel(feed_ui, state, "读写")
+Rel(chat_ui, chat_svc, "调用")
+Rel(chat_svc, chat_domain, "编排")
+Rel(chat_svc, chat_mapper, "映射")
+Rel(chat_svc, chat_infra, "投影读写")
+Rel(chat_infra, chat_domain, "实现仓储")
+Rel(chat_ui, ws_client, "订阅/发送")
+Rel(chat_ui, web_rtc, "通话")
+Rel(web_rtc, ws_client, "信令")
+Rel(state, api_client, "副作用")
+Rel(api_client, controllers, "REST :9001")
+Rel(ws_client, websocket, "Socket.IO :9002")
+Rel(chat_svc, api_client, "Hydrate REST")
+
+Rel(m_screens, m_chat_svc, "调用")
+Rel(m_chat_svc, m_chat_domain, "编排")
+Rel(m_chat_svc, m_chat_mapper, "映射")
+Rel(m_chat_svc, m_chat_infra, "投影读写")
+Rel(m_chat_infra, m_chat_domain, "实现仓储")
+Rel(m_screens, m_api, "REST / WS")
+Rel(m_screens, m_rtc, "通话")
+Rel(m_rtc, m_api, "信令")
+Rel(m_im_dto, im_contract, "对齐字段", "手写")
+Rel(m_api, controllers, "REST :9001")
+Rel(m_api, websocket, "Socket.IO :9002")
+
+Rel(api_client, im_contract, "对齐字段", "手写")
+Rel(ws_client, im_contract, "事件名", "手写")
+
+Rel(ios_root, ios_features, "导航")
+Rel(ios_features, ios_iam, "Sign in with IAM")
+Rel(ios_iam, explore_iam, "authorize + token PKCE", "HTTPS")
+Rel(ios_features, ios_api, "HTTP")
+Rel(ios_features, ios_socket, "实时")
+Rel(ios_features, ios_session, "读写会话")
+Rel(ios_rtc, ios_socket, "信令")
+Rel(ios_api, controllers, "REST :9001")
+Rel(ios_socket, websocket, "Socket.IO :9002")
+
+Rel(admin_app, controllers, "REST")
+Rel(controllers, jwt_filter, "Bearer 鉴权")
+Rel(jwt_filter, explore_iam, "IAM JWT JWKS", "HTTPS")
+Rel(jwt_filter, app_services, "IamUserProvisioner → ChatUser")
+Rel(controllers, app_services, "调用")
+Rel(websocket, app_services, "消息写路径")
+Rel(app_services, domain_repos, "依赖")
+Rel(app_services, domain_model, "编排")
+Rel(infra_adapters, domain_repos, "实现")
+Rel(infra_adapters, jpa_store, "JPA")
+Rel(app_services, image_playground, "HTTP", "可选")
+Rel(app_services, speech_svc, "HTTP", "可选")
+Rel(app_services, video_svc, "HTTP", "可选")
+Rel(app_services, vision, "HTTP", "可选")
+Rel(app_services, recommendation, "HTTP", "可选")
+Rel(app_services, ollama, "HTTP", "可选")
+
+note right of api_server
+  分层：controller → service → domain ← infra (+ mapper)。
+  Auth 双轨：password HS JWT 或 IAM Bearer。
+  限界上下文见 Glossary Preferred Terms。
+end note
+
+note right of web_app
+  Local Chat Projection：UI 读投影；
+  权威在 Spring + IM Contract。
+end note
+
+note right of ios_app
+  契约见 src/main/ios/docs/API-Contract.md。
+  本轮未改 Swift DDD 投影。
+end note
+
+SHOW_LEGEND()
+@enduml

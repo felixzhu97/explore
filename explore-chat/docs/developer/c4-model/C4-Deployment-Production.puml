@@ -16,8 +16,8 @@ Deployment_Node(cdn_edge, "静态托管（计划）", "Vercel 或同类") {
 }
 
 Deployment_Node(cloud, "容器平台（计划）", "Render / Railway / 自建 Docker") {
-  Container(api_prod, "API 服务", "NestJS Docker", "绑定 0.0.0.0:$PORT；健康检查 /api/v1/health")
-  ContainerDb(pg_prod, "PostgreSQL", "托管 Postgres", "Prisma migrate deploy")
+  Container(api_prod, "API 服务", "Spring Boot Docker", "绑定 0.0.0.0:$PORT；健康检查 /api/v1/health")
+  ContainerDb(pg_prod, "PostgreSQL", "托管 Postgres", "Liquibase/JPA migrate deploy")
   ContainerDb(redis_prod, "Redis", "托管 Redis", "会话与缓存")
 }
 
