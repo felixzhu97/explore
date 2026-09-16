@@ -13,6 +13,7 @@ before Phase 1 is done (or marked N/A).
 |----------|------|------|
 | Domain Glossary | repo `docs/Glossary.md` (when present) | Preferred Terms, modules, routes, API prefixes |
 | C4 model | repo `docs/developer/c4-model/` (when present) | Structural C4 + Code + **Dynamic** sequences (`.puml` source of truth) — standards: [c4-model](./c4-model.md) |
+| Root README | repo `README.md` | On-ramp: pitch + Get started + Next steps — tone: [readme](./readme.md) |
 | User Story Map | repo `docs/product-owner/User-Story-Map.md` (when present) | Journey / Backbone / Epic index (status) |
 | User stories (Epics) | repo `docs/product-owner/user-stories/` (when present) | Per-US As a / GWT acceptance criteria / status |
 
@@ -64,19 +65,21 @@ match, mark N/A on the checklist.
 | Change | Update | Phase |
 |--------|--------|-------|
 | New or renamed Preferred Term, business concept, package module, frontend route, API prefix | Glossary | **1** (before code) |
+| Planned domain delta (review before as-built merge) | `C4-Code-Domain-Model-Plan.puml` (GitHub diff colors) | **1** (optional) |
 | New/changed aggregate, entity, VO, domain association, or public domain method on aggregate/entity | `C4-Code-Domain-Model.puml` | **1** (before code); **3** if reconcile after implementation |
 | New actor / external system / system purpose | `C1-Context.puml` | **3** |
 | New app/API container, subdomain, major data store, public port | `C2-Container.puml` (+ C1 if actors/systems change) | **3** |
 | New feature module, UI app surface, or cross-app wiring | `C3-Component.puml` (single combined diagram) | **3** |
 | Local or production deploy topology, ports, hosting | `C4-Deployment.puml` (single combined view) | **3** |
-| New or changed critical runtime path (auth, proxy, WS, payment, …) | `C4-Dynamic-{Flow}.puml` (+ `style-zinc.puml` if styles change) | **3** |
+| New or changed critical runtime path (auth, proxy, WS, payment, …) | `C4-Dynamic-{Flow}.puml` (+ `style.puml` if structural tokens change) | **3** |
 | New user-visible capability, nav/module add/remove, delivery status change | User Story Map index **and** the matching `user-stories/E*.md` | **3** |
+| Default boot command, ports, datastore, or public Live URL change | Root `README.md` Get started / Configuration — [readme](./readme.md) | **3** |
 | Pure unit/integration tests, formatting, dependency bump with no product/architecture semantics | None (N/A) | — |
 
 Do **not** invent split files such as `C3-Component-Backend.puml` /
 `C3-Component-Frontend.puml` or a separate production-only deployment diagram
 unless the repo already standardized on them. Follow [c4-model](./c4-model.md).
-Domain / Dynamic diagrams must use the zinc skeletons in [c4-model](./c4-model.md) (`style-zinc.puml`, not C4-PlantUML dynamic `Rel`).
+Domain / Dynamic diagrams must use the IAM white/black skeletons in [c4-model](./c4-model.md) (`!theme plain` + black borders; UML `+` members; not C4-PlantUML dynamic `Rel`). Structural C4 inlines [`style.puml`](./style.puml) (no `C4_blue_new` / `style-zinc`).
 
 `.puml` first. Regenerate `png/` when PlantUML is available; otherwise note in
 the PR that PNGs are stale.

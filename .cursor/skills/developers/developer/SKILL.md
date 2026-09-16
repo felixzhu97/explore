@@ -1,24 +1,25 @@
 ---
 name: developer
-description: Feature development for this repo — XP, DDD, BDD, TDD, Glossary naming, Apple HIG minimal UX, living docs sync (C4 / Glossary / User Story Map), and mandatory commit/PR standards (why body + References from official docs and research). Submit fine-grained Draft PRs via GitHub Stack (gh stack). Use when implementing features, writing tests, committing, opening PRs, UI work, or DDD/TDD/BDD/XP/clean-code tasks.
+description: Feature development for this repo — XP, DDD, BDD, TDD, Glossary naming, Apple HIG minimal UX, root README on-ramp tone (Get started → Next steps), living docs sync (C4 / Glossary / User Story Map), and mandatory commit/PR standards (why body + References from official docs and research). Submit fine-grained Draft PRs via GitHub Stack (gh stack). Use when implementing features, writing tests, committing, opening PRs, UI work, README edits, or DDD/TDD/BDD/XP/clean-code tasks.
 ---
 
 # Developer
 
 **XP + DDD + BDD + TDD + minimal Clean Code.** Smallest correct change. UI: Apple HIG + minimal.
 
-**Every** commit and PR must follow §6 (project standards). **Every** Jira ticket must follow [Jira delivery](../jira-delivery/SKILL.md). Do not invent alternate formats.
+**Every** commit and PR must follow §6 (project standards). **Every** Jira ticket must follow [Product Owner](../jira-delivery/SKILL.md). Do not invent alternate formats.
 
 ## Hard constraints
 
-1. Layers: [architecture](../../../rules/architecture.mdc) — per feature `controller → service → domain ← infra` (+ `mapper`)
+1. Layers: [architecture](../../../../rules/architecture.mdc) — per feature `controller → service → domain ← infra` (+ `mapper`)
 2. No `domain/port`, `adapter/in|out`, `*Port` in new code
 3. Tests: `should expected result when condition` (spaces; Java methods: camelCase)
 4. Names: Glossary Preferred Term in repo `docs/Glossary.md` (when present) + [clean-code-naming](references/clean-code-naming.md)
 5. UI: Apple HIG + [apple-minimal-ux](references/apple-minimal-ux.md)
-6. **Commit / PR / Jira / branches**: always reuse §6 + [Jira delivery](../jira-delivery/SKILL.md); branch `<slug>` (no prefix); submit **fine-grained Draft PRs via GitHub Stack** (`gh stack`); commit subject = PR title (imperative, no type prefix); body why → References → JIRA; prose ≤72 cols; References = official docs + research
+6. **Commit / PR / Jira / branches**: always reuse §6 + [Product Owner](../jira-delivery/SKILL.md); branch `<slug>` (no prefix); submit **fine-grained Draft PRs via GitHub Stack** (`gh stack`); commit subject = PR title (imperative, no type prefix); body why → References → JIRA; prose ≤72 cols; References = official docs + research
 7. **XP**: follow [extreme-programming](references/extreme-programming.md) — Simple Design / YAGNI, CI green, small releases, customer / AC feedback
-8. **Living docs (phased)**: **before code** — Glossary → `C4-Code-Domain-Model.puml`; **after code (CI green)** — other C4 + User Story Map; same feature branch — see §4 and [living-docs](references/living-docs.md)
+8. **Living docs (phased)**: **before code** — Glossary → `C4-Code-Domain-Model.puml`; **after code (CI green)** — other C4 + User Story Map (+ root README when boot/ports/Live change); same feature branch — see §4 and [living-docs](references/living-docs.md)
+9. Root `README.md` tone: short pitch, Get started → Next steps — [readme](references/readme.md)
 
 ## Workflow
 
@@ -88,7 +89,7 @@ Living docs follow **three phases** on the same feature branch. Unmatched trigge
 | Document | Path |
 |----------|------|
 | Glossary | repo `docs/Glossary.md` (when present) |
-| C4 | repo `docs/developer/c4-model/` (when present) — `.puml` source; style & file set: [c4-model](references/c4-model.md) |
+| C4 | repo `docs/developer/c4-model/` (when present) — `.puml` source; IAM white/black (`style.puml` inline + plain domain/dynamic) & UML members: [c4-model](references/c4-model.md) |
 | User Story Map | repo `docs/product-owner/User-Story-Map.md` (when present) (+ `user-stories/E*.md`) |
 
 | Change | Phase | Must update |
@@ -97,19 +98,24 @@ Living docs follow **three phases** on the same feature branch. Unmatched trigge
 | New/changed aggregate, entity, VO, domain association, or public domain method on aggregate/entity | **1** (+ **3** if reconcile) | `C4-Code-Domain-Model.puml` |
 | Actor/external system, container, component wiring, deploy topology, **critical runtime path** | **3** | Matching C4 / Dynamic `.puml` per [c4-model](references/c4-model.md) |
 | New user-visible capability, delivery status, primary nav add/remove | **3** | User Story Map index + matching `user-stories/E*.md` |
+| Default boot, ports, datastore, or public Live URL change | **3** | Root `README.md` Get started / Configuration per [readme](references/readme.md) |
 | Pure tests / pure styling / no product or architecture semantics | — | None (N/A) |
 
 Flow: Phase 1 docs → implement → Phase 3 docs → commit/PR (stack recommended).
 Prefer editing `.puml` (C4-PlantUML style in [c4-model](references/c4-model.md)); if
 PlantUML is unavailable, note in the PR that `png/` is pending render.
 
-Detail + examples: [living-docs](references/living-docs.md) · C4 standards: [c4-model](references/c4-model.md)
+Detail + examples: [living-docs](references/living-docs.md) · C4 standards: [c4-model](references/c4-model.md) · README: [readme](references/readme.md)
 
 ### 5. UI — Apple HIG + minimal
 
 Official: [HIG](https://developer.apple.com/design/human-interface-guidelines/). Clarity, deference, one primary action; no decorative noise.
 
 Detail: [apple-minimal-ux](references/apple-minimal-ux.md)
+
+### 5b. Root README — on-ramp tone
+
+When creating or rewriting the repo root `README.md`, follow [readme](references/readme.md): calm second-person prose, Get started → Next steps, no badge/TOC walls; deep content stays in project docs.
 
 ### 6. Branches / Commit / PR (mandatory every time)
 
@@ -123,7 +129,7 @@ Detail: [apple-minimal-ux](references/apple-minimal-ux.md)
 | Jira **summary**                  | English (`As a … I want … so that …`)                                  |
 | Jira description                  | English (headings, prefixes, body, Definition of Done)                 |
 
-Jira tickets follow [Jira delivery](../jira-delivery/SKILL.md): business-facing, short descriptions.
+Jira tickets follow [Product Owner](../jira-delivery/SKILL.md): business-facing, short descriptions.
 
 #### Branch naming
 
@@ -325,13 +331,14 @@ same official/research priority.
 - [ ] Phase 3 living docs: other C4 + User Story Map **after** implementation, CI green (or N/A)
 - [ ] Domain model reconciled with code if implementation drifted
 - [ ] UI (if any): HIG + minimal
+- [ ] Root README (if boot/ports/Live changed or rewriting front page): [readme](references/readme.md) tone
 - [ ] Branch: `<slug>` (no prefix); fine-grained Draft PRs via `gh stack` (no single mega-Draft)
 - [ ] Commit: subject = PR title; why + References (official/research); no type prefix
 - [ ] Each References link maps to a claim in the why text (or N/A with note)
 - [ ] PR title: business summary, imperative verb (commit-style); no `feat:`/`fix:` prefix
 - [ ] PR body: why → References → JIRA (bottom); ≤72 cols; no title echo; CI green
 - [ ] Stack submitted as Drafts (`gh stack submit` / `--auto`; no `--open` until ready)
-- [ ] Jira (if any): [Jira delivery](../jira-delivery/SKILL.md) template followed
+- [ ] Jira (if any): [Product Owner](../jira-delivery/SKILL.md) template followed
 
 ## Related
 
@@ -339,7 +346,8 @@ same official/research priority.
 |------|-------|
 | Extreme Programming | [extreme-programming](references/extreme-programming.md) |
 | Living docs sync | [living-docs](references/living-docs.md) |
-| Architecture | [architecture rule](../../../rules/architecture.mdc) |
+| Root README tone | [readme](references/readme.md) |
+| Architecture | [architecture rule](../../../../rules/architecture.mdc) |
 | Glossary | repo `docs/Glossary.md` (when present) |
 | C4 model | repo `docs/developer/c4-model/` (when present) — [c4-model](references/c4-model.md) |
 | User Story Map | repo `docs/product-owner/User-Story-Map.md` (when present) |
@@ -350,4 +358,4 @@ same official/research priority.
 | Business Analysis | [business-analysis](../business-analysis/SKILL.md) |
 | Market / tech strategy | [market-tech-analysis](../market-tech-analysis/SKILL.md) |
 | Research / OSS watchlist | [sources.md](../market-tech-analysis/references/sources.md) |
-| Product Owner | [Jira delivery](../jira-delivery/SKILL.md) |
+| Product Owner | [Product Owner](../jira-delivery/SKILL.md) |
