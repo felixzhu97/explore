@@ -8,7 +8,7 @@ Guidance under this role should cite **engineering practice**, **product domain 
 1. Prefer links from this folder. **Claim + deep URL**; never company name alone.
 2. Do **not** invent URLs. Do **not** replace a whitelist primary source with a random Medium/secondary summary.
 3. If nothing here fits, add a row to the matching file (same whitelist) before citing elsewhere.
-4. Whitelist: **Google, Meta, Apple, Microsoft, Amazon, Netflix, Uber, Spotify, LinkedIn, Cloudflare** — official eng blogs, design docs, research pubs, architecture centers.
+4. Whitelist for **industry vendors**: **Apple, Google, GitHub** (official eng blogs, design docs, research pubs, architecture centers). **Protocols, standards, papers, Hugging Face, and Qwen** (RFC / NIST / W3C / arXiv abs / HF cards / Qwen) are always allowed when the claim needs them.
 
 ## Which file to use
 
@@ -24,13 +24,18 @@ Guidance under this role should cite **engineering practice**, **product domain 
 ## Citation format (answers / design notes)
 
 ```text
-Claim: Batch marketplace matching optimizes network wait time, not only nearest supply.
-Source: Uber — https://www.uber.com/us/en/marketplace/matching/
+Claim: Prefer Apple HIG for account and sign-in flows.
+Source: Apple — https://developer.apple.com/design/human-interface-guidelines/managing-accounts
 ```
 
 ```text
-Claim: Prefer static stability over reactive scale-out when an AZ fails.
-Source: Amazon Builders’ Library — https://aws.amazon.com/builders-library/static-stability-using-availability-zones/
+Claim: Treat latency as a golden signal for interactive systems.
+Source: Google SRE — https://sre.google/sre-book/monitoring-distributed-systems/
+```
+
+```text
+Claim: Use Dependabot for grouped GitHub Actions updates.
+Source: GitHub — https://docs.github.com/en/code-security/dependabot
 ```
 
 ## Indexes

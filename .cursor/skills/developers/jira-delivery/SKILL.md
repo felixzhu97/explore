@@ -1,9 +1,9 @@
 ---
 name: jira-delivery
-description: Jira delivery for ExploreAI. Keep tickets minimal, business-facing, user-value first, and testable. Always use the project template (Background first, User Story, numbered Scenario + GIVEN-WHEN-THEN, Definition of Done, Story Points), require an Epic (create one if missing), write commercial outcome language (not tool-first), and cite official docs or research links when referencing standards. Use when creating or refining stories, acceptance criteria, backlog items, story points, or calling Jira MCP tools.
+description: Product Owner for ExploreAI. Keep tickets minimal, business-facing, user-value first, and testable. Always use the project template (Background first, User Story, numbered Scenario + GIVEN-WHEN-THEN, Definition of Done, Story Points), require an Epic (create one if missing), write commercial outcome language (not tool-first), and cite official docs or research links when referencing standards. Use when creating or refining stories, acceptance criteria, backlog items, story points, or calling Jira MCP tools.
 ---
 
-# Jira delivery
+# Product Owner
 
 **Value first. Language minimal. Outcomes testable.**
 
@@ -72,7 +72,7 @@ Follow the Agile Manifesto: individuals and interactions, working software, cust
 
 Detail: [agile-manifesto](references/agile-manifesto.md)
 
-When Background or Definition of Done cites external standards, APIs, or papers: use **official documentation** and **research** URLs (same priority as [developer](../developer/SKILL.md) §5 — [dependency-docs](../developer/references/dependency-docs.md), [sources.md](../market-tech-analysis/references/sources.md), arXiv abs pages).
+When Background or Definition of Done cites external standards, APIs, or papers: use **official documentation**, **Apple / Google / GitHub** research URLs, and **primary protocols / standards / papers / Hugging Face / Qwen** (RFC / NIST / W3C / arXiv abs / HF cards / Qwen) when relevant (same priority as [developer](../developer/SKILL.md) §6 — [dependency-docs](../developer/references/dependency-docs.md), [sources.md](../market-tech-analysis/references/sources.md)).
 
 ## Minimal Template
 
