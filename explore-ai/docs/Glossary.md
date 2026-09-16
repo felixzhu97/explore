@@ -151,9 +151,11 @@ Shared persistence and aggregate bases. Feature modules inherit these types inst
 | Data Retention           | 数据留存 | Timed purge of inactive sessions and aged metrics events | Job               | `ChatDataRetentionJob`, `app.data-retention` | Default 90d aligned with Client Identity cookie |
 | Plan Quota               | 套餐配额 | Daily hard limit on billable AI API calls for Free/Pro plan | Technical         | `billing.web.UsageQuotaFilter`, `app.billing` | Returns `429` / `QUOTA_EXCEEDED`; distinct from short-window rate limit |
 | Metrics Admin Key        | Metrics 管理密钥 | Shared secret protecting `/api/metrics/**` when configured | Technical         | `MetricsAdminAuthFilter`, `METRICS_ADMIN_API_KEY` | Header `X-Admin-Key`; empty key keeps local Metrics UI open |
-| Account Me               | 当前账号 | Viewer identity: anonymous Client Identity or authenticated OAuth user | Use Case          | `AccountController` `/api/account/me` | `mode=anonymous\|authenticated`; `loginAvailable` + `loginProviders` when any OAuth provider is configured |
-| Account User             | 账号用户 | Persisted OAuth subject linked to a Client Identity cookie | Entity            | `AccountUser`, `account_users` | Provider+subject unique; login merges `c:` rows into `u:{id}` |
-| OAuth Login              | OAuth 登录 | Optional Google/GitHub sign-in via Spring Security OAuth2 Client | Capability        | `/oauth2/authorization/{google\|github}`, `/api/account/logout` | Guest mode remains default; no login wall |
+| Account Me               | 当前账号 | Viewer identity: anonymous Client Identity, OAuth Login session, or IAM Bearer JWT | Use Case          | `AccountController` `/api/account/me` | `mode=anonymous\|authenticated`; native clients may omit Client Identity cookie when `Authorization: Bearer` is present |
+| Account User             | 账号用户 | Persisted OAuth / IAM subject; browser sessions may link a Client Identity cookie | Entity            | `AccountUser`, `account_users` | Provider+subject unique; login merges `c:` rows into `u:{id}`; provider `explore-iam` for IAM tokens |
+| OAuth Login              | OAuth 登录 | Optional Google/GitHub/Explore IAM sign-in via Spring Security OAuth2 Client | Capability        | `/oauth2/authorization/{google\|github\|explore-iam}`, `/api/account/logout` | Guest mode remains default; no login wall |
+| IAM Bearer               | IAM 访问令牌 | Explore IAM access token accepted by the JWT resource server for native / API clients | Capability        | `Authorization: Bearer` + `app.oauth.explore-iam.issuer-uri` | Maps to Account User (`explore-iam` + `sub`); CSRF header not required |
+| IAM Module Scope         | IAM 模块范围 | GitHub-style OAuth scope on IAM access tokens gating AI modules when Bearer is present | Concept | `SCOPE_write:ai_chat` … `SCOPE_write:ai_tools` | Guests without JWT stay open; missing scope → 403 |
 | Legal Documents          | 法律文档 | Terms, Privacy Policy, Cookie Policy, Sub-processors pages | UI                | `/policies`, `/policies/<slug>` | Hub via Help → Policies; doc bodies localized (en/zh/ja/fr/es). Distinct from interactive `/privacy` controls. Legacy `/legal` redirects. |
 | Chat Message             | 消息   | Single message within a session                       | Entity            | `ChatMessage`                                 | Immutable; created via factory methods |
 | User Message             | 用户消息 | Message sent by the user                              | Enum / Role       | `ChatMessageType.USER`, role=`user`           | —                                      |
@@ -340,9 +342,10 @@ UPLOADING → PROCESSING → READY
 | Speech Text                        | 语音文本   | Validated text input for TTS               | Value Object        | `SpeechText`                         | —                                                     |
 | Synthesized Audio                  | 合成音频   | Domain result of TTS conversion            | Value Object        | `SynthesizedAudio`                   | Audio bytes                                           |
 | Synthesize                         | 合成     | Execute text-to-speech conversion          | Use Case Behavior   | `AudioFacade.synthesize()`           | POST `/api/audio/speak` (alias `/api/tts/synthesize`) |
-| Automatic Speech Recognition (ASR) | 自动语音识别 | Convert spoken audio to text               | Capability          | `StreamingTranscriptionUseCase`      | whisper.cpp; flag `module-audio-asr`                  |
-| Streaming Transcription            | 流式转写   | Real-time ASR over WebSocket               | Use Case Behavior   | `AudioTranscriptionWebSocketHandler` | Port 8178                                             |
-| Transcription                      | 转写     | Single ASR result converting audio to text | Application Concept | `WhisperCppTranscriptionAdapter`     | Returns text                                          |
+| Automatic Speech Recognition (ASR) | 自动语音识别 | Convert spoken audio to text               | Capability          | `StreamingTranscriptionUseCase`      | explore-ml Qwen3-ASR via speech (`:8004`); flag `module-audio-asr` |
+| Streaming Transcription            | 流式转写   | Real-time ASR over WebSocket               | Use Case Behavior   | `AudioTranscriptionWebSocketHandler` | Product `WS /ws/audio/transcribe` → speech `/ws/v1/audios:transcribe` |
+| Transcription                      | 转写     | Single ASR result converting audio to text | Application Concept | `StreamingTranscriptionGateway`      | `SpeechStreamingTranscriptionAdapter` |
+| Voice Conversation                 | 语音对话   | Duplex mic → ASR → chat → TTS on native clients | Capability     | AI iOS Chat (Qwen)                   | ChatGPT-style UI; Qwen3 ASR/TTS via speech `:8004` |
 
 
 ---
