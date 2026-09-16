@@ -1,0 +1,261 @@
+@startuml C4-Code-Domain-Model-Plan
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontColor #000000
+}
+
+title Code diagram (C4) — Domain model plan (vs as-built)
+
+legend right
+  |= Stereotype |= Meaning |
+  | <<AggregateRoot>> | Consistency boundary |
+  | <<Entity>> | Identity + lifecycle |
+  | <<ValueObject>> | Immutable by value |
+  | <<ReadModel>> | Query / projection (not AR) |
+  | <<DomainEvent>> | Client in-process fact |
+  | <<Repository>> | Outbound port |
+  | <color:#1A7F37>██</color> | Add / rename toward plan |
+  | <color:#CF222E>██</color> | Remove / demote from as-built |
+endlegend
+
+note as N_PLAN
+  Base: C4-Code-Domain-Model.puml (as-built).
+  Goals: fewer AggregateRoots, clearer edges,
+  Glossary names (User / Chat / Message / Post).
+  Flat diagram — no package wrappers.
+  Wire SSoT: src/main/im-contract/openapi.yaml
+end note
+
+abstract class AbstractImmutable <<Abstract>> {
+  + id: String
+  + createdAt: Instant
+}
+abstract class AbstractEntity <<Abstract>> {
+  + updatedAt: Instant
+  + version: long
+  # touch()
+}
+AbstractImmutable <|-- AbstractEntity
+
+' ========== Server (planned shape) ==========
+
+class User <<AggregateRoot>> {
+  username
+  email
+  avatar
+  status
+  online
+  --
+  {static} register(...)
+  updateProfile(...)
+  markOnline(online)
+}
+note right of User
+  <color:#1A7F37>Rename ChatUser → User</color>
+  (Glossary Preferred Term).
+end note
+
+class Follow <<Entity>> {
+  followerId
+  followingId
+}
+User "1" o-- "0..*" Follow : follows
+
+class Chat <<AggregateRoot>> {
+  type: PRIVATE | GROUP
+  name
+  avatar
+  deleted
+  --
+  {static} createPrivate()
+  {static} createGroup(name)
+  rename(name)
+  softDelete()
+  <color:#1A7F37>+ ensureParticipant(userId)</color>
+}
+
+class Participant <<Entity>> {
+  userId
+  role
+  archived
+  muted
+  --
+  {static} join(...)
+  archive / mute
+}
+note right of Participant
+  <color:#1A7F37>Rename ChatParticipant → Participant</color>
+  (owned by Chat).
+end note
+
+class Message <<Entity>> {
+  senderId
+  type
+  content
+  mediaUrl
+  deleted
+  <color:#1A7F37>+ clientMsgId?</color>
+  --
+  {static} send(...)
+  edit(content)
+  softDelete()
+}
+note right of Message
+  <color:#CF222E>Demote: was AggregateRoot</color>
+  <color:#1A7F37>→ Entity inside Chat</color>
+  Write path: Chat.ensureParticipant
+  then Message.send → save.
+end note
+
+class Reaction <<Entity>> {
+  userId
+  emoji
+}
+class ReadReceipt <<Entity>> {
+  userId
+}
+
+Chat "1" *-- "1..*" Participant
+Chat "1" *-- "0..*" Message
+Message "1" *-- "0..*" Reaction
+Message "1" *-- "0..*" ReadReceipt
+Participant --> User
+Message --> User : sender
+
+interface ChatRepository <<Repository>> {
+  findById / save
+}
+interface MessageRepository <<Repository>> {
+  save / findByChatId
+}
+Chat ..> ChatRepository
+Message ..> MessageRepository
+
+class Post <<AggregateRoot>> {
+  authorId
+  caption
+  type
+  mediaUrls
+  --
+  {static} create(...)
+}
+note right of Post
+  <color:#1A7F37>Rename SocialPost → Post</color>
+end note
+
+class Comment <<Entity>> {
+  userId
+  content
+  parentId?
+}
+class FeedEntry <<Entity>> {
+  postId
+  authorId
+}
+
+Post "1" *-- "0..*" Comment
+Post "1" o-- "0..*" FeedEntry
+Post --> User : author
+Comment --> User : author
+
+class Notification <<Entity>> {
+  recipientId
+  actorId
+  type
+  postId?
+  readAt?
+}
+note right of Notification
+  <color:#1A7F37>Rename ActivityNotification
+  → Notification</color>
+  Not an AggregateRoot.
+end note
+Notification --> Post
+
+class Group <<Entity>> {
+  name
+  creatorId
+}
+note right of Group
+  <color:#CF222E>Demote SocialGroup AggregateRoot</color>
+  <color:#1A7F37>→ Entity / Chat.type=GROUP</color>
+  Prefer Chat for messaging groups.
+end note
+
+' ========== Client Local Chat Projection (planned) ==========
+
+class ChatId <<ValueObject>>
+class ClientMsgId <<ValueObject>>
+class DeliveryStatus <<ValueObject>> {
+  sending | sent | delivered | read | failed
+  --
+  canTransition(to)
+}
+
+class ChatThread <<AggregateRoot>> {
+  chatId: ChatId
+  --
+  hydrate / accept
+  sendOptimistic
+  applyDelivery
+  timeline
+  pullDomainEvents
+}
+
+class ThreadMessage <<Entity>> {
+  id
+  clientMsgId
+  status: DeliveryStatus
+  --
+  promote / transition
+}
+note right of ThreadMessage
+  <color:#1A7F37>Client message entity</color>
+  (avoid clash with server Message).
+end note
+
+class ChatCatalog <<ReadModel>> {
+  summaries[]
+  --
+  replaceAll
+  applyPreview
+  list
+}
+note right of ChatCatalog
+  <color:#CF222E>Not AggregateRoot</color>
+  <color:#1A7F37>→ ReadModel / list projection</color>
+  Orchestrated by service; no Catalog⊃Thread.
+end note
+
+interface ChatProjectionRepository <<Repository>> {
+  listChats / upsertChats
+  listMessages / replaceMessages
+}
+
+ChatThread "1" *-- "0..*" ThreadMessage
+ChatThread --> ChatId
+ThreadMessage --> ClientMsgId
+ThreadMessage --> DeliveryStatus
+ChatCatalog ..> ChatId
+ChatProjectionRepository ..> ChatCatalog
+ChatProjectionRepository ..> ThreadMessage
+
+note as N_EVENTS
+  Client DomainEvents (in-process only):
+  ThreadHydrated, MessageAccepted,
+  DeliveryStatusChanged, ChatPreviewChanged, …
+  <color:#CF222E>Do not model as network events.</color>
+end note
+N_EVENTS .. ChatThread
+
+N_PLAN .. User
+N_PLAN .. Chat
+N_PLAN .. ChatThread
+
+@enduml
