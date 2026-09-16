@@ -12,14 +12,15 @@ Person(user, "用户", "对话、文档、Agent / 工作流、工具、图像分
 Person(admin, "管理员/开发者", "评估、文本分析、AI 指标看板、功能开关")
 
 ' ============================================================
-' FRONTEND
+' FRONTEND / NATIVE
 ' ============================================================
 Container(angular_app, "Web Frontend", "Angular 22 + TypeScript", "/chat /generate /rag /metrics + flag: /agents /skills /vision /mcp /eval /asr\nLaunchDarkly + Datadog RUM")
+Container(ios_app, "AI iOS", "SwiftUI", "src/main/ios · PKCE · explore-ai-ios · API :9000")
 
 ' ============================================================
 ' BACKEND
 ' ============================================================
-Container(backend, "AI Platform Backend", "Spring Boot 4.1 / Java 25 / Spring AI 2.0", "Clean Architecture，dev :9000 / prod :8080")
+Container(backend, "AI Platform Backend", "Spring Boot 4.1 / Java 25 / Spring AI 2.0", "Clean Architecture，dev :9000 / prod :8080\nIamResourceServerConfig · JWT → AccountUser")
 
 ' ============================================================
 ' DOMAIN 1: CHAT
@@ -127,10 +128,10 @@ Container_Boundary(vision_domain, "Image Analysis Domain") {
 Container_Boundary(audio_domain, "Audio Domain") {
     Container(audio_controller, "AudioController", "@RestController", "TTS HTTP + ASR WebSocket")
     Container(audio_facade, "AudioFacade", "Application Service", "TTS 门面")
-    Container(asr_usecase, "StreamingTranscriptionUseCase", "Use Case", "流式转录 [local]")
+    Container(asr_usecase, "StreamingTranscriptionUseCase", "Use Case", "流式转录")
     Container(asr_ws_handler, "AudioTranscriptionWebSocketHandler", "@Component", "ASR WebSocket")
-    Container(asr_adapter, "WhisperCppTranscriptionAdapter", "@Component", "whisper.cpp [local]")
-    Container(tts_repo, "SpringAiTextToSpeechRepository", "@Component", "OpenAI TTS 适配器")
+    Container(asr_adapter, "SpeechStreamingTranscriptionAdapter", "@Component", "explore-ml Qwen3-ASR")
+    Container(tts_repo, "TextToSpeechRepository", "Repository", "OpenAI TTS or speech Qwen TTS")
 }
 
 ' ============================================================
@@ -183,18 +184,24 @@ Container_Ext(deepseek_api, "DeepSeek API", "REST API", "LLM 对话", "HTTPS")
 Container_Ext(openai_api, "OpenAI API", "REST API", "DALL-E + TTS", "HTTPS")
 Container_Ext(ollama_svc, "Ollama [local]", "REST API", "Embedding + qwen3.5 多模态 RAG", "11434")
 Container_Ext(tesseract_svc, "Tesseract OCR [local]", "Native Library", "eng + chi_sim tessdata", "系统安装")
-Container_Ext(whisper_cpp_svc, "whisper.cpp [local]", "REST/WebSocket", "流式 ASR", "8178")
+Container_Ext(speech_svc, "explore-ml speech", "REST/WebSocket", "Qwen3-ASR + Qwen3-TTS", "8004")
 Container_Ext(serper_api, "Serper.dev API", "REST API", "Web 搜索", "HTTPS")
 Container_Ext(launchdarkly, "LaunchDarkly", "SaaS", "功能开关", "HTTPS")
 Container_Ext(datadog, "Datadog us5", "SaaS", "APM (javaagent → Agent)", "HTTPS")
+Container_Ext(explore_iam, "Explore IAM", "OIDC Provider", "authorize / token / JWKS :9100", "HTTPS")
 
 ' ============================================================
 ' RELATIONSHIPS
 ' ============================================================
 Rel(user, angular_app, "使用 Web UI", "HTTP/SSE/WebSocket")
+Rel(user, ios_app, "使用 iOS", "SwiftUI")
 Rel(admin, eval_controller, "质量评估", "HTTP")
 Rel(admin, analysis_controller, "文本分析", "HTTP")
 Rel(admin, metrics_controller, "AI 指标看板", "HTTP")
+
+Rel(ios_app, explore_iam, "OIDC + PKCE", "HTTPS :9100")
+Rel(ios_app, backend, "Bearer access_token", "HTTPS :9000")
+Rel(backend, explore_iam, "JWKS / issuer validate", "HTTPS")
 
 Rel(angular_app, chat_controller, "会话 CRUD", "HTTP")
 Rel(angular_app, text_controller, "流式对话", "SSE")
@@ -289,9 +296,10 @@ Rel(audio_controller, audio_facade, "TTS")
 Rel(audio_controller, asr_ws_handler, "ASR WebSocket")
 Rel(audio_facade, tts_repo, "合成")
 Rel(asr_ws_handler, asr_usecase, "流式转录")
-Rel(asr_usecase, asr_adapter, "调用")
-Rel(asr_adapter, whisper_cpp_svc, "转录", "HTTP :8178")
-Rel(tts_repo, openai_api, "TTS", "HTTPS")
+Rel(asr_usecase, asr_adapter, "speech")
+Rel(asr_adapter, speech_svc, "WS /ws/v1/audios:transcribe", "WS :8004")
+Rel(tts_repo, openai_api, "OpenAI TTS", "HTTPS")
+Rel(tts_repo, speech_svc, "voices:synthesize", "HTTP :8004")
 
 Rel(mcp_controller, mcp_server_svc, "调用")
 Rel(mcp_client_controller, mcp_facade, "调用")

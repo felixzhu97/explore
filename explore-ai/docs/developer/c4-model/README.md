@@ -9,7 +9,7 @@ Source of truth: `.puml`。官方 C4: [c4model.com](https://c4model.com/)。库:
 | Track | Files | Style |
 | ----- | ----- | ----- |
 | **Structural C4** | C1–C3, Deployment | Official **`C4_blue_new`** theme（线框；勿与 zinc 混用） |
-| **Domain + Dynamics** | Code domain model, `C4-Dynamic-*` | Shared zinc look via [`style-zinc.puml`](style-zinc.puml) |
+| **Domain + Dynamics** | Code domain model, `C4-Dynamic-*` | [`style-zinc.puml`](style-zinc.puml)（白底 + 彩色边框，IAM 风格） |
 
 Do not mix `C4_blue_new` into domain/dynamic diagrams（也不要把 `style-zinc.puml` 用于 structural C4）。
 
@@ -17,15 +17,16 @@ Do not mix `C4_blue_new` into domain/dynamic diagrams（也不要把 `style-zinc
 
 | 文件 | 层级 | 说明 |
 | --- | --- | --- |
-| `C1-Context.puml` | C1 | 系统上下文图（含 LaunchDarkly、Datadog、cloud-minimal prod） |
-| `C2-Container.puml` | C2 | 容器图（13 个子域 + 功能开关横切） |
-| `C3-Component.puml` | C3 | **单图**：前后端组件 + Clean Architecture 四层 |
+| `C1-Context.puml` | C1 | 系统上下文（含 Explore IAM、AI iOS、LaunchDarkly、Datadog） |
+| `C2-Container.puml` | C2 | 容器图（13 子域 + AI iOS + IAM） |
+| `C3-Component.puml` | C3 | **单图**：Web + iOS + Backend；`IamResourceServerConfig` |
 | `C4-Code-Domain-Model.puml` | **Code** | 领域模型（Entity 行为 + VO / Repository；对齐 `com.ai.*.domain`） |
-| `C4-Deployment.puml` | Deployment | **单图**：本地 dev + 生产（Vercel + Render） |
-| `style-zinc.puml` | Shared | Code + Dynamics 共用 zinc 样式 |
+| `C4-Deployment.puml` | Deployment | **单图**：本地（IAM :9100 / AI :9000 / Simulator）+ 生产 |
+| `style-zinc.puml` | Shared | Code + Dynamic 共用样式（白底、标题色区分 stereotype） |
 | `C4-Dynamic-Document-Upload.puml` | Dynamic | 文档上传 ETL |
 | `C4-Dynamic-Rag-Ask.puml` | Dynamic | RAG SSE 问答 |
 | `C4-Dynamic-Chat-Tools.puml` | Dynamic | Chat 工具 SSE + A2UI 图表 |
+| `C4-Dynamic-IamNativeSignIn.puml` | Dynamic | AI iOS PKCE → IAM → Bearer `/api/account/me` → Home |
 
 > **Code vs Deployment**：C4 官方第 4 层是 **Code**（类与关系）。本仓 `C4-Deployment.puml` 是部署视图；领域类型总览见 `C4-Code-Domain-Model.puml`。图中 stereotype 表示约定，**没有**共享 Java `Entity`/`AggregateRoot` 基类。
 
@@ -64,7 +65,7 @@ Do not mix `C4_blue_new` into domain/dynamic diagrams（也不要把 `style-zinc
 
 ![C4-Code-Domain-Model](png/C4-Code-Domain-Model.png)
 
-按 `com.ai.*.domain` 分包；Aggregate / Entity 展示领域行为（factory、状态转换、聚合内操作）。术语见 [Glossary](../../Glossary.md) Appendix A。
+按 `com.ai.*.domain` 分包；**AggregateRoot** 绿 · **Entity** 蓝 · **ValueObject** 橙 · **Enum** 琥珀 · **DomainEvent** 紫（白底 + 彩色边框/标题，与 IAM authorization 图一致）。成员使用 UML `+field: Type` / `+method()`。术语见 [Glossary](../../Glossary.md) Appendix A。
 
 ---
 
@@ -83,6 +84,7 @@ Do not mix `C4_blue_new` into domain/dynamic diagrams（也不要把 `style-zinc
 | [C4-Dynamic-Document-Upload.puml](C4-Dynamic-Document-Upload.puml) | 文档上传 → 分块 → 嵌入 → H2 |
 | [C4-Dynamic-Rag-Ask.puml](C4-Dynamic-Rag-Ask.puml) | RAG 提问 → 检索 → SSE 流式回答 |
 | [C4-Dynamic-Chat-Tools.puml](C4-Dynamic-Chat-Tools.puml) | Chat 工具调用 → SSE → A2UI 图表 |
+| [C4-Dynamic-IamNativeSignIn.puml](C4-Dynamic-IamNativeSignIn.puml) | AI iOS IAM PKCE 登录 → Bearer me → Home |
 
 ![C4-Dynamic-Rag-Ask](png/C4-Dynamic-Rag-Ask.png)
 
@@ -100,7 +102,7 @@ Do not mix `C4_blue_new` into domain/dynamic diagrams（也不要把 `style-zinc
 - **功能开关**: LaunchDarkly（`ModuleAccessFilter` + `FeatureFlagService`）
 - **可观测性**: Datadog RUM（前端，可选）；APM javaagent 可选（Render Starter 512MB 默认关闭）
 - **外部服务 (cloud)**: DeepSeek API (LLM) / OpenAI API (DALL-E + TTS) / Serper.dev (Web 搜索) / Resend (Automations 邮件)
-- **本地服务 (dev / prod 默认关闭)**: Ollama / whisper.cpp / Tesseract / ONNX Image Analysis
+- **本地服务 (dev / prod 默认关闭)**: Ollama / explore-ml speech / Tesseract / ONNX Image Analysis
 
 ### Pipeline（工作流）子域
 
@@ -189,7 +191,7 @@ RAG 检索经 `H2SpringAiVectorStore`（Spring AI `VectorStore` SPI）+ `VectorS
 ```
 Browser :4200 → Angular Dev Server → proxy /api/* → Spring Boot :9000
                                               ↘ H2 ./data/explore-ai
-                                              ↘ Ollama :11434 / whisper :8178 / Tesseract
+                                              ↘ Ollama :11434 / speech :8004 / Tesseract
                                               ↘ DeepSeek / OpenAI / Serper / Resend
 ```
 
@@ -210,7 +212,7 @@ Browser → Vercel (Angular static) → Render Starter explore-ai (:8080 + H2 ep
 **GitHub OAuth redirect URI**: `https://www.felixzhu.chat/login/oauth2/code/github`
 
 
-**cloud-minimal**: `module-pipelines` / `module-skills` **开启**；Vision / ASR / MCP / Eval / Ollama **关闭**
+**cloud-minimal**: `module-pipelines` / `module-skills` **开启**；Vision / ASR / MCP / Eval / Ollama **关闭**；Docker `bootJar -PcloudMinimal`（不含 ONNX/Tess4J/MCP jars）；Automations due-scan 默认关闭
 
 ---
 
@@ -222,7 +224,8 @@ Browser → Vercel (Angular static) → Render Starter explore-ai (:8080 + H2 ep
 | Spring Boot Backend (prod) | **8080** |
 | H2 Embedded | 内嵌 (dev `./data` / prod `/app/data` volume) |
 | Ollama (Embedding/RAG Vision) | 11434 [local] |
-| whisper.cpp (ASR) | 8178 [local] |
+| explore-ml speech (Qwen3 ASR/TTS) | 8004 [local] |
+| explore-ml image-playground | 8003 [local] |
 | Tesseract OCR | 系统安装 (JNA) [local] |
 | Image Analysis ONNX Models | `models/` 本地文件 [local] |
 | Angular Dev Server | 4200 |
@@ -256,9 +259,9 @@ Browser → Vercel (Angular static) → Render Starter explore-ai (:8080 + H2 ep
 | Caption | BLIP base ONNX | ONNX Runtime 本地 |
 | Detect | YOLOv8n ONNX | COCO 80 类 |
 | OCR | eng + chi_sim | Tesseract tessdata |
-| ASR | whisper-base | whisper.cpp 本地 |
+| ASR | Qwen3-ASR-1.7B | explore-ml speech `:8004` |
 | Image Gen | dall-e-3 | OpenAI API |
-| TTS | gpt-4o-mini-tts | OpenAI API |
+| TTS | Qwen3-TTS (default) / gpt-4o-mini-tts | explore-ml speech `:8004` / OpenAI |
 
 ---
 

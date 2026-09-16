@@ -1,39 +1,79 @@
-@startuml C4-Deployment
+@startuml
+!ROUNDED_STYLE=1
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
+' 样式内联自 style.puml（勿改为 !include）
+UpdateElementStyle("person", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_person", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("system", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_system", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("container", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_container", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("component", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_component", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("node", "#FFFFFF", "#000000", "#000000")
+UpdateBoundaryStyle("", $bgColor="#FFFFFF", $fontColor="#000000", $borderColor="#000000")
+UpdateRelStyle("#000000", "#000000")
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
 
 LAYOUT_WITH_LEGEND()
-
-title 部署图 (C4) - 本地开发
+title [C4 Deployment] Chat - 本地开发（+ 生产简述）
 
 Deployment_Node(dev_machine, "开发机", "macOS / Linux") {
-  Deployment_Node(browser, "浏览器", "Chrome / Safari") {
-    Container(web, "Web 应用", "Next.js", "pnpm start:web，:4000")
+  Deployment_Node(browser, "浏览器", "") {
+    Container(web, "Web / Admin", "Next.js", "http://localhost:4000（Admin :4001）")
   }
-  Deployment_Node(node_api, "Node 进程", "NestJS") {
-    Container(api, "API 服务", "NestJS", "HOST=0.0.0.0 PORT=3001")
+
+  Deployment_Node(sim, "iOS Simulator", "Xcode") {
+    Container(ios, "Chat iOS", "SwiftUI", "PKCE → IAM；Bearer → :9001")
   }
-  Deployment_Node(compose, "Docker Compose", "services/server/docker-compose.yml") {
-    ContainerDb(pg, "PostgreSQL", "postgres:18", "主机 :5433 → 5432")
-    ContainerDb(redis, "Redis", "redis:7", ":6379")
-    ContainerDb(kafka, "Kafka", "可选", ":9092")
-    ContainerDb(cassandra, "Cassandra", "可选", ":9042")
-    ContainerDb(mongo, "MongoDB", "可选", ":27017")
-    ContainerDb(es, "Elasticsearch", "可选", ":9200")
-    ContainerDb(qdrant, "Qdrant", "可选", ":6333")
+
+  Deployment_Node(jvm, "JVM 进程", "Gradle / Spring Boot") {
+    Container(api, "API 服务", "Spring Boot", "HOST=0.0.0.0 PORT=9001；Socket.IO :9002")
+    Container(iam, "Explore IAM", "Spring Boot", "OIDC Provider :9100")
   }
-  Deployment_Node(py_svcs, "Python 服务（可选）", "venv") {
-    Container(rec, "Recommendation", "FastAPI/Celery", ":8000")
+
+  Deployment_Node(node_procs, "Node 进程", "pnpm") {
+    Container(metro, "Expo Metro（可选）", "Expo Go", ":8081")
+  }
+
+  Deployment_Node(data, "数据", "文件") {
+    ContainerDb(h2db, "H2 / Postgres", "JPA + Liquibase", "本地 H2 文件或 DATABASE_URL")
+    Container(uploads, "uploads/", "本地目录", "媒体文件")
+    Container(qdrant_dir, "Qdrant path（可选）", "本地目录", "explore-ml data/ 或 rag 本地 path")
+  }
+
+  Deployment_Node(py_svcs, "explore-ml python_ml（可选）", "venv") {
+    Container(rec, "Recommendation", "FastAPI", ":8000")
     Container(vision, "Vision", "FastAPI", ":8001")
     Container(rag, "RAG", "FastAPI", ":8002")
-    Container(media, "Media Gen", "FastAPI", ":3456")
+    Container(image_playground, "Image Playground", "FastAPI", ":8003")
+    Container(speech, "Speech", "FastAPI", ":8004")
+    Container(video, "Video", "FastAPI", ":8005")
   }
 }
 
-Rel(web, api, "REST / GraphQL / WS", "localhost:3001")
-Rel(api, pg, "DATABASE_URL")
-Rel(api, redis, "REDIS_URL")
+Rel(web, api, "REST / Socket.IO", "localhost:9001 / :9002")
+Rel(metro, api, "REST / WS", "localhost:9001 / :9002")
+Rel(ios, iam, "OIDC + PKCE", "localhost:9100")
+Rel(ios, api, "Bearer REST", "localhost:9001")
+Rel(api, iam, "JWKS validate", "localhost:9100")
+Rel(api, h2db, "JPA", "H2 file 或 Postgres")
+Rel(api, uploads, "UPLOAD_DIR")
 Rel(api, rec, "HTTP", "可选")
 Rel(api, vision, "HTTP", "可选")
-Rel(api, media, "HTTP", "可选")
+Rel(api, rag, "HTTP", "可选")
+Rel(api, image_playground, "HTTP", "可选")
+Rel(api, speech, "HTTP", "可选")
+Rel(api, video, "HTTP", "可选")
+Rel(rag, qdrant_dir, "path=", "本地")
 
+note as N_PROD
+  **生产（目标简述，非已上线证明）**：
+  Web/Admin 可静态托管；API 容器绑定 $PORT；
+  DATABASE_URL 可切换 Postgres；缓存可再接 Redis。
+  本地 **不** 默认 docker compose。
+end note
+
+SHOW_LEGEND()
 @enduml
