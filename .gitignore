@@ -17,6 +17,7 @@
 !explore-chat/
 !explore-commerce/
 !explore-lowcode/
+!explore-ml/
 
 # Ignore one-level entries under project roots, then re-allow docs
 */*
