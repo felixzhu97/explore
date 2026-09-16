@@ -1,272 +1,109 @@
-# WhatsFeed
+# Chat
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D22-brightgreen.svg)](https://nodejs.org/)
-[![pnpm](https://img.shields.io/badge/pnpm-%3E%3D10-orange.svg)](https://pnpm.io/)
+`Chat` is a social messaging app you can use to share posts, browse Feed and Reels, message friends, and place calls. It is a pnpm + Turbo monorepo with a **Spring Boot API at the repo root**, Next.js web/admin under `src/main/web` and `src/main/admin`, Expo mobile under `src/main/mobile`, and optional Python side services in sibling [explore-ml](https://github.com/felixzhu97/explore-ml).
 
-WhatsFeed brings social connection into everyday life. Our mission is to help people share, message, and discover — simply and beautifully.
+Cross-language IM wire shapes are documented in [`src/main/im-contract/openapi.yaml`](src/main/im-contract/openapi.yaml) (protocol only). Web and mobile each keep their own chat/RTC client code aligned with that contract.
+
+Clients talk only to the Spring API over HTTPS and Socket.IO (plus WebRTC signaling). Optional AI, vision, recommendation, and RAG side services stay behind the API. Local Java defaults use H2 + Liquibase.
 
 **Live:** [https://whatschat-web.vercel.app](https://whatschat-web.vercel.app)
 
-## Table of contents
+## Get started
 
-- [Features](#features)
-- [Architecture](#architecture)
-- [Repository structure](#repository-structure)
-- [Screenshots](#screenshots)
-- [Prerequisites](#prerequisites)
-- [Quick start](#quick-start)
-- [Configuration](#configuration)
-- [Development](#development)
-- [Documentation](#documentation)
-- [C4 model](#c4-model)
-- [Contributing](#contributing)
-- [License](#license)
+### Requirements
 
-## Features
+- **JDK 25** (Java API)
+- Node.js 22 or later
+- pnpm 10 or later
+- Git
 
-- Real-time messaging (Socket.IO) and WebRTC voice/video calls
-- Social feed, Reels, stories, comments, likes, and saves
-- Explore grid and global search (Elasticsearch optional)
-- Media upload and post creation
-- JWT authentication
-- AI text/image/video/voice flows proxied through Nest (including Explore AI BFF)
-- Content moderation and vision side services (via Nest)
-- Recommendation and RAG side services (via Nest)
-- Ads, analytics, and admin tools
-- Web (Next.js), mobile (Expo), and admin apps
+Optional: [Ollama](https://ollama.com/) and Python services in [explore-ml](https://github.com/felixzhu97/explore-ml) (`python_ml/`). See [Guideline](docs/Guideline.md) and [Glossary](docs/Glossary.md).
 
-## Architecture
+### Initial setup
 
-pnpm + Turbo monorepo.
-
-| Layer                            | Layout                                                                                                                                                                                                        |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Web / Mobile**                 | Business-domain folders (`auth/`, `feed/`, `chat/`, …) with colocated API and UI. Redux Toolkit on clients. No Clean Architecture layer trees.                                                                |
-| **Nest API** (`services/server`) | Business-domain vertical slices (`auth/`, `post/`, `chats/`, …). Each domain keeps Clean Architecture layers: `presentation` → `application` → `domain` ← `infrastructure`. Shared infra lives under `core/`. |
-| **Python services**              | Media generation, vision, recommendation, RAG — reached only through Nest.                                                                                                                                    |
-
-Canonical terms and package paths: [docs/Glossary.md](docs/Glossary.md).  
-Rules summary: [.cursor/rules/architecture.mdc](.cursor/rules/architecture.mdc).
-
-```text
-Browser / Mobile ──HTTPS / WS──► NestJS (:3001, /api/v1)
-                                      │
-                    ┌─────────────────┼─────────────────┐
-                    ▼                 ▼                 ▼
-              media-gen          vision / RAG      recommendation
+```bash
+git clone https://github.com/felixzhu97/explore-chat.git
+cd explore-chat
+pnpm install
 ```
 
-## Repository structure
+### Run
 
-```text
-apps/
-  web              # Next.js web app (:4000)
-  admin            # Admin console (:4001)
-  mobile           # Expo / React Native
-services/
-  server           # NestJS API (:3001)
-  media-gen        # Media generation (:3456)
-  recommendation   # Recommendation + Celery
-  vision           # Moderation / vision (:8001)
-  rag              # RAG Q&A (:8002)
-packages/
-  shared-types     # Shared TypeScript types and consts
-  im               # IM / RTC client module
-  analytics        # Analytics SDK
-docs/
-  developer/       # Quick start, API, C4, CI notes
-  product-owner/   # User story map
+```bash
+# API only
+./gradlew bootRun
+
+# Web + API (scripts/app/start.sh)
+pnpm dev
+
+# Mobile (Expo)
+pnpm start:mobile
 ```
+
+| Surface   | Default URL                           |
+| --------- | ------------------------------------- |
+| Web       | http://localhost:4000                 |
+| Admin     | http://localhost:4001                 |
+| Mobile    | Expo (`pnpm start:mobile`)                |
+| HTTP API  | http://localhost:9001                 |
+| Health    | http://localhost:9001/api/v1/health   |
+| Socket.IO | http://localhost:9002 (`/socket.io`)  |
+
+Demo user (seeded on API boot): `alice@example.com` / `123456`.
+
+```bash
+./gradlew checkstyleMain checkstyleTest test
+pnpm check-types
+pnpm lint
+pnpm test
+```
+
+### Configuration
+
+| App / service | Example |
+| ------------- | ------- |
+| Java API | [`src/main/resources/application.yml`](src/main/resources/application.yml) |
+| Explore IAM (optional) | `CHAT_IAM_ENABLED=true` · `CHAT_IAM_ISSUER_URI=http://localhost:9100` (native Sign in with IAM) |
+| Web | `NEXT_PUBLIC_API_URL=http://localhost:9001/api/v1` · `NEXT_PUBLIC_SOCKET_IO_URL=http://localhost:9002` |
+| Admin | `NEXT_PUBLIC_API_URL=http://localhost:9001/api/v1` |
+| Mobile (Expo) | `EXPO_PUBLIC_API_URL=http://localhost:9001` · `EXPO_PUBLIC_SOCKET_IO_URL=http://localhost:9002` |
+| iOS (native) | IAM client `explore-chat-ios` · redirect `com.explore.chat://oauth/callback` · in-app `ASWebAuthenticationSession` ([iOS README](src/main/ios/README.md)) |
 
 ## Screenshots
 
-### Mobile
-
 <p align="center">
-  <img src="./screenshots/mobile-feed-new-01.png" width="220" alt="Mobile feed screenshot 1">
-  <img src="./screenshots/mobile-feed-new-02.png" width="220" alt="Mobile feed screenshot 2">
-  <img src="./screenshots/mobile-feed-new-03.png" width="220" alt="Mobile feed screenshot 3">
-</p>
-<p align="center">
-  <img src="./screenshots/mobile-feed-new-04.png" width="220" alt="Mobile feed screenshot 4">
-  <img src="./screenshots/mobile-feed-new-05.png" width="220" alt="Mobile feed screenshot 5">
+  <img src="./screenshots/mobile-feed-new-01.png" width="180" alt="Mobile feed">
+  <img src="./screenshots/web-screen-1.png" width="280" alt="Web">
+  <img src="./screenshots/admin-dashboard.png" width="280" alt="Admin">
 </p>
 
-### Web
+## Next steps
 
-<p align="center">
-  <img src="./screenshots/web-screen-1.png" width="340" alt="Web screenshot 1">
-  <img src="./screenshots/web-screen-2.png" width="340" alt="Web screenshot 2">
-</p>
-<p align="center">
-  <img src="./screenshots/web-screen-3.png" width="340" alt="Web screenshot 3">
-  <img src="./screenshots/web-screen-4.png" width="340" alt="Web screenshot 4">
-</p>
-<p align="center">
-  <img src="./screenshots/web-screen-5.png" width="340" alt="Web screenshot 5">
-  <img src="./screenshots/web-screen-6.png" width="340" alt="Web screenshot 6">
-</p>
-<p align="center">
-  <img src="./screenshots/web-screen-7.png" width="340" alt="Web screenshot 7">
-  <img src="./screenshots/web-screen-8.png" width="340" alt="Web screenshot 8">
-</p>
-<p align="center">
-  <img src="./screenshots/web-screen-9.png" width="340" alt="Web screenshot 9">
-</p>
+- [QUICKSTART](docs/developer/QUICKSTART.md)
+- [Guideline](docs/Guideline.md) · [Glossary](docs/Glossary.md)
+- [API notes](docs/developer/api.md) · [Python services](docs/developer/python-services.md) (→ [explore-ml](https://github.com/felixzhu97/explore-ml))
+- [C4 model](docs/developer/c4-model/README.md)
+- [User Story Map](docs/product-owner/User-Story-Map.md)
 
-### Admin
+## Repository layout
 
-<p align="center">
-  <img src="./screenshots/admin-dashboard.png" width="340" alt="Admin dashboard">
-  <img src="./screenshots/admin-users.png" width="340" alt="Admin users">
-</p>
-
-## Prerequisites
-
-| Tool                    | Version                                               |
-| ----------------------- | ----------------------------------------------------- |
-| Node.js                 | >= 22 (aligned with CI)                               |
-| pnpm                    | >= 10                                                 |
-| Docker + Docker Compose | Recent stable (Postgres, Redis, and other local deps) |
-| Git                     | Any recent version                                    |
-
-Optional for AI / media flows: Ollama, and the Python services under `services/`.
-
-## Quick start
-
-```bash
-git clone https://github.com/felixzhu97/whatsfeed.git
-cd whatsfeed
-pnpm install
-pnpm setup
+```text
+src/main/java            Spring Boot API (:9001 HTTP, :9002 Socket.IO)
+src/main/web             Next.js (:4000)
+src/main/admin           Admin (:4001)
+src/main/mobile          Expo / React Native
+packages/                Shared IM and analytics (web / Expo)
+docs/                    Guideline, Glossary, developer, C4
 ```
 
-Start local data stores (from `services/server`, at least Postgres and Redis):
+Optional ML helpers live in sibling [`explore-ml`](https://github.com/felixzhu97/explore-ml) under `python_ml/` (ports `:8000`–`:8005`).
 
-```bash
-cd services/server
-docker compose up -d postgres redis
-cd ../..
-cp services/server/.env.example services/server/.env
-# Set DATABASE_URL, REDIS_URL, JWT_SECRET (production secrets must be strong)
-```
-
-Migrate and generate Prisma client:
-
-```bash
-cd services/server
-pnpm db:generate
-pnpm migrate          # or: pnpm exec prisma migrate deploy
-pnpm db:seed          # optional demo data
-cd ../..
-```
-
-Run apps (from repo root):
-
-```bash
-pnpm start:server          # Nest API — http://localhost:3001
-pnpm start:web             # Web — http://localhost:4000
-pnpm start:admin           # Admin — http://localhost:4001
-pnpm start:mobile:ios      # Expo iOS (or start:mobile / start:mobile:android)
-
-# Web + API together
-pnpm dev
-```
-
-| Service                  | Default URL                         |
-| ------------------------ | ----------------------------------- |
-| Web                      | http://localhost:4000               |
-| Admin                    | http://localhost:4001               |
-| API                      | http://localhost:3001               |
-| Health                   | http://localhost:3001/api/v1/health |
-| Swagger (non-production) | http://localhost:3001/api/docs      |
-
-Stop helpers: `pnpm stop` (dev) / `pnpm stop:prod`.
-
-More detail: [docs/developer/QUICKSTART.md](docs/developer/QUICKSTART.md).
-
-## Configuration
-
-Copy examples and adjust for your machine:
-
-| App / service | Example file                                                                         |
-| ------------- | ------------------------------------------------------------------------------------ |
-| Nest API      | [`services/server/.env.example`](services/server/.env.example)                       |
-| Mobile        | [`apps/mobile/.env.example`](apps/mobile/.env.example)                               |
-| Web           | `apps/web/.env.local` — typically `NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1` |
-| Admin         | `apps/admin/.env.local` — API URL + `ADMIN_EMAILS`                                   |
-
-Common server variables:
-
-```bash
-# services/server/.env (illustrative)
-DATABASE_URL=postgresql://whatschat:whatschat123@localhost:5433/whatschat?schema=public
-REDIS_URL=redis://localhost:6379
-JWT_SECRET=whatschat-dev-jwt-secret
-OLLAMA_BASE_URL=http://localhost:11434
-MEDIA_GENERATION_API_URL=http://localhost:3456
-VISION_SERVICE_URL=http://localhost:8001
-RAG_SERVICE_URL=http://localhost:8002
-```
-
-Mobile physical devices should set `EXPO_PUBLIC_API_URL` to your LAN host (see `apps/mobile/.env.example`).
-
-## Development
-
-```bash
-pnpm check-types    # TypeScript across packages
-pnpm lint
-pnpm test
-pnpm test:watch
-pnpm format
-pnpm build
-```
-
-Pre-commit hooks run via Husky (`lint-staged` + typecheck).
-
-## Documentation
-
-| Doc             | Path                                                                         |
-| --------------- | ---------------------------------------------------------------------------- |
-| Quick start     | [docs/developer/QUICKSTART.md](docs/developer/QUICKSTART.md)                 |
-| API             | [docs/developer/api.md](docs/developer/api.md)                               |
-| Python services | [docs/developer/python-services.md](docs/developer/python-services.md)       |
-| C4 model        | [docs/developer/c4-model/](docs/developer/c4-model/)                         |
-| Glossary        | [docs/Glossary.md](docs/Glossary.md)                                         |
-| User story map  | [docs/product-owner/User-Story-Map.md](docs/product-owner/User-Story-Map.md) |
-| CI / coverage   | [docs/developer/cicd/](docs/developer/cicd/)                                 |
-
-## C4 model
-
-Architecture diagrams live under [docs/developer/c4-model/](docs/developer/c4-model/).
-
-### C1 — System context
-
-![C1 system context](./docs/developer/c4-model/png/C1-Context.png)
-
-### C2 — Containers
-
-![C2 containers](./docs/developer/c4-model/png/C2-Container.png)
-
-### C3 — Components
-
-#### API server
-
-![C3 API server](./docs/developer/c4-model/png/C3-Component-Backend.png)
-
-#### Web app
-
-![C3 web app](./docs/developer/c4-model/png/C3-Component-Frontend.png)
+Java features use per-feature packages: `controller` → `service` → `domain` ← `infra`, plus `mapper`.
 
 ## Contributing
 
-1. Use branch names as English kebab-case slugs only (for example `glossary-update`, `input-validation`) — no `feat/`, `docs/`, `eng/`, or other prefix.
-2. Prefer small PRs with a clear why, References, and linked Jira when applicable.
-3. Keep Glossary Preferred Terms and architecture docs in sync when package layout or APIs change.
-
-See [.cursor/skills/developers/public-docs/SKILL.md](.cursor/skills/developers/public-docs/SKILL.md) for project commit and PR conventions.
+Prefer a single English kebab-case branch slug, small PRs with a clear why and References, and keep Glossary terms plus C4 docs in sync when packages or APIs change.
 
 ## License
 
-MIT (see `license` in the root [`package.json`](package.json)).
+See repository license file.
