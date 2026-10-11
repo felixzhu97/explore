@@ -1,7 +1,7 @@
 # Public Docs
 
-[![License](https://img.shields.io/badge/license-Public%20Learning-blue.svg)](#license)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 A collection of **architecture diagrams** for public projects — primarily [C4 Model](https://c4model.com/) views — to help developers understand system boundaries, containers, and core components.
 
@@ -16,10 +16,11 @@ A collection of **architecture diagrams** for public projects — primarily [C4 
 - [Repository Layout](#repository-layout)
 - [Quick Start](#quick-start)
 - [Suggested Learning Path](#suggested-learning-path)
-- [Contributing](#contributing)
-- [Code of Conduct](#code-of-conduct)
+- [Contributing](CONTRIBUTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security](SECURITY.md)
 - [Acknowledgments](#acknowledgments)
-- [License](#license)
+- [License](LICENSE)
 
 ## About
 
@@ -110,39 +111,11 @@ Useful entry points:
 
 ## Contributing
 
-Issues and pull requests are welcome. You can help by adding models, fixing mistakes, improving docs, or extending project coverage.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Issues and pull requests are welcome. You can help by adding models, fixing mistakes, improving docs, or extending project coverage. Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-### Before you contribute
+## Security
 
-- [ ] Content is for learning and respects project licenses and attribution
-- [ ] Diagram layers are clear (C1 → C2 → C3)
-- [ ] Include a short README or index (overview, diagram list, how to render)
-- [ ] Prefer PlantUML sources; PNGs are optional
-- [ ] Submit architecture docs only — no full source trees, secrets, or build artifacts
-
-### Adding a project
-
-1. Add `docs/developer/c4-model/` under the project directory (`C1-`–`C4-` naming)
-2. Update the [Projects](#projects) table in this README
-3. Open a pull request with a clear description of what you added
-
-### Commit messages
-
-Use clear conventional-style messages, for example:
-
-```text
-docs(<project>): refine architecture diagram
-docs(<project>): clarify container boundaries
-docs(<project>): update deployment view
-```
-
-## Code of Conduct
-
-- Be kind and keep discussion focused on architecture and technology
-- Cite sources: link project design docs when you reuse ideas
-- Stay verifiable: tie claims to containers / components in the diagrams or to source paths
-
-When in doubt, open an Issue for discussion before merging.
+Report vulnerabilities as described in [SECURITY.md](SECURITY.md).
 
 ## Acknowledgments
 
@@ -150,7 +123,9 @@ Thanks to the authors and contributors of the listed public projects. Architectu
 
 ## License
 
-- Cataloging, learning paths, and docs in this repository are shared for learning and collaboration
+[MIT](LICENSE) © 2026 Felix
+
+- Cataloging, learning paths, and docs in this repository are shared under the MIT license
 - Architecture models that include project copyrighted material remain under the corresponding project licenses
 - Review each project’s `LICENSE` before reuse or redistribution
 
