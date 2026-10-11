@@ -68,7 +68,7 @@ Deliver Phase 1–3 meta sync as stacked Draft PRs —
 | New container, subdomain, data store, port | `C2-Container.puml` | **3** |
 | New feature module, UI surface, cross-app wiring | `C3-Component.puml` | **3** |
 | Deploy topology, ports, hosting | `C4-Deployment.puml` | **3** |
-| New/changed critical runtime path | `C4-Dynamic-{Flow}.puml` (+ `style-zinc.puml` if styles change) | **3** |
+| New/changed critical runtime path | `C4-Dynamic-{Flow}.puml` (+ `style.puml` if structural tokens change) | **3** |
 | New user-visible capability, nav change, delivery status | User Story Map + matching `E*.md` | **3** |
 | Pure tests/formatting/deps with no product/architecture semantics | None (N/A) | — |
 

@@ -55,7 +55,7 @@ Reference layout:
 ```text
 docs/developer/c4-model/
 ├── README.md
-├── style-zinc.puml          # shared by Code + Dynamic tracks (when used)
+├── style.puml               # structural white/black tokens (inline into C1–C3 / Deployment)
 ├── C1-Context.puml
 ├── C2-Container.puml
 ├── C3-Component.puml
@@ -86,7 +86,7 @@ If **any** row matches, update the listed artifacts in the **same PR**. If none 
 | New container, subdomain boundary, major data store | `C2-Container.puml` |
 | New/changed module or component structure inside a container | `C3-Component.puml` (prefer single combined diagram) |
 | New/changed class-level design worth a Code view | `C4-Code-Domain-Model.puml` or `C4-Code-<Scope>.puml` |
-| New/changed critical runtime flow | `C4-Dynamic-<Scenario>.puml` (+ `style-zinc.puml` when styles change) |
+| New/changed critical runtime flow | `C4-Dynamic-<Scenario>.puml` (+ `style.puml` when structural tokens change) |
 | Deploy topology, ports, hosting | `C4-Deployment.puml` |
 | Project added to or removed from the catalog | Matching `docs/developer/c4-model/` + root README Projects |
 | Pure wording polish with no architecture semantics | None (N/A) |
