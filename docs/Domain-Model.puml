@@ -1,0 +1,1177 @@
+@startuml Domain-Model
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 30
+skinparam ranksep 50
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontColor #000000
+}
+skinparam package {
+  BorderColor #000000
+  FontColor #000000
+}
+
+title Explore workspace — Domain model (all catalogued projects)
+hide empty members
+hide methods
+
+legend right
+  |= Stereotype |= Meaning |
+  | <<AggregateRoot>> | 聚合根 |
+  | <<Entity>> | 实体 |
+  | <<ValueObject>> | 值对象 |
+  | <<Enum>> | 枚举 |
+  | <<DomainEvent>> | 领域事件 |
+  | ..> (cross-project) | 跨项目引用 |
+endlegend
+
+note as N_SCOPE
+  One package per project, one nested package per bounded context.
+  Attributes only; typed ids (e.g. ChatSessionId) appear as attribute
+  types. Base classes, repositories and methods live in each project's
+  docs/developer/c4-model/C4-Code-Domain-Model.puml.
+  Domain events: only types present in code are drawn. Server sides
+  publish no domain events; AiInvocationEvent is a persisted audit row,
+  IAM audit records are aggregate roots.
+  Lowcode has no local source: drawn from its Glossary and C3 (unverified).
+end note
+
+' ══ Explore IAM ═══════════════════════════════════════════
+package "Explore IAM" as iam {
+  package "common" as iam_common {
+    class "ResourceName" as iam_ResourceName <<ValueObject>> {
+      +value: String (ARN)
+    }
+    class "Permission" as iam_Permission <<ValueObject>> {
+      +value: String
+    }
+    class "Resource" as iam_Resource <<ValueObject>> {
+      +value: String
+    }
+    class "Scope" as iam_Scope <<ValueObject>> {
+      +value: String
+    }
+    class "PrincipalId" as iam_PrincipalId <<ValueObject>> {
+      +value: String
+    }
+    class "ReasonCode" as iam_ReasonCode <<ValueObject>> {
+      +value: String
+    }
+    enum "Effect" as iam_Effect <<Enum>> {
+      ALLOW
+      DENY
+    }
+  }
+  package "identity" as iam_identity {
+    class "User" as iam_User <<AggregateRoot>> {
+      +username: String
+      +email: String
+      +enabled: boolean
+    }
+    class "RoleBinding" as iam_RoleBinding <<Entity>> {
+      +userId: String
+      +roleId: String
+    }
+    class "Group" as iam_Group <<AggregateRoot>> {
+      +name: String
+    }
+    class "GroupMember" as iam_GroupMember <<Entity>> {
+      +userId: String
+    }
+    class "Role" as iam_Role <<AggregateRoot>> {
+      +name: String
+      +resourceName: ResourceName
+      +trustPolicy: ImpersonationPolicy
+    }
+    class "ImpersonationPolicy" as iam_ImpersonationPolicy <<ValueObject>> {
+      +json: String
+    }
+    class "TotpCredential" as iam_TotpCredential <<AggregateRoot>> {
+      +userId: String
+      +enabled: boolean
+    }
+    class "WebAuthnCredential" as iam_WebAuthnCredential <<ValueObject>> {
+      +credentialId: byte[]
+      +userHandle: byte[]
+    }
+  }
+  package "policy" as iam_policy {
+    class "AllowPolicy" as iam_AllowPolicy <<AggregateRoot>> {
+      +name: String
+      +statements: List<PolicyStatement>
+    }
+    class "PolicyStatement" as iam_PolicyStatement <<ValueObject>> {
+      +effect: Effect
+      +actions: Set<Permission>
+      +resources: Set<Resource>
+    }
+    class "PolicyBinding" as iam_PolicyBinding <<AggregateRoot>> {
+      +policyId: String
+      +principalArn: ResourceName
+    }
+    class "Permission (catalog)" as iam_PermissionEntry <<AggregateRoot>> {
+      +code: String
+      +oauthScope: Scope
+      +module: String
+      +action: Permission
+      +resource: Resource
+    }
+    class "AccessTuple" as iam_AccessTuple <<ValueObject>> {
+      +principalId: PrincipalId
+      +action: Permission
+      +resource: Resource
+    }
+    class "AccessDecision" as iam_AccessDecision <<ValueObject>> {
+      +effect: Effect
+      +reasonCode: ReasonCode
+    }
+  }
+  package "sts" as iam_sts {
+    class "ShortLivedCredential" as iam_ShortLivedCredential <<AggregateRoot>> {
+      +roleArn: ResourceName
+      +sessionName: String
+      +expiresAt: Instant
+    }
+  }
+  package "federation" as iam_federation {
+    class "OAuthClient" as iam_OAuthClient <<AggregateRoot>> {
+      +clientId: ClientId
+      +redirectUris: Set<RedirectUri>
+      +scopes: Set<String>
+    }
+    class "FederatedIdentity" as iam_FederatedIdentity <<AggregateRoot>> {
+      +userId: String
+      +provider: String
+      +externalSubject: String
+    }
+    class "ClientId" as iam_ClientId <<ValueObject>> {
+      +value: String
+    }
+    class "RedirectUri" as iam_RedirectUri <<ValueObject>> {
+      +value: String
+    }
+  }
+  package "audit" as iam_audit {
+    class "AdminActivity" as iam_AdminActivity <<AggregateRoot>> {
+      +actor: AuditActor
+      +action: String
+      +target: AuditTarget
+      +outcome: AuditOutcome
+    }
+    class "DataAccessLog" as iam_DataAccessLog <<AggregateRoot>> {
+      +principalId: PrincipalId
+      +action: Permission
+      +resource: Resource
+      +effect: Effect
+    }
+    class "AuditActor" as iam_AuditActor <<ValueObject>> {
+      +value: String
+    }
+    class "AuditTarget" as iam_AuditTarget <<ValueObject>> {
+      +type: String
+      +targetId: String
+    }
+    enum "AuditOutcome" as iam_AuditOutcome <<Enum>> {
+      SUCCESS
+      FAILURE
+    }
+  }
+}
+
+iam_User "1" *-- "0..*" iam_RoleBinding
+iam_RoleBinding --> iam_Role
+iam_Group "1" *-- "0..*" iam_GroupMember
+iam_User "1" o-- "0..1" iam_TotpCredential
+iam_User "1" o-- "0..*" iam_WebAuthnCredential
+iam_Role --> iam_ImpersonationPolicy
+iam_Role --> iam_ResourceName
+iam_AllowPolicy "1" *-- "1..*" iam_PolicyStatement
+iam_PolicyStatement --> iam_Effect
+iam_PolicyBinding --> iam_AllowPolicy : policyId
+iam_PermissionEntry --> iam_Scope
+iam_AccessDecision --> iam_ReasonCode
+iam_ShortLivedCredential --> iam_Role : roleArn
+iam_OAuthClient --> iam_ClientId
+iam_OAuthClient "1" *-- "1..*" iam_RedirectUri
+iam_FederatedIdentity --> iam_User : userId
+iam_AdminActivity --> iam_AuditActor
+iam_AdminActivity --> iam_AuditTarget
+iam_AdminActivity --> iam_AuditOutcome
+iam_DataAccessLog ..> iam_AccessDecision : records
+
+' ══ Explore AI ════════════════════════════════════════════
+package "Explore AI" as ai {
+  package "common" as ai_common {
+    class "OwnerKey" as ai_OwnerKey <<ValueObject>> {
+      +value: String (c:clientId | u:accountId)
+    }
+  }
+  package "chat" as ai_chat {
+    class "ChatSession" as ai_ChatSession <<AggregateRoot>> {
+      +id: ChatSessionId
+      +ownerKey: OwnerKey
+      +title: SessionTitle
+      +lastActivityAt: Instant
+    }
+    class "ChatMessage" as ai_ChatMessage <<Entity>> {
+      +id: MessageId
+      +text: String
+      +role: MessageRole
+    }
+    class "SessionTitle" as ai_SessionTitle <<ValueObject>> {
+      +value: String
+    }
+    enum "MessageRole" as ai_MessageRole <<Enum>> {
+      USER
+      ASSISTANT
+    }
+    class "WebSource" as ai_WebSource <<ValueObject>> {
+      +url: String
+      +title: String
+    }
+    class "DetectedLanguage" as ai_DetectedLanguage <<ValueObject>> {
+      +code: String
+    }
+    class "ContentHash" as ai_ContentHash <<ValueObject>> {
+      +value: String
+    }
+  }
+  package "rag" as ai_rag {
+    class "RagDocument" as ai_RagDocument <<AggregateRoot>> {
+      +id: DocumentId
+      +ownerKey: OwnerKey
+      +title: String
+      +status: DocumentStatus
+      +chunkCount: int
+    }
+    class "DocumentChunk" as ai_DocumentChunk <<Entity>> {
+      +id: ChunkId
+      +documentId: DocumentId
+      +content: String
+    }
+    enum "DocumentStatus" as ai_DocumentStatus <<Enum>> {
+      PROCESSING
+      READY
+      FAILED
+    }
+    class "ScoredChunk" as ai_ScoredChunk <<ValueObject>> {
+      +chunk: DocumentChunk
+      +score: double
+    }
+    class "SourceCitation" as ai_SourceCitation <<ValueObject>> {
+      +content: String
+      +score: double
+    }
+  }
+  package "pipeline" as ai_pipeline {
+    class "AgentPipeline" as ai_AgentPipeline <<AggregateRoot>> {
+      +nodes: List<PipelineNode>
+      +edges: List
+    }
+    class "AgentDefinition" as ai_AgentDefinition <<Entity>> {
+      +type: AgentType
+      +systemPrompt: String
+    }
+    class "PipelineTemplate" as ai_PipelineTemplate <<Entity>> {
+      +id: PipelineTemplateId
+      +name: String
+      +agentTypes: List<AgentType>
+    }
+    class "CustomAgent" as ai_CustomAgent <<Entity>> {
+      +id: CustomAgentId
+      +agentType: String
+    }
+    class "PipelineNode" as ai_PipelineNode <<ValueObject>> {
+      +agentType: AgentType
+    }
+    class "AgentType" as ai_AgentType <<ValueObject>> {
+      +value: String
+    }
+    class "RoutingPlan" as ai_RoutingPlan <<ValueObject>>
+  }
+  package "skill" as ai_skill {
+    class "Skill" as ai_Skill <<AggregateRoot>> {
+      +id: SkillId
+      +name: String
+      +enabled: boolean
+    }
+  }
+  package "automation" as ai_automation {
+    class "AutomationSchedule" as ai_AutomationSchedule <<AggregateRoot>> {
+      +id: ScheduleId
+      +timing: ScheduleTiming
+      +pipelineTemplateId: PipelineTemplateId
+      +enabled: boolean
+    }
+    class "AutomationRun" as ai_AutomationRun <<Entity>> {
+      +id: RunId
+      +status: RunStatus
+      +startedAt: Instant
+      +finishedAt: Instant
+    }
+    class "ScheduleTiming" as ai_ScheduleTiming <<ValueObject>> {
+      +kind: ScheduleKind
+      +cronExpression: String
+      +timezone: String
+    }
+    class "EmailMessage" as ai_EmailMessage <<ValueObject>>
+    enum "RunStatus" as ai_RunStatus <<Enum>> {
+      SUCCESS
+      FAILED
+      SKIPPED
+    }
+    enum "ScheduleKind" as ai_ScheduleKind <<Enum>>
+    enum "EmailDeliveryStatus" as ai_EmailDeliveryStatus <<Enum>>
+    enum "AutomationActionType" as ai_AutomationActionType <<Enum>>
+  }
+  package "account" as ai_account {
+    class "Account" as ai_Account <<Entity>> {
+      +provider: String
+      +subject: String
+      +email: ContactEmail
+      +displayName: String
+      +linkedClientId: ClientId
+    }
+    class "ExternalIdentity" as ai_ExternalIdentity <<ValueObject>> {
+      +provider: String
+      +subject: String
+    }
+    class "ContactEmail" as ai_ContactEmail <<ValueObject>> {
+      +value: String
+    }
+    class "ClientId" as ai_ClientId <<ValueObject>> {
+      +value: String (UUID)
+    }
+  }
+  package "billing" as ai_billing {
+    enum "Plan" as ai_Plan <<Enum>> {
+      FREE
+      PRO
+    }
+    class "QuotaPolicy" as ai_QuotaPolicy <<ValueObject>> {
+      +enforced: boolean
+      +plan: Plan
+    }
+    class "DailyUsage" as ai_DailyUsage <<ValueObject>> {
+      +day: LocalDate
+      +count: int
+    }
+    class "QuotaSubject" as ai_QuotaSubject <<ValueObject>> {
+      +key: String
+    }
+    class "QuotaDecision" as ai_QuotaDecision <<ValueObject>> {
+      +allowed: boolean
+      +limit: int
+      +remaining: int
+    }
+  }
+  package "mcp" as ai_mcp {
+    class "McpSession" as ai_McpSession <<AggregateRoot>> {
+      +id: UUID
+      +status: McpSessionStatus
+    }
+    class "McpServerConnection" as ai_McpServerConnection <<Entity>>
+    class "McpToolDefinition" as ai_McpToolDefinition <<ValueObject>>
+  }
+  package "metrics" as ai_metrics {
+    class "AiInvocationEvent" as ai_AiInvocationEvent <<DomainEvent>> {
+      +capability: AiCapability
+      +outcome: InvocationOutcome
+      +ownerKey: OwnerKey
+      +latencyMs: long
+    }
+    enum "AiCapability" as ai_AiCapability <<Enum>> {
+      CHAT
+      RAG
+      AGENTS
+      TOOLS
+      VISION
+      WORKFLOW
+    }
+    enum "InvocationOutcome" as ai_InvocationOutcome <<Enum>>
+    class "TokenUsage" as ai_TokenUsage <<ValueObject>> {
+      +prompt: Integer
+      +completion: Integer
+    }
+    class "Latency" as ai_Latency <<ValueObject>> {
+      +millis: long
+    }
+    class "ErrorSummary" as ai_ErrorSummary <<ValueObject>> {
+      +code: String
+      +message: String
+    }
+    class "InvocationStats" as ai_InvocationStats <<ValueObject>> {
+      +requests: long
+      +errors: long
+    }
+    class "MetricsWindow" as ai_MetricsWindow <<ValueObject>>
+    class "LatencyStats" as ai_LatencyStats <<ValueObject>>
+  }
+  package "tools" as ai_tools {
+    class "WeatherSimulator" as ai_WeatherSimulator <<Entity>> {
+      +location: String
+      +current: WeatherInfo
+    }
+    class "WeatherInfo" as ai_WeatherInfo <<ValueObject>>
+  }
+  note bottom of ai_AiInvocationEvent
+    Persisted immutable audit row;
+    not published on an event bus.
+  end note
+}
+
+ai_ChatSession "1" *-- "0..*" ai_ChatMessage
+ai_ChatSession --> ai_SessionTitle
+ai_ChatSession --> ai_OwnerKey
+ai_ChatMessage --> ai_MessageRole
+ai_RagDocument "1" *-- "0..*" ai_DocumentChunk
+ai_RagDocument --> ai_DocumentStatus
+ai_ScoredChunk --> ai_DocumentChunk
+ai_AgentPipeline "1" *-- "1..*" ai_PipelineNode
+ai_PipelineTemplate ..> ai_AgentPipeline : builds
+ai_CustomAgent ..> ai_AgentDefinition : overrides
+ai_PipelineNode --> ai_AgentType
+ai_AutomationSchedule "1" o-- "0..*" ai_AutomationRun
+ai_AutomationSchedule --> ai_ScheduleTiming
+ai_AutomationSchedule --> ai_PipelineTemplate : pipelineTemplateId
+ai_AutomationRun --> ai_RunStatus
+ai_Account --> ai_ExternalIdentity
+ai_Account --> ai_ContactEmail
+ai_Account --> ai_ClientId : linkedClientId
+ai_QuotaPolicy --> ai_Plan
+ai_McpSession "1" o-- "0..*" ai_McpServerConnection
+ai_McpServerConnection "1" o-- "0..*" ai_McpToolDefinition
+ai_AiInvocationEvent --> ai_AiCapability
+ai_AiInvocationEvent --> ai_InvocationOutcome
+ai_AiInvocationEvent --> ai_TokenUsage
+ai_WeatherSimulator --> ai_WeatherInfo
+
+' ══ Explore Chat ══════════════════════════════════════════
+package "Explore Chat" as chat {
+  package "users / follow" as chat_users {
+    class "User" as chat_User <<AggregateRoot>> {
+      +username: String
+      +email: String
+      +avatar: String
+      +online: boolean
+      +lastSeen: Instant
+    }
+    class "UserFollow" as chat_UserFollow <<Entity>> {
+      +followerId: String
+      +followingId: String
+    }
+    class "BlockedUser" as chat_BlockedUser <<Entity>> {
+      +blockerId: String
+      +blockedId: String
+    }
+  }
+  package "auth" as chat_auth {
+    class "PasswordResetToken" as chat_PasswordResetToken <<Entity>> {
+      +userId: String
+      +expiresAt: Instant
+      +used: boolean
+    }
+    class "RevokedToken" as chat_RevokedToken <<Entity>> {
+      +jti: String
+      +expiresAt: Instant
+    }
+  }
+  package "chats / messages" as chat_chats {
+    class "Chat" as chat_Chat <<AggregateRoot>> {
+      +type: ChatType
+      +name: String
+      +deleted: boolean
+    }
+    class "ChatParticipant" as chat_ChatParticipant <<Entity>> {
+      +chatId: String
+      +userId: String
+      +role: String
+      +archived: boolean
+      +muted: boolean
+    }
+    enum "ChatType" as chat_ChatType <<Enum>> {
+      PRIVATE
+      GROUP
+    }
+    class "Message" as chat_Message <<AggregateRoot>> {
+      +chatId: String
+      +senderId: String
+      +type: MessageType
+      +content: String
+      +deleted: boolean
+    }
+    class "MessageReaction" as chat_MessageReaction <<Entity>> {
+      +messageId: String
+      +userId: String
+      +emoji: String
+    }
+    class "MessageRead" as chat_MessageRead <<Entity>> {
+      +messageId: String
+      +userId: String
+    }
+    enum "MessageType" as chat_MessageType <<Enum>> {
+      TEXT
+    }
+  }
+  package "groups" as chat_groups {
+    class "Group" as chat_Group <<AggregateRoot>> {
+      +name: String
+      +creatorId: String
+    }
+    class "GroupParticipant" as chat_GroupParticipant <<Entity>> {
+      +groupId: String
+      +userId: String
+      +role: String
+    }
+  }
+  package "post / comments" as chat_post {
+    class "Post" as chat_Post <<AggregateRoot>> {
+      +authorId: String
+      +caption: String
+      +postType: MediaType
+      +mediaUrls: String[]
+    }
+    enum "MediaType" as chat_MediaType <<Enum>> {
+      TEXT
+      IMAGE
+      VIDEO
+      REEL
+    }
+    class "Comment" as chat_Comment <<Entity>> {
+      +postId: String
+      +userId: String
+      +content: String
+      +parentId: String
+    }
+    class "Hashtag" as chat_Hashtag <<Entity>> {
+      +tag: String
+      +postCount: long
+    }
+    class "PostHashtag" as chat_PostHashtag <<Entity>> {
+      +postId: String
+      +hashtagId: String
+    }
+    class "PostLike" as chat_PostLike <<Entity>> {
+      +postId: String
+      +userId: String
+    }
+    class "PostSave" as chat_PostSave <<Entity>> {
+      +postId: String
+      +userId: String
+    }
+  }
+  package "calls / notifications / status" as chat_misc {
+    class "Call" as chat_Call <<AggregateRoot>> {
+      +callerId: String
+      +calleeId: String
+      +status: CallStatus
+    }
+    enum "CallStatus" as chat_CallStatus <<Enum>> {
+      ringing
+      answered
+      rejected
+      ended
+    }
+    class "Notification" as chat_Notification <<Entity>> {
+      +recipientId: String
+      +actorId: String
+      +type: String
+      +readAt: Instant
+    }
+    class "UserStatus" as chat_UserStatus <<AggregateRoot>> {
+      +authorId: String
+      +content: String
+      +mediaUrl: String
+      +expiresAt: Instant
+    }
+    class "StatusView" as chat_StatusView <<Entity>> {
+      +statusId: String
+      +viewerId: String
+    }
+  }
+  package "ads / analytics" as chat_ads {
+    class "AdAccount" as chat_AdAccount <<AggregateRoot>> {
+      +ownerId: String
+      +name: String
+      +status: AdAccountStatus
+    }
+    class "AdCampaign" as chat_AdCampaign <<Entity>> {
+      +accountId: String
+      +name: String
+      +budget: long
+      +status: AdCampaignStatus
+    }
+    class "AdCreative" as chat_AdCreative <<Entity>> {
+      +campaignId: String
+      +headline: String
+      +status: AdCreativeStatus
+    }
+    class "AnalyticsEvent" as chat_AnalyticsEvent <<Entity>> {
+      +userId: String
+      +eventName: String
+      +payload: String
+    }
+  }
+  package "client: Local Chat Projection (web + mobile)" as chat_client {
+    class "ChatCatalog" as chat_ChatCatalog <<AggregateRoot>> {
+      +previews: List
+    }
+    class "ChatThread" as chat_ChatThread <<AggregateRoot>> {
+      +chatId: ChatId
+      +title: ChatTitle
+    }
+    class "Message (client)" as chat_ClientMessage <<Entity>> {
+      +id: MessageId
+      +clientMsgId: ClientMsgId
+      +senderId: SenderId
+      +body: MessageBody
+      +status: MessageDeliveryStatus
+    }
+    class "MessageDeliveryStatus" as chat_MessageDeliveryStatus <<ValueObject>>
+    class "ChatTitle" as chat_ChatTitle <<ValueObject>>
+    class "AvatarURL" as chat_AvatarURL <<ValueObject>>
+    class "ThreadHydrated" as chat_ThreadHydrated <<DomainEvent>>
+    class "MessageAccepted" as chat_MessageAccepted <<DomainEvent>>
+    class "LastMessageChanged" as chat_LastMessageChanged <<DomainEvent>>
+    class "DeliveryStatusChanged" as chat_DeliveryStatusChanged <<DomainEvent>>
+    class "CatalogReplaced" as chat_CatalogReplaced <<DomainEvent>>
+    class "ChatPreviewChanged" as chat_ChatPreviewChanged <<DomainEvent>>
+  }
+}
+
+chat_User "1" o-- "0..*" chat_UserFollow
+chat_User "1" o-- "0..*" chat_BlockedUser
+chat_PasswordResetToken --> chat_User : userId
+chat_Chat "1" *-- "1..*" chat_ChatParticipant
+chat_Chat --> chat_ChatType
+chat_ChatParticipant --> chat_User
+chat_Chat "1" o-- "0..*" chat_Message : chatId
+chat_Message "1" o-- "0..*" chat_MessageReaction
+chat_Message "1" o-- "0..*" chat_MessageRead
+chat_Message --> chat_MessageType
+chat_Message --> chat_User : senderId
+chat_Group "1" *-- "0..*" chat_GroupParticipant
+chat_Post --> chat_User : author
+chat_Post --> chat_MediaType
+chat_Post "1" o-- "0..*" chat_Comment
+chat_Post "1" o-- "0..*" chat_PostLike
+chat_Post "1" o-- "0..*" chat_PostSave
+chat_Post "1" o-- "0..*" chat_PostHashtag
+chat_PostHashtag --> chat_Hashtag
+chat_Call --> chat_CallStatus
+chat_Notification --> chat_Post
+chat_UserStatus "1" o-- "0..*" chat_StatusView
+chat_AdAccount "1" *-- "0..*" chat_AdCampaign
+chat_AdCampaign "1" *-- "0..*" chat_AdCreative
+chat_ChatThread "1" *-- "0..*" chat_ClientMessage
+chat_ChatThread --> chat_ChatTitle
+chat_ClientMessage --> chat_MessageDeliveryStatus
+chat_ChatThread ..> chat_ThreadHydrated : emits
+chat_ChatThread ..> chat_MessageAccepted : emits
+chat_ChatThread ..> chat_LastMessageChanged : emits
+chat_ChatThread ..> chat_DeliveryStatusChanged : emits
+chat_ChatCatalog ..> chat_CatalogReplaced : emits
+chat_ChatCatalog ..> chat_ChatPreviewChanged : emits
+chat_ChatCatalog --> chat_AvatarURL
+
+' ══ Explore ML ════════════════════════════════════════════
+package "Explore ML" as ml {
+  package "rag" as ml_rag {
+    class "IndexedDocument" as ml_IndexedDocument <<AggregateRoot>> {
+      +id: str
+      +filename: str
+      +content_type: str
+      +file_size: int
+      +chunks_count: int
+    }
+    class "ScrapedWebpage" as ml_ScrapedWebpage <<AggregateRoot>> {
+      +id: str
+      +url: str
+      +title: str
+      +chunks_count: int
+    }
+    class "Chunk" as ml_Chunk <<Entity>> {
+      +id: str
+      +text: str
+      +token_count: int
+      +start_char: int
+      +end_char: int
+    }
+    class "DocumentSummary" as ml_DocumentSummary <<ValueObject>>
+    class "SearchHit" as ml_SearchHit <<ValueObject>>
+    class "Answer" as ml_Answer <<ValueObject>>
+    class "CrawlReport" as ml_CrawlReport <<ValueObject>>
+    class "SyncResult" as ml_SyncResult <<ValueObject>>
+  }
+  package "vision" as ml_vision {
+    class "Prediction" as ml_Prediction <<ValueObject>> {
+      +label: str
+      +score: float
+    }
+    class "ModerationVerdict" as ml_ModerationVerdict <<ValueObject>>
+    class "ModerationCategory" as ml_ModerationCategory <<ValueObject>>
+    class "FrameVerdict" as ml_FrameVerdict <<ValueObject>>
+  }
+  package "image_playground / video" as ml_jobs {
+    class "Job" as ml_Job <<AggregateRoot>> {
+      +id: str
+      +status: JobStatus
+      +url: str
+      +error: str
+    }
+    enum "JobStatus" as ml_JobStatus <<Enum>> {
+      pending
+      succeeded
+      failed
+    }
+  }
+  package "speech" as ml_speech {
+    class "StreamingTranscriptionSession" as ml_StreamingTranscriptionSession <<Entity>> {
+      +buffer: PCM
+      +closed: bool
+    }
+  }
+  package "recommendation" as ml_recommendation {
+    class "FeatureDefinition" as ml_FeatureDefinition <<ValueObject>> {
+      +name: str
+      +entity: EntityType
+    }
+    enum "EntityType" as ml_EntityType <<Enum>> {
+      user
+      post
+      reel
+    }
+  }
+}
+
+ml_IndexedDocument "1" *-- "1..*" ml_Chunk
+ml_ScrapedWebpage "1" *-- "0..*" ml_Chunk
+ml_CrawlReport "1" o-- "1..*" ml_ScrapedWebpage
+ml_Answer "1" o-- "0..*" ml_SearchHit
+ml_ModerationVerdict "1" *-- "0..*" ml_ModerationCategory
+ml_ModerationVerdict "1" *-- "0..*" ml_FrameVerdict
+ml_Job --> ml_JobStatus
+ml_FeatureDefinition --> ml_EntityType
+
+' ══ Explore Commerce ══════════════════════════════════════
+package "Explore Commerce" as commerce {
+  package "identity" as com_identity {
+    class "User" as com_User <<AggregateRoot>> {
+      +email: String
+      +role: UserRole
+      +firstName: String
+      +lastName: String
+      +address fields
+    }
+    enum "UserRole" as com_UserRole <<Enum>> {
+      user
+      admin
+    }
+  }
+  package "catalog" as com_catalog {
+    class "Product" as com_Product <<AggregateRoot>> {
+      +name: String
+      +price: Number
+      +category: String
+      +stock: Number
+      +rating: Number
+    }
+  }
+  package "cart" as com_cart {
+    class "Cart" as com_Cart <<AggregateRoot>> {
+      +userId: ObjectId (unique)
+    }
+    class "CartItem" as com_CartItem <<Entity>> {
+      +productId: ObjectId
+      +quantity: Number
+    }
+  }
+  package "ordering" as com_ordering {
+    class "Order" as com_Order <<AggregateRoot>> {
+      +userId: ObjectId
+      +totalAmount: Number
+      +status: OrderStatus
+      +paymentMethod: PaymentMethod
+    }
+    class "OrderItem" as com_OrderItem <<Entity>> {
+      +productId: ObjectId
+      +name: String
+      +price: Number
+      +quantity: Number
+    }
+    class "ShippingAddress" as com_ShippingAddress <<ValueObject>> {
+      +fullName: String
+      +phone: String
+      +address: String
+      +city: String
+      +postalCode: String
+    }
+    enum "OrderStatus" as com_OrderStatus <<Enum>> {
+      pending
+      processing
+      shipped
+      delivered
+      cancelled
+    }
+    enum "PaymentMethod" as com_PaymentMethod <<Enum>> {
+      alipay
+      wechat
+      credit-card
+    }
+  }
+  package "payment (library)" as com_payment {
+    class "PaymentRequest" as com_PaymentRequest <<ValueObject>> {
+      +orderId: String
+      +amount: Number
+    }
+    enum "PaymentStatus" as com_PaymentStatus <<Enum>> {
+      pending
+      processing
+      success
+      failed
+      cancelled
+      refunded
+    }
+  }
+  package "crawler" as com_crawler {
+    class "JobRecord" as com_JobRecord <<AggregateRoot>> {
+      +id: str
+      +status: JobStatus
+    }
+    class "ScrapedProduct" as com_ScrapedProduct <<ValueObject>>
+    enum "JobStatus" as com_JobStatus <<Enum>> {
+      queued
+      running
+      completed
+      failed
+    }
+  }
+}
+
+com_User --> com_UserRole
+com_User "1" -- "0..1" com_Cart
+com_Cart "1" *-- "0..*" com_CartItem
+com_CartItem --> com_Product : productId
+com_User "1" -- "0..*" com_Order
+com_Order "1" *-- "1..*" com_OrderItem
+com_OrderItem --> com_Product : productId
+com_Order *-- com_ShippingAddress
+com_Order --> com_OrderStatus
+com_Order --> com_PaymentMethod
+com_PaymentRequest ..> com_Order : orderId
+com_PaymentRequest ..> com_PaymentStatus
+com_JobRecord "1" *-- "0..*" com_ScrapedProduct
+com_JobRecord --> com_JobStatus
+
+' ══ Explore Portfolio (FinPulse) ══════════════════════════
+package "Explore Portfolio (FinPulse)" as pf {
+  package "kernel" as pf_kernel {
+    class "Money" as pf_Money <<ValueObject>> {
+      +amount: BigDecimal
+      +currency: CurrencyCode
+    }
+    class "CurrencyCode" as pf_CurrencyCode <<ValueObject>> {
+      +code: String
+    }
+    class "Symbol" as pf_Symbol <<ValueObject>> {
+      +value: String
+    }
+    class "Quantity" as pf_Quantity <<ValueObject>> {
+      +value: BigDecimal
+    }
+  }
+  package "auth / customer / account" as pf_customer {
+    class "Session" as pf_Session <<Entity>> {
+      +customerId: CustomerId
+      +expiresAt: Instant
+    }
+    class "UserCredential" as pf_UserCredential <<Entity>> {
+      +customerId: CustomerId
+      +email: String
+    }
+    class "Customer" as pf_Customer <<AggregateRoot>> {
+      +name: String
+      +email: String
+      +kycStatus: KycStatus
+    }
+    enum "KycStatus" as pf_KycStatus <<Enum>> {
+      PENDING
+      VERIFIED
+      REJECTED
+    }
+    class "Account" as pf_Account <<Entity>> {
+      +customerId: CustomerId
+      +accountType: AccountType
+      +currency: CurrencyCode
+      +status: AccountStatus
+    }
+    enum "AccountType" as pf_AccountType <<Enum>> {
+      CASH
+      MARGIN
+      BROKERAGE
+    }
+    enum "AccountStatus" as pf_AccountStatus <<Enum>> {
+      ACTIVE
+      CLOSED
+      SUSPENDED
+    }
+    class "UserPreference" as pf_UserPreference <<Entity>> {
+      +theme: String
+      +language: String
+      +notificationsEnabled: boolean
+    }
+  }
+  package "instrument / market" as pf_instrument {
+    class "Instrument" as pf_Instrument <<AggregateRoot>> {
+      +symbol: Symbol
+      +name: String
+      +assetClass: AssetClass
+      +exchange: String
+    }
+    enum "AssetClass" as pf_AssetClass <<Enum>> {
+      EQUITY
+      BOND
+      OPTION
+      OTHER
+    }
+    class "Bond" as pf_Bond <<Entity>> {
+      +faceValue: BigDecimal
+      +couponRate: BigDecimal
+      +ytm: BigDecimal
+      +duration: BigDecimal
+    }
+    class "Option" as pf_Option <<Entity>> {
+      +underlyingInstrumentId: InstrumentId
+      +strike: BigDecimal
+      +expiry: Instant
+      +optionType: OptionType
+      +impliedVolatility: BigDecimal
+    }
+    enum "OptionType" as pf_OptionType <<Enum>> {
+      CALL
+      PUT
+    }
+    class "MarketData" as pf_MarketData <<Entity>> {
+      +timestamp: Instant
+      +open/high/low/close: BigDecimal
+      +volume: BigDecimal
+    }
+  }
+  package "portfolio / watchlist" as pf_portfolio {
+    class "Portfolio" as pf_Portfolio <<AggregateRoot>> {
+      +accountId: AccountId
+      +name: String
+      +baseCurrency: CurrencyCode
+    }
+    class "Position" as pf_Position <<Entity>> {
+      +instrumentId: InstrumentId
+      +quantity: Quantity
+      +costBasis: BigDecimal
+      +asOfDate: LocalDate
+    }
+    class "Watchlist" as pf_Watchlist <<AggregateRoot>> {
+      +customerId: CustomerId
+      +name: String
+    }
+    class "WatchlistItem" as pf_WatchlistItem <<Entity>> {
+      +instrumentId: InstrumentId
+      +addedAt: Instant
+    }
+  }
+  package "order / payment / settlement" as pf_order {
+    class "Order" as pf_Order <<AggregateRoot>> {
+      +accountId: AccountId
+      +instrumentId: InstrumentId
+      +side: OrderSide
+      +quantity: Quantity
+      +orderType: OrderType
+      +status: OrderStatus
+    }
+    enum "OrderSide" as pf_OrderSide <<Enum>> {
+      BUY
+      SELL
+    }
+    enum "OrderType" as pf_OrderType <<Enum>> {
+      MARKET
+      LIMIT
+    }
+    enum "OrderStatus" as pf_OrderStatus <<Enum>> {
+      PENDING
+      FILLED
+      CANCELLED
+    }
+    class "Trade" as pf_Trade <<Entity>> {
+      +quantity: Quantity
+      +price: BigDecimal
+      +fee: BigDecimal
+      +executedAt: Instant
+    }
+    class "Payment" as pf_Payment <<Entity>> {
+      +counterparty: String
+      +amount: Money
+      +status: PaymentStatus
+    }
+    enum "PaymentStatus" as pf_PaymentStatus <<Enum>> {
+      PENDING
+      COMPLETED
+      FAILED
+    }
+    class "CashTransaction" as pf_CashTransaction <<Entity>> {
+      +type: CashTxnType
+      +amount: Money
+      +status: CashTxnStatus
+    }
+    enum "CashTxnType" as pf_CashTxnType <<Enum>> {
+      DEPOSIT
+      WITHDRAWAL
+      FEE
+    }
+    class "Settlement" as pf_Settlement <<Entity>> {
+      +status: SettlementStatus
+      +settledAt: Instant
+    }
+    enum "SettlementStatus" as pf_SettlementStatus <<Enum>> {
+      PENDING
+      SETTLED
+    }
+  }
+}
+
+pf_Money --> pf_CurrencyCode
+pf_Session --> pf_Customer : customerId
+pf_UserCredential --> pf_Customer : customerId
+pf_Customer --> pf_KycStatus
+pf_Customer "1" o-- "0..*" pf_Account
+pf_Customer "1" o-- "0..1" pf_UserPreference
+pf_Customer "1" o-- "0..*" pf_Watchlist
+pf_Account --> pf_AccountType
+pf_Account --> pf_AccountStatus
+pf_Instrument --> pf_Symbol
+pf_Instrument --> pf_AssetClass
+pf_Instrument "1" o-- "0..1" pf_Bond
+pf_Instrument "1" o-- "0..1" pf_Option
+pf_Instrument "1" o-- "0..*" pf_MarketData
+pf_Option --> pf_OptionType
+pf_Account "1" o-- "0..*" pf_Portfolio
+pf_Portfolio "1" *-- "0..*" pf_Position
+pf_Position --> pf_Instrument : instrumentId
+pf_Position --> pf_Quantity
+pf_Watchlist "1" *-- "0..*" pf_WatchlistItem
+pf_WatchlistItem --> pf_Instrument : instrumentId
+pf_Account "1" o-- "0..*" pf_Order
+pf_Order --> pf_Instrument : instrumentId
+pf_Order --> pf_OrderSide
+pf_Order --> pf_OrderType
+pf_Order --> pf_OrderStatus
+pf_Order "1" *-- "0..*" pf_Trade
+pf_Account "1" o-- "0..*" pf_Payment
+pf_Payment --> pf_Money
+pf_Payment --> pf_PaymentStatus
+pf_Account "1" o-- "0..*" pf_CashTransaction
+pf_CashTransaction --> pf_CashTxnType
+pf_Trade "1" -- "0..1" pf_Settlement
+pf_Payment "1" -- "0..1" pf_Settlement
+pf_Settlement --> pf_SettlementStatus
+
+' ══ Explore Lowcode (docs only) ═══════════════════════════
+package "Explore Lowcode (from Glossary, unverified)" as lc {
+  class "Canvas" as lc_Canvas <<AggregateRoot>> {
+    +devicePreview: DevicePreview
+    +grid: boolean
+  }
+  class "Component Instance" as lc_ComponentInstance <<Entity>> {
+    +type: ComponentType
+    +props: Properties
+    +position
+  }
+  class "Custom Component" as lc_CustomComponent <<AggregateRoot>>
+  class "Template" as lc_Template <<AggregateRoot>>
+  class "Theme Config" as lc_ThemeConfig <<ValueObject>> {
+    +colors
+    +fonts
+    +radii
+  }
+  class "Data Source" as lc_DataSource <<Entity>>
+  class "Data Binding" as lc_DataBinding <<ValueObject>>
+  class "Properties" as lc_Properties <<ValueObject>> {
+    +style
+    +data
+    +interaction
+  }
+  enum "DevicePreview" as lc_DevicePreview <<Enum>> {
+    desktop
+    tablet
+    mobile
+  }
+}
+
+lc_Canvas "1" *-- "0..*" lc_ComponentInstance
+lc_ComponentInstance "0..1" o-- "0..*" lc_ComponentInstance : children
+lc_ComponentInstance --> lc_Properties
+lc_ComponentInstance "0..*" --> "0..1" lc_DataBinding
+lc_DataBinding "0..*" --> "1" lc_DataSource
+lc_CustomComponent ..> lc_ComponentInstance : defines type
+lc_Template "1" o-- "1..*" lc_ComponentInstance
+lc_Canvas --> lc_ThemeConfig
+lc_Canvas --> lc_DevicePreview
+
+' ══ Explore Three ═════════════════════════════════════════
+package "Explore Three" as three {
+  package "geography" as th_geo {
+    class "GeoCoord" as th_GeoCoord <<ValueObject>> {
+      +lat: number (-90..90)
+      +lon: number (-180..180)
+    }
+    class "SpherePoint" as th_SpherePoint <<ValueObject>> {
+      +x: number
+      +y: number
+      +z: number
+    }
+  }
+  package "route" as th_route {
+    class "FlightRoute" as th_FlightRoute <<Entity>> {
+      +origin: GeoCoord
+      +destination: GeoCoord
+    }
+  }
+  package "theme" as th_theme {
+    enum "ThemeId" as th_ThemeId <<Enum>> {
+      bright
+      tech
+    }
+    class "RouteColor" as th_RouteColor <<ValueObject>> {
+      +r: number
+      +g: number
+      +b: number
+    }
+    class "ThemeAppearance" as th_ThemeAppearance <<ValueObject>> {
+      +type: ThemeId
+      +lightConfig
+      +buttonStroke
+    }
+  }
+}
+
+th_FlightRoute "1" --> "2" th_GeoCoord : endpoints
+th_GeoCoord ..> th_SpherePoint : projects to
+th_ThemeAppearance --> th_ThemeId
+th_ThemeAppearance --> th_RouteColor
+
+' ══ Cross-project references ══════════════════════════════
+iam_OAuthClient ..> ai_Account : OIDC sub → subject
+iam_OAuthClient ..> chat_User : OIDC sub → User (IamUserProvisioner)
+iam_PermissionEntry ..> ai_Skill : scopes write:ai_*
+iam_PermissionEntry ..> chat_Chat : scopes write:chat_*, admin:chat
+ai_ChatSession ..> ml_StreamingTranscriptionSession : ASR /ws/v1/audios:transcribe, TTS voices:synthesize
+chat_Post ..> ml_FeatureDefinition : feeds:rank
+chat_Post ..> ml_Prediction : images:predict
+chat_Post ..> ml_Job : images:generate, videos:generate
+chat_User ..> ai_ClientId : Explore AI proxy (X-Client-Id)
+ml_IndexedDocument ..> chat_Post : content API /posts, /comments (legacy WhatsFeed, 待确认)
+
+@enduml

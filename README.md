@@ -39,6 +39,7 @@ Workspace-level view of how catalogued Explore products **evolve**, **integrate*
 - [docs/README.md](docs/README.md) — how to read the map
 - [docs/Workspace-Map.puml](docs/Workspace-Map.puml) — PlantUML source
 - [docs/png/Workspace-Map.png](docs/png/Workspace-Map.png) — preview
+- [docs/Domain-Model.puml](docs/Domain-Model.puml) — cross-project domain model (aggregates, entities, value objects, domain events); preview [docs/png/Domain-Model.png](docs/png/Domain-Model.png)
 
 ## Projects
 
@@ -58,7 +59,7 @@ Workspace-level view of how catalogued Explore products **evolve**, **integrate*
 ```text
 explore/
 ├── README.md
-├── docs/                    # Workspace Map (evolution · integration · migration)
+├── docs/                    # Workspace Map + cross-project Domain Model
 ├── explore-ai/
 │   ├── README.md
 │   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
