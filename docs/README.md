@@ -33,10 +33,19 @@ Source: [`Workspace-Map.puml`](Workspace-Map.puml)
 
 Uncatalogued local trees stay default-denied until onboarded — see [sync-repo](../.cursor/skills/developers/public-docs/references/sync-repo.md).
 
+## Domain Model
+
+Workspace-wide DDD view: one package per catalogued project with its bounded contexts, aggregate roots, entities, value objects, enums, and domain events, plus dashed cross-project references (IAM OIDC, ML calls, AI proxy).
+
+![Domain Model](png/Domain-Model.png)
+
+Source: [`Domain-Model.puml`](Domain-Model.puml). Per-project detail (base classes, repositories, methods) stays in each `C4-Code-Domain-Model.puml`.
+
 ## Render
 
 ```bash
 brew install plantuml   # macOS
 plantuml docs/Workspace-Map.puml
 mv docs/Explore-Workspace-Map.png docs/png/Workspace-Map.png
+plantuml -DPLANTUML_LIMIT_SIZE=30000 -o png docs/Domain-Model.puml
 ```
