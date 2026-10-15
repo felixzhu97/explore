@@ -22,6 +22,8 @@
 !explore-commerce/
 !explore-lowcode/
 !explore-ml/
+!explore-portfolio/
+!explore-three/
 
 # Ignore one-level entries under project roots, then re-allow docs
 */*

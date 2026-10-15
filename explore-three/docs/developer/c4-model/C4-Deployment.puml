@@ -1,0 +1,35 @@
+@startuml C4-Deployment
+!ROUNDED_STYLE=1
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
+UpdateElementStyle("person", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_person", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("system", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_system", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("container", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_container", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("component", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_component", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("node", "#FFFFFF", "#000000", "#000000")
+UpdateBoundaryStyle("", $bgColor="#FFFFFF", $fontColor="#000000", $borderColor="#000000")
+UpdateRelStyle("#000000", "#000000")
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+LAYOUT_WITH_LEGEND()
+title [C4] Explore Three - 部署图
+
+Deployment_Node(local, "Developer Machine", "macOS / Linux") {
+    Deployment_Node(ng_node, "Angular CLI", "pnpm start") {
+        Container(dev_spa, "Globe App (dev)", "Angular + Three.js", "HMR :4200")
+    }
+}
+
+Deployment_Node(vercel_cloud, "Vercel", "CDN") {
+    Container(prod_spa, "Globe App (prod)", "Static dist/explore-three/browser", "SPA rewrite")
+}
+
+Rel(dev_spa, prod_spa, "pnpm build → deploy", "CI / Vercel")
+
+SHOW_LEGEND()
+
+@enduml

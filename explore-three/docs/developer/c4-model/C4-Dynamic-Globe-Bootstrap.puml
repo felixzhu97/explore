@@ -1,0 +1,33 @@
+@startuml C4-Dynamic-Globe-Bootstrap
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+title Dynamic — Globe bootstrap (GlobeService.mount → dispose)
+
+actor "Browser User" as user
+participant "Theme Page\n(Angular)" as page <<ui>>
+participant "GlobeHostComponent" as host
+participant "GlobeService" as globe
+participant "GlobeGroup" as root
+participant "WebGL Canvas" as canvas
+
+user -> page: 1. Open /globe-light or /globe-dark
+page -> host: 2. render app-globe-host
+host -> globe: 3. mount(container, canvas, options)
+globe -> root: 4. new GlobeGroup(...)
+root --> globe: 5. scene graph
+globe -> canvas: 6. requestAnimationFrame
+globe --> host: 7. GlobeSession
+page --> user: 8. Interactive globe
+
+note right of host
+  On destroy: session.dispose()
+  stops rAF and removes listeners
+end note
+
+user -> page: 9. Leave route / unmount
+page -> host: 10. ngOnDestroy
+host -> globe: 11. dispose()
+
+@enduml

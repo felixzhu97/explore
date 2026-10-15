@@ -1,0 +1,36 @@
+@startuml C1-Context
+!ROUNDED_STYLE=1
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+UpdateElementStyle("person", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_person", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("system", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_system", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("container", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_container", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("component", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_component", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("node", "#FFFFFF", "#000000", "#000000")
+UpdateBoundaryStyle("", $bgColor="#FFFFFF", $fontColor="#000000", $borderColor="#000000")
+UpdateRelStyle("#000000", "#000000")
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+LAYOUT_WITH_LEGEND()
+title [C4 Level 1] Explore Three - 系统上下文
+
+Person(user, "Browser User", "浏览交互式地球仪")
+
+System_Boundary(boundary, "Explore Three") {
+    System(globe_app, "explore-three", "Angular SPA\nThree.js 地球仪与飞线")
+}
+
+System_Ext(vercel, "Vercel", "静态托管与 CDN")
+System_Ext(assets, "Static Assets", "public/img 纹理")
+
+Rel(user, globe_app, "打开主题页、拖拽地球仪", "HTTPS")
+Rel(globe_app, vercel, "部署产物", "CI / CDN")
+Rel(globe_app, assets, "加载陆地蒙版与弧线纹理", "HTTP")
+
+SHOW_LEGEND()
+
+@enduml

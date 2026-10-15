@@ -1,0 +1,84 @@
+@startuml C4-Code-Domain-Model
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontColor #000000
+}
+
+title Code diagram — product types by domain folder
+hide empty members
+
+legend right
+  |= Stereotype |= Meaning |
+  | <<Entity>> | Identity + lifecycle |
+  | <<ValueObject>> | Immutable by value |
+  | <<Service>> | Angular injectable |
+endlegend
+
+note as N_LAYERS
+  Folders: geography / route / theme / globe
+  (no src/domain or src/infra packages)
+  Preferred Terms: docs/Glossary.md
+end note
+
+package "geography" as pkg_geo {
+  class SpherePoint <<ValueObject>> {
+    +x: number
+    +y: number
+    +z: number
+  }
+  class GeoCoord <<ValueObject>> {
+    +lat: number
+    +lon: number
+    --
+    +projectToSpherePoint(radius)
+  }
+  class GeographyService <<Service>>
+}
+
+package "route" as pkg_route {
+  class FlightRoute <<Entity>> {
+    +origin: GeoCoord
+    +destination: GeoCoord
+    --
+    +{static} of(origin, destination)
+    +endpoints()
+  }
+  class RouteService <<Service>> {
+    +defaultRoutes: FlightRoute[]
+  }
+}
+
+package "theme" as pkg_theme {
+  class ThemeId <<ValueObject>> {
+    +bright
+    +tech
+  }
+  class RouteColor <<ValueObject>> {
+    +r: number
+    +g: number
+    +b: number
+  }
+  class ThemeAppearance <<ValueObject>> {
+    +type: ThemeId
+    +lightConfig
+    +buttonStroke: String
+    +sourceUrl: String
+  }
+  class ThemeService <<Service>>
+}
+
+GeoCoord --> SpherePoint : projectToSpherePoint
+FlightRoute --> GeoCoord : origin
+FlightRoute --> GeoCoord : destination
+RouteService --> FlightRoute
+ThemeService --> ThemeAppearance
+ThemeAppearance --> ThemeId
+ThemeService --> RouteColor
+
+@enduml

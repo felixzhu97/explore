@@ -50,6 +50,8 @@ Workspace-level view of how catalogued Explore products **evolve**, **integrate*
 | [Explore Commerce](https://github.com/felixzhu97/explore-commerce) | C4 | [`explore-commerce/docs/developer/c4-model/`](explore-commerce/docs/developer/c4-model/) | E-commerce monorepo: Web shop, admin, API |
 | [Explore Lowcode](https://github.com/felixzhu97/explore-lowcode) | C4 | [`explore-lowcode/docs/developer/c4-model/`](explore-lowcode/docs/developer/c4-model/) | Visual page builder: canvas, components, themes, export |
 | [Explore ML](https://github.com/felixzhu97/explore-ml) | C4 | [`explore-ml/docs/developer/c4-model/`](explore-ml/docs/developer/c4-model/) | Optional Python FastAPI helpers: recommendation, vision, RAG, image-playground, speech, video |
+| [Explore Portfolio](https://github.com/felixzhu97/explore-portfolio) | C4 | [`explore-portfolio/docs/developer/c4-model/`](explore-portfolio/docs/developer/c4-model/) | FinPulse fintech: portfolios, markets, orders, payments, risk (Spring Boot + FastAPI + React) |
+| [Explore Three](https://github.com/felixzhu97/explore-three) | C4 | [`explore-three/docs/developer/c4-model/`](explore-three/docs/developer/c4-model/) | Interactive 3D globe with flying routes and themes (Three.js + Angular) |
 
 ## Repository Layout
 
@@ -72,7 +74,13 @@ explore/
 ├── explore-lowcode/
 │   ├── README.md
 │   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
-└── explore-ml/
+├── explore-ml/
+│   ├── README.md
+│   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
+├── explore-portfolio/
+│   ├── README.md
+│   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
+└── explore-three/
     ├── README.md
     └── docs/{Glossary.md,product-owner/,developer/c4-model/}
 ```
@@ -98,6 +106,8 @@ Useful entry points:
 - [Explore Chat system context](explore-chat/docs/developer/c4-model/C1-Context.puml)
 - [Explore Commerce system context](explore-commerce/docs/developer/c4-model/C1-Context.puml)
 - [Explore Lowcode system context](explore-lowcode/docs/developer/c4-model/C1-Context.puml)
+- [Explore Portfolio system context](explore-portfolio/docs/developer/c4-model/C1-Context.puml)
+- [Explore Three system context](explore-three/docs/developer/c4-model/C1-Context.puml)
 
 ## Suggested Learning Path
 
@@ -107,7 +117,9 @@ Useful entry points:
 4. Read [Explore Chat C4](explore-chat/docs/developer/c4-model/) for Nest API, clients, and Python service boundaries
 5. Read [Explore Commerce C4](explore-commerce/docs/developer/c4-model/) for Web / Admin / API container split
 6. Read [Explore Lowcode C4](explore-lowcode/docs/developer/c4-model/) for SPA canvas / domain layout and Vercel deploy
-7. Compare how frontend shells, BFF/API containers, and external systems are drawn across these projects
+7. Read [Explore Portfolio C4](explore-portfolio/docs/developer/c4-model/) for Spring Boot + FastAPI fintech feature modules
+8. Read [Explore Three C4](explore-three/docs/developer/c4-model/) for an Angular + Three.js client-only app
+9. Compare how frontend shells, BFF/API containers, and external systems are drawn across these projects
 
 ## Contributing
 
