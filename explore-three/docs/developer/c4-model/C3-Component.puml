@@ -1,0 +1,79 @@
+@startuml C3-Component
+!ROUNDED_STYLE=1
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+UpdateElementStyle("person", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_person", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("system", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_system", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("container", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_container", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("component", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("external_component", "#FFFFFF", "#000000", "#000000")
+UpdateElementStyle("node", "#FFFFFF", "#000000", "#000000")
+UpdateBoundaryStyle("", $bgColor="#FFFFFF", $fontColor="#000000", $borderColor="#000000")
+UpdateRelStyle("#000000", "#000000")
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+LAYOUT_WITH_LEGEND()
+title [C4 Level 3] Explore Three - 组件图
+
+Container_Boundary(ui, "Angular UI (src/app + src/globe pages)") {
+    Component(nav, "NavbarComponent", "TS", "主题路由导航")
+    Component(page_light, "GlobeLightPageComponent", "TS", "/ 与 /globe-light")
+    Component(page_dark, "GlobeDarkPageComponent", "TS", "/globe-dark")
+    Component(host, "GlobeHostComponent", "TS", "canvas 挂载 + 交互")
+}
+
+Container_Boundary(globe, "Globe (src/globe)") {
+    Component(globe_svc, "GlobeService", "Service", "mount / dispose / rAF")
+    Component(globe_group, "GlobeGroup", "Group", "灯光 / 球体 / 子对象")
+    Component(land, "LandDotsGroup", "Group", "陆地蒙版 → 点")
+    Component(cfg, "globe.config", "Module", "半径 / tube / 贴图")
+}
+
+Container_Boundary(route_bc, "Route (src/route)") {
+    Component(route_svc, "RouteService", "Service", "FlightRoute / DEFAULT_ROUTES")
+    Component(arc, "FlightArc", "Mesh", "飞线 tube")
+    Component(marker, "RouteMarker", "Mesh", "端点 disc")
+}
+
+Container_Boundary(theme_bc, "Theme (src/theme)") {
+    Component(theme_svc, "ThemeService", "Service", "ThemeAppearance / RouteColor")
+}
+
+Container_Boundary(geo_bc, "Geography (src/geography)") {
+    Component(geo, "GeoCoord / SpherePoint", "Type", "projectToSpherePoint")
+}
+
+Container_Boundary(ext, "Libraries") {
+    Component(threejs, "Three.js", "Library", "WebGL 引擎")
+    Component(orbit, "OrbitControls", "Addon", "轨道相机")
+    Component(gsap, "GSAP", "Library", "挤出补间")
+    Component(angular, "Angular", "Library", "路由与组件")
+}
+
+Rel(nav, page_light, "导航到亮色")
+Rel(nav, page_dark, "导航到暗色")
+Rel(page_light, host, "渲染")
+Rel(page_dark, host, "渲染")
+Rel(host, globe_svc, "mount")
+Rel(host, gsap, "u_maxExtrusion tween")
+Rel(host, theme_svc, "themeId → appearance")
+Rel(globe_svc, globe_group, "new GlobeGroup")
+Rel(globe_svc, route_svc, "defaultRoutes")
+Rel(globe_group, land, "LandDotsGroup")
+Rel(globe_group, arc, "FlightArc")
+Rel(globe_group, marker, "RouteMarker")
+Rel(globe_group, cfg, "globeConfig")
+Rel(arc, geo, "project")
+Rel(marker, geo, "project")
+Rel(land, threejs, "Mesh")
+Rel(arc, threejs, "TubeGeometry")
+Rel(globe_svc, threejs, "Scene / rAF")
+Rel(globe_svc, orbit, "OrbitControls")
+Rel(nav, angular, "RouterLink")
+
+SHOW_LEGEND()
+
+@enduml

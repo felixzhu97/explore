@@ -27,8 +27,11 @@ Source: [`Workspace-Map.puml`](Workspace-Map.puml)
 | [Explore Chat](../explore-chat/README.md) | [c4-model](../explore-chat/docs/developer/c4-model/) | [Glossary](../explore-chat/docs/Glossary.md) | [User Story Map](../explore-chat/docs/product-owner/User-Story-Map.md) |
 | [Explore Commerce](../explore-commerce/README.md) | [c4-model](../explore-commerce/docs/developer/c4-model/) | [Glossary](../explore-commerce/docs/Glossary.md) | [User Story Map](../explore-commerce/docs/product-owner/User-Story-Map.md) |
 | [Explore Lowcode](../explore-lowcode/README.md) | [c4-model](../explore-lowcode/docs/developer/c4-model/) | [Glossary](../explore-lowcode/docs/Glossary.md) | [User Story Map](../explore-lowcode/docs/product-owner/User-Story-Map.md) |
+| [Explore ML](../explore-ml/README.md) | [c4-model](../explore-ml/docs/developer/c4-model/) | [Glossary](../explore-ml/docs/Glossary.md) | [User Story Map](../explore-ml/docs/product-owner/User-Story-Map.md) |
+| [Explore Portfolio](../explore-portfolio/README.md) | [c4-model](../explore-portfolio/docs/developer/c4-model/) | [Glossary](../explore-portfolio/docs/Glossary.md) | [User Story Map](../explore-portfolio/docs/product-owner/User-Story-Map.md) |
+| [Explore Three](../explore-three/README.md) | [c4-model](../explore-three/docs/developer/c4-model/) | [Glossary](../explore-three/docs/Glossary.md) | [User Story Map](../explore-three/docs/product-owner/User-Story-Map.md) |
 
-Uncatalogued local trees (for example `explore-portfolio`) stay default-denied until onboarded — see [sync-repo](../.cursor/skills/developers/public-docs/references/sync-repo.md).
+Uncatalogued local trees stay default-denied until onboarded — see [sync-repo](../.cursor/skills/developers/public-docs/references/sync-repo.md).
 
 ## Render
 
