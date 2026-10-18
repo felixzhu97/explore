@@ -48,12 +48,18 @@ Chat 的架构视图。源文件为 `.puml`；PNG 可选。术语见 [Glossary](
 
 ![C4-Code-Domain-Model](png/C4-Code-Domain-Model.png)
 
-对齐 Java feature 包：`controller` / `service` / `domain` / `infra` / `mapper`，以及
-`base/domain`（`AbstractImmutable` → `AbstractEntity` + `@Version`）。持久化：JPA + Liquibase（H2 / Postgres）。
+`C4-Code-Domain-Model.puml` 的 PlantUML **package 以 Glossary 业务域命名**
+（User / Chat / Message / Post / Call…），不用 Java 包路径。类型为名词；方法为
+verb + noun（`createUser`、`createMessage`、`createCall`、`markDeleted`）。
 
-服务端：`Chat.createPrivate|createGroup`、`Message.send|edit|softDelete`；参与者校验在
-`ChatsService`；infra 为 `SpringData*Repository`。客户端 Local Chat Projection（Web / Expo，源码同构）：
-`ChatCatalog` / `ChatThread` / `Message` + VOs；wire SSoT：`src/main/im-contract/openapi.yaml`（无共享 npm）。
+Java feature 包：`controller` / `service` / `domain.model`（无 `domain.vo`） /
+`domain.repository` / `infra` / `mapper`，以及 `base/domain`（`AbstractImmutable` →
+`AbstractEntity` + `@Version`）。持久化：JPA + Liquibase **仅 `0.1` createTable**
+（改基线，无 alter）；`User`→`chat_user` 等保留字表名由
+`ChatPhysicalNamingStrategy` 映射。
+
+客户端 Local Chat Projection（Web / Expo）：`ChatCatalog` / `ChatThread` /
+`Message` + VOs 均在 `domain/model`；wire SSoT：`src/main/im-contract/openapi.yaml`。
 
 ### Plan
 
@@ -118,7 +124,7 @@ Chat iOS `IamAuthService` → Explore IAM → Bearer `/api/v1/auth/me` → 主 T
 | Mobile       | Expo / React Native (`src/main/mobile`)                                                        |
 | API          | Spring Boot；REST / Socket.IO；`:9001`                                         |
 | 持久化       | H2 / Postgres（JPA + Liquibase）                                                       |
-| 旁路（可选） | [explore-ml](https://github.com/felixzhu97/explore-ml) `python_ml/` — recommendation `:8000`、vision `:8001`、rag `:8002`、image-playground `:8003`、speech `:8004`、video `:8005` |
+| 旁路（可选） | [explore-ml](https://github.com/felixzhu97/explore-ml) `python_ml/` — 单一应用 `:8000`（recommendation、vision、rag、image_playground、speech、video）；`EXPLORE_ML_API_URL` |
 | AI           | 本地 Ollama；Explore AI 经 Spring BFF                                                  |
 
 限界上下文（Java）：`auth` / `users` / `post` / `comments` / `chats` / `search` / `notifications` / …

@@ -96,14 +96,18 @@ packages/                Shared IM and analytics (web / Expo)
 docs/                    Guideline, Glossary, developer, C4
 ```
 
-Optional ML helpers live in sibling [`explore-ml`](https://github.com/felixzhu97/explore-ml) under `python_ml/` (ports `:8000`–`:8005`).
+Optional ML helpers live in sibling [`explore-ml`](https://github.com/felixzhu97/explore-ml) under `python_ml/`, served as one app on `:8000` (`EXPLORE_ML_API_URL`).
 
 Java features use per-feature packages: `controller` → `service` → `domain` ← `infra`, plus `mapper`.
 
 ## Contributing
 
-Prefer a single English kebab-case branch slug, small PRs with a clear why and References, and keep Glossary terms plus C4 docs in sync when packages or APIs change.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Prefer a single English kebab-case branch slug, small PRs with a clear why and References, and keep Glossary terms plus C4 docs in sync when packages or APIs change. Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Security
+
+Report vulnerabilities as described in [SECURITY.md](SECURITY.md).
 
 ## License
 
-See repository license file.
+[MIT](LICENSE) © 2026 Felix
