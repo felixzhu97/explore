@@ -12,21 +12,22 @@ Style standards: global [c4-model](~/.cursor/skills/scrum-team/developers/develo
 |-------|-------|-------|
 | **Structural C4** | C1–C3, Deployment | `C4_blue_new` theme (wireframe) |
 | **Domain model** | `C4-Code-Domain-Model.puml` | 白底黑字黑边框（对齐 explore-chat Code 图） |
-| **Dynamics** | `C4-Dynamic-*` | [`style-zinc.puml`](style-zinc.puml) 或内联白底（见各文件） |
+| **Dynamics** | `C4-Dynamic-*` | Plain 黑白（`!theme plain` + 白底，无彩色 legend） |
 
 ## File set
 
 | File | Level | Description |
 |------|-------|-------------|
-| `C1-Context.puml` | Context | People, Explore IAM boundary, Relying Parties, external IdPs |
-| `C2-Container.puml` | Container | IAM Application monolith (:9100), metadata database |
-| `C3-Component.puml` | Component | **Single** diagram: Angular Console + backend modules (`controller → service → domain ← infra`) |
-| `C4-Code-Domain-Model.puml` | Code | DDD class model with `AbstractEntity` / `AbstractImmutable` kernel |
+| `C1-Context.puml` | Context | People, Explore IAM boundary, Relying Parties, external IdPs, Enterprise IdP (SCIM client), Explore AI as Provisioning Target |
+| `C2-Container.puml` | Container | IAM Application monolith (:9100) with SCIM server + outbound push, metadata database |
+| `C3-Component.puml` | Component | **Single** diagram: Angular Console + backend modules incl. SCIM (`controller → service → domain ← infra`) |
+| `C4-Code-Domain-Model.puml` | Code | DDD class model grouped by business domain (Domain Kernel, Common, Identity, Policy, Short-lived credentials, Federation, Audit) |
 | `C4-Deployment.puml` | Deployment | **Single** view: local H2 + Render Starter (Docker) |
+| `C4-Dynamic-Overview.puml` | Dynamic (macro) | End-to-end lifecycle: govern identity & policy → onboard Relying Party → SSO → Bearer API calls → STS → audit / what-if; `ref` to the detailed flows below |
 | `C4-Dynamic-SSOLogin.puml` | Dynamic | OIDC Authorization Code (confidential + public PKCE) |
 | `C4-Dynamic-NativePkceLogin.puml` | Dynamic | Native iOS ASWebAuthenticationSession + PKCE → RP Bearer |
-| `C4-Dynamic-PolicyEvaluation.puml` | Dynamic | AssumeRole + PolicyEngine (Deny > Allow > implicit Deny) |
-| `style-zinc.puml` | Shared | Dynamic 序列图可选样式（Code 领域模型内联白底黑边框） |
+| `C4-Dynamic-PolicyEvaluation.puml` | Dynamic | Short-lived credentials + PolicyEngine (Deny > Allow > implicit Deny) |
+| `C4-Dynamic-ScimProvisioning.puml` | Dynamic | Enterprise IdP → IAM `/scim/v2` → domain events → idempotent push to Explore AI `/scim/v2/Users` (retry, resubmit) |
 
 ## Stack & ports
 
@@ -42,7 +43,8 @@ Style standards: global [c4-model](~/.cursor/skills/scrum-team/developers/develo
 ## Render
 
 ```bash
-plantuml -tpng docs/developer/c4-model/*.puml
+cd docs/developer/c4-model
+PLANTUML_LIMIT_SIZE=16384 plantuml -tpng -o png C4-Code-Domain-Model.puml
 ```
 
 Online: [PlantUML server](https://www.plantuml.com/plantuml/uml/).
@@ -51,18 +53,25 @@ Online: [PlantUML server](https://www.plantuml.com/plantuml/uml/).
 
 1. C1 → C2 → C3 (structure)
 2. `C4-Code-Domain-Model.puml` (ubiquitous language)
-3. `C4-Dynamic-*` (runtime paths)
+3. `C4-Dynamic-Overview.puml` (macro runtime), then the other `C4-Dynamic-*` (detailed paths)
 4. `C4-Deployment.puml` (where it runs)
 
-## AWS IAM mapping
+## Google Cloud IAM mapping
 
-| AWS IAM | Explore IAM |
-|---------|-------------|
-| IAM User / Group / Role | `IamUser`, `Group`, `Role` |
-| Identity / Resource policy | `PolicyDocument`, `PolicyEngine` |
-| STS AssumeRole | `AssumeRoleService`, `AssumedRoleSession` |
-| IAM Identity Center / federation | OIDC Provider + `FederatedIdentityLink` |
-| CloudTrail | `ManagementEvent`, `AuthorizationDecisionLog` |
+Vocabulary follows [Google Cloud IAM](https://cloud.google.com/iam/docs/overview).
+
+| Google Cloud IAM | Explore IAM |
+|------------------|-------------|
+| Principal (user, group) | `User`, `Group` |
+| Role / role binding | `Role`, `RoleBinding` |
+| Allow policy | `AllowPolicy`, `PolicyStatement`, `PolicyEngine` |
+| Policy binding | `PolicyBinding` |
+| Permission | `Permission` (common value object and policy catalog entry) |
+| Resource name | `ResourceName` |
+| Short-lived credentials | `ShortLivedCredential` |
+| Workforce / workload identity federation | OIDC Provider + `FederatedIdentity` |
+| OAuth client | `OAuthClient` |
+| Cloud Audit Logs (Admin Activity, Data Access) | `AdminActivity`, `DataAccessLog` |
 
 ## Related docs
 
