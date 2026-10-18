@@ -1,0 +1,48 @@
+@startuml C4-Dynamic-ScimProvisioning
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+title Dynamic — User lifecycle from Explore IAM to Explore AI (SCIM 2.0)
+
+autonumber
+actor "IAM Administrator" as admin
+participant "IAM Console\n/users" as console <<ui>>
+participant "IAM Identity +\nAudit (same tx)" as iam <<java>>
+participant "ScimPushListener\n(after commit)" as push <<java>>
+participant "IAM /oauth2/token" as token <<java>>
+participant "AI ScimSecurityConfig +\nScimAccountService" as aiscim <<java>>
+participant "AI feature modules\nchat · rag · skill · pipeline ·\nautomation · metrics" as modules <<java>>
+
+admin -> console: Create / disable / delete user
+console -> iam: REST call
+iam -> iam: Change User, publish domain event\nAdminActivity identity:* (same transaction)
+iam --> console: 201 / 200 / 204
+
+iam -> push: UserProvisioned / UserDeactivated /\nUserDeleted event (ids only)
+push -> token: client_credentials iam-scim-outbound\nscope write:ai_scim (cached)
+token --> push: Access token
+
+alt Create
+  push -> aiscim: POST /scim/v2/Users\nexternalId = IAM user id, userName, email, displayName
+  aiscim -> aiscim: Check JWT issuer and SCOPE_write:ai_scim\n(401 / 403 SCIM error otherwise)
+  aiscim --> push: 201 + Location + ETag
+else Disable
+  push -> aiscim: PUT /scim/v2/Users/{id} (active = false, If-Match)
+  aiscim --> push: 200 · sign-in now fails ACCOUNT_INACTIVE
+else Delete
+  push -> aiscim: DELETE /scim/v2/Users/{id}
+  aiscim -> modules: OwnerErasureRequestedEvent (same transaction)
+  modules -> modules: Each module deletes its own owner rows\nChatSessionsErasedEvent → metrics
+  aiscim -> aiscim: Delete account
+  aiscim --> push: 204
+end
+push -> push: Record remote id and synced version
+
+note over push, aiscim
+  5xx / 429: retry with backoff; incomplete publications are resubmitted every 5 minutes and on restart
+  Enterprise IdPs provision IAM the same way (client_credentials, scope write:iam_scim)
+end note
+
+@enduml

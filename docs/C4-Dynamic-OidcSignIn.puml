@@ -1,0 +1,51 @@
+@startuml C4-Dynamic-OidcSignIn
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+title Dynamic — Sign in to Explore products with Explore IAM (OIDC)
+
+autonumber
+actor "End User" as user
+participant "Product client\nAI Web · AI iOS · Chat iOS" as client <<ui>>
+participant "Product API\nAI Backend :9000 · Chat API :9001" as api <<java>>
+participant "Explore IAM\n:9100" as iam <<java>>
+
+alt Web (AI Web, confidential client explore-ai)
+  user -> client: Sign in with Explore IAM
+  client -> api: GET /oauth2/authorization/explore-iam
+  api --> user: Redirect to IAM /oauth2/authorize
+else Native (AI iOS / Chat iOS, public client + PKCE)
+  user -> client: Tap Sign in with IAM
+  client -> client: PKCE verifier, challenge, state
+  client -> iam: ASWebAuthenticationSession\nGET /oauth2/authorize (explore-ai-ios / explore-chat-ios)
+end
+
+iam --> user: /login: password, then OTT / passkey / TOTP
+user -> iam: Credentials and second factor
+iam --> user: Redirect to redirect_uri?code=…&state=…
+
+alt Web
+  user -> api: /login/oauth2/code/explore-iam?code=…
+  api -> iam: POST /oauth2/token (client secret + code)
+  iam --> api: Access + ID token
+  api -> api: Link browser to account,\nmove guest data (GuestLinkedToAccountEvent)
+  api --> client: Session cookie, redirect to SPA
+else Native
+  client -> iam: POST /oauth2/token (code + code_verifier)
+  iam --> client: Access token (email / profile claims)
+  client -> api: API call, Authorization: Bearer
+  api -> iam: Fetch JWKS, check issuer
+  api -> api: JWT → local account / owner
+end
+api --> client: 200 with account payload
+client --> user: Signed-in home
+
+note over client, iam
+  Discovery: /.well-known/openid-configuration · custom-scheme redirects per RFC 8252
+  Bearer requests skip CSRF · Commerce and Lowcode sign-in are planned
+  Deactivated or deleted IAM users get no new tokens
+end note
+
+@enduml

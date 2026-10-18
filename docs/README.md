@@ -47,6 +47,19 @@ The integration container view keeps only the containers that make cross-system 
 
 Source: [`C2-Integration-Container.puml`](C2-Integration-Container.puml)
 
+## Core Dynamics
+
+The four runtime flows that cross system boundaries:
+
+| Flow | Purpose |
+| --- | --- |
+| [OIDC sign-in](png/C4-Dynamic-OidcSignIn.png) | Web (confidential client) and native (PKCE) sign-in through Explore IAM, then JWKS-validated Bearer calls |
+| [SCIM provisioning](png/C4-Dynamic-ScimProvisioning.png) | IAM pushes user create / disable / delete to Explore AI with a `client_credentials` token; delete triggers owner erasure |
+| [Chat to AI BFF](png/C4-Dynamic-ChatAiBff.png) | Planned path where Chat's `AiProxyService` translates to Explore AI; today it forwards to Ollama |
+| [ML app calls](png/C4-Dynamic-MlSidecar.png) | Chat API forwards ranking, vision, and media generation to the loopback Explore ML app |
+
+Sources: [`C4-Dynamic-OidcSignIn.puml`](C4-Dynamic-OidcSignIn.puml), [`C4-Dynamic-ScimProvisioning.puml`](C4-Dynamic-ScimProvisioning.puml), [`C4-Dynamic-ChatAiBff.puml`](C4-Dynamic-ChatAiBff.puml), [`C4-Dynamic-MlSidecar.puml`](C4-Dynamic-MlSidecar.puml)
+
 ## Domain Model
 
 Workspace-wide DDD view: one package per catalogued project with its bounded contexts, aggregate roots, entities, value objects, enums, and domain events, plus dashed cross-project references (IAM OIDC, ML calls, AI proxy).
@@ -63,4 +76,5 @@ plantuml docs/Workspace-Map.puml
 mv docs/Explore-Workspace-Map.png docs/png/Workspace-Map.png
 plantuml -DPLANTUML_LIMIT_SIZE=30000 -o png docs/Domain-Model.puml
 plantuml -tpng -o png docs/C1-System-Landscape.puml docs/C2-Integration-Container.puml
+plantuml -tpng -o png docs/C4-Dynamic-*.puml
 ```

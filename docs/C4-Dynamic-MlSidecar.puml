@@ -1,0 +1,36 @@
+@startuml C4-Dynamic-MlSidecar
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+title Dynamic — Explore Chat calls the Explore ML app (loopback)
+
+autonumber
+actor "End User" as user
+participant "Chat Web / iOS" as client <<ui>>
+participant "Chat API :9001\nAiController · AiProxyService" as api <<java>>
+participant "Explore ML :8000\nFastAPI main:app" as ml <<python>>
+participant "ML module\nrecommendation · vision ·\nimage_playground · speech · video" as module <<python>>
+
+user -> client: Open feed / upload image / generate media
+client -> api: POST /api/v1/recommendations:rank\nvision:predict · images:generate ·\nvoices:synthesize · videos:generate
+api -> api: Authenticate (Chat or IAM JWT)
+api -> ml: POST EXPLORE_ML_API_URL/api/v1/feeds:rank\nimages:predict · images:generate ·\nvoices:synthesize · videos:generate
+ml -> module: Route to module
+module -> module: Run model (ranking, labels, generation)
+module --> ml: Result JSON
+ml --> api: 200 JSON
+api --> client: 200 JSON
+
+alt ML app down or error
+  api --> client: 502 Upstream unavailable
+  client --> user: Feature degrades; core chat still works
+end
+
+note over client, ml
+  Client rule: browsers and iOS call the Chat API only, never Explore ML directly.
+  Explore ML listens on loopback :8000 beside the product API; GET /health aggregates modules.
+end note
+
+@enduml

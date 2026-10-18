@@ -1,0 +1,44 @@
+@startuml C4-Dynamic-ChatAiBff
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+title Dynamic — Explore Chat uses Explore AI through a BFF [planned]
+
+autonumber
+actor "End User" as user
+participant "Chat Web / iOS" as client <<ui>>
+participant "Chat API :9001\nAiController" as api <<java>>
+participant "AiProxyService\n(ACL to Explore AI [planned])" as acl <<java>>
+participant "Explore AI :9000\n/api (Published Language)" as ai <<java>>
+participant "Ollama :11434" as ollama <<external>>
+
+user -> client: Ask AI (text generate dialog)
+client -> api: POST /api/v1/ai/chat\nAuthorization: Bearer (Chat or IAM token)
+
+alt chat.upstreams.explore-ai configured [planned]
+  api -> acl: Chat request (Chat terms)
+  acl -> acl: Translate to Explore AI request,\npass the user's IAM token
+  acl -> ai: POST /api/chat/... (Bearer)
+  ai -> ai: JWT → owner, quota, module flags
+  ai --> acl: Reply in Explore AI terms
+  acl -> acl: Translate back to Chat terms
+  acl --> api: Chat reply
+else Today: explore-ai upstream empty
+  api -> acl: chatOllama(body)
+  acl -> ollama: POST /api/chat
+  ollama --> acl: Model reply
+  acl --> api: Reply map
+end
+api --> client: 200 reply\n502 Upstream unavailable on failure
+client --> user: Show answer
+
+note over api, ai
+  Implemented today: AiController → AiProxyService → Ollama (chat) and Explore ML (media).
+  Web /ai/explore/chat/stream is called by the client but has no Chat API handler yet.
+  chat.upstreams.explore-ai exists but is blank; no Explore AI client is wired yet.
+  Clients never call Explore AI directly; the BFF owns translation (ACL).
+end note
+
+@enduml
