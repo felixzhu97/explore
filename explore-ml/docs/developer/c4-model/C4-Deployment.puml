@@ -13,24 +13,28 @@ LAYOUT_WITH_LEGEND()
 title [C4 Deployment] Explore ML - Local Development
 
 Deployment_Node(dev_machine, "Dev machine", "macOS / Linux") {
-  Deployment_Node(py_svcs, "python_ml (venv)", "") {
-    Container(rec, "Recommendation", "FastAPI", ":8000")
-    Container(vision, "Vision", "FastAPI", ":8001")
-    Container(rag, "RAG", "FastAPI", ":8002")
-    Container(ip, "Image Playground", "FastAPI", ":8003")
-    Container(sp, "Speech", "FastAPI", ":8004")
-    Container(vd, "Video", "FastAPI", ":8005")
+  Deployment_Node(py_app, "python_ml (venv, one uvicorn)", "Python 3.12") {
+    Container(app, "ML app", "FastAPI", ":8000; recommendation, vision, rag, image_playground, speech, video")
+    ContainerDb(qdrant, "Qdrant (embedded)", "Files", "python_ml/rag/data/qdrant; or a remote QDRANT_URL")
   }
-  Deployment_Node(data_node, "data/", "fixtures") {
-    Container(fixtures, "fixtures", "Files", "Small files in git; large weights gitignored")
+  Deployment_Node(ollama_node, "Ollama", ":11434") {
+    Container(ollama, "Ollama", "LLM runtime", "Embedding + chat models")
   }
-  Deployment_Node(ui_node, "ui/", "planned") {
-    Container(ui, "Model Test UI", "(not implemented)", "Sibling of python_ml")
+  Deployment_Node(weights_node, "~/Codes/models", "LOCAL_MODELS_ROOT, outside the repo") {
+    ContainerDb(weights, "Model weights", "Files", "asr, tts, image, rerank, recommendation, fine-tuned outputs")
+  }
+  Deployment_Node(data_node, "data/", "in git") {
+    ContainerDb(fixtures, "Fixtures", "JSONL", "data/finetune/* small eval and training sets")
+  }
+  Deployment_Node(ui_node, "ui/ (Node 22)", "ng serve :4200") {
+    Container(ui, "Model Test UI", "Angular", "Proxies /ml to :8000")
   }
 }
 
-Rel(rag, fixtures, "optional path")
-Rel(ui, rec, "HTTP", "planned")
+Rel(ui, app, "/ml", "HTTP + SSE + WS")
+Rel(app, qdrant, "embedded client")
+Rel(app, ollama, "HTTP")
+Rel(app, weights, "reads")
 
 SHOW_LEGEND()
 @enduml
