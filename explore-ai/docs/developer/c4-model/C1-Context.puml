@@ -1,21 +1,8 @@
 @startuml C1-Context
-!ROUNDED_STYLE=1
+!theme C4_blue_new from https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/themes
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
-UpdateElementStyle("person", "#FFFFFF", "#000000", "#000000")
-UpdateElementStyle("external_person", "#FFFFFF", "#000000", "#000000")
-UpdateElementStyle("system", "#FFFFFF", "#000000", "#000000")
-UpdateElementStyle("external_system", "#FFFFFF", "#000000", "#000000")
-UpdateElementStyle("container", "#FFFFFF", "#000000", "#000000")
-UpdateElementStyle("external_container", "#FFFFFF", "#000000", "#000000")
-UpdateElementStyle("component", "#FFFFFF", "#000000", "#000000")
-UpdateElementStyle("external_component", "#FFFFFF", "#000000", "#000000")
-UpdateElementStyle("node", "#FFFFFF", "#000000", "#000000")
-UpdateBoundaryStyle("", $bgColor="#FFFFFF", $fontColor="#000000", $borderColor="#000000")
-UpdateRelStyle("#000000", "#000000")
-skinparam backgroundColor #FFFFFF
-skinparam shadowing false
 
-title System Context (C1) - AI Chat & Agent Platform
+title System Context (C1) — AI Chat & Agent Platform
 
 Person(user, "User", "Chat, RAG, Agent/workflows, image/TTS; optional Vision/MCP/Eval/ASR\nSigns in via Web or AI iOS (IAM PKCE)")
 Person(admin, "Admin / Developer", "Eval, text analysis, metrics, feature flags, API integration")
@@ -26,7 +13,7 @@ System_Boundary(ai_platform, "AI Chat & Agent Platform") {
     System(backend, "AI Platform Backend", "Spring Boot 4.1 / Java 25 / Spring AI 2.0\nGradle :9000 (dev) / Render :8080 (prod)\nOAuth2 Resource Server (IAM JWT)")
 }
 
-System_Ext(explore_iam, "Explore IAM", "OIDC Provider :9100\nDiscovery / authorize / token / JWKS")
+System_Ext(explore_iam, "Explore IAM", "OIDC Provider :9100\nDiscovery / authorize / token / JWKS\nSCIM 2.0 Client (provisioning hub)")
 System_Ext(launchdarkly, "LaunchDarkly", "Feature flags")
 System_Ext(datadog, "Datadog (us5)", "RUM; optional APM")
 System_Ext(deepseek_api, "DeepSeek API", "LLM")
@@ -43,11 +30,12 @@ Rel(user, frontend, "Uses Web UI", "HTTPS")
 Rel(user, ios_app, "Uses native app", "iOS")
 Rel(user, explore_iam, "Login / consent", "OIDC / PKCE")
 Rel(admin, launchdarkly, "Configure flags", "HTTPS")
-Rel(admin, backend, "Eval / analysis / metrics", "HTTPS")
+Rel(admin, backend, "Eval / text analysis / metrics", "HTTPS")
 Rel(frontend, backend, "REST / SSE / WebSocket", "HTTPS")
 Rel(ios_app, explore_iam, "Authorize + token (PKCE)", "HTTPS")
 Rel(ios_app, backend, "API Bearer access_token", "HTTPS :9000")
 Rel(backend, explore_iam, "OIDC discovery / JWKS validate", "HTTPS")
+Rel(explore_iam, backend, "Provision accounts /scim/v2/Users", "SCIM 2.0 / HTTPS")
 
 Rel(frontend, launchdarkly, "Client SDK", "HTTPS")
 Rel(frontend, datadog, "RUM", "HTTPS")
@@ -60,7 +48,7 @@ Rel(backend, resend_api, "Automations mail", "HTTPS")
 Rel(backend, h2_db, "JDBC", "embedded")
 Rel_Back(backend, ollama, "Embedding + vision RAG [dev]", "HTTP")
 Rel_Back(backend, tesseract, "OCR [dev]", "JNA")
-Rel_Back(backend, speech, "ASR / TTS [dev]", "HTTP/WS :8004")
+Rel_Back(backend, speech, "ASR / TTS [dev]", "HTTP/WS :8000")
 Rel_Back(backend, onnx_vision, "Caption / Detect [dev]", "file I/O")
 
 SHOW_LEGEND()
