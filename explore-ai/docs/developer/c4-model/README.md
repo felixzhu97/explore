@@ -4,29 +4,31 @@
 
 Source of truth: `.puml`。官方 C4: [c4model.com](https://c4model.com/)。库: [C4-PlantUML](https://github.com/plantuml-stdlib/C4-PlantUML)。
 
-## Visual tracks
+## Visual tracks (do not mix)
+
+与 [Explore IAM C4 模型](https://github.com/felixzhu97/explore-iam/tree/main/docs/developer/c4-model) 保持一致。
 
 | Track | Files | Style |
 | ----- | ----- | ----- |
-| **Structural C4** | C1–C3, Deployment | Official **`C4_blue_new`** theme（线框；勿与 zinc 混用） |
-| **Domain + Dynamics** | Code domain model, `C4-Dynamic-*` | [`style-zinc.puml`](style-zinc.puml)（白底 + 彩色边框，IAM 风格） |
-
-Do not mix `C4_blue_new` into domain/dynamic diagrams（也不要把 `style-zinc.puml` 用于 structural C4）。
+| **Structural C4** | C1–C3, Deployment | `C4_blue_new` theme (wireframe) |
+| **Domain model** | `C4-Code-Domain-Model.puml` | 白底黑字黑边框（内联 `!theme plain`）；package 以业务域命名（Glossary Preferred Term），不用 Java 包路径 |
+| **Dynamics** | `C4-Dynamic-*` | [`style-zinc.puml`](style-zinc.puml) 或内联白底（见各文件） |
 
 ## 文件
 
 | 文件 | 层级 | 说明 |
 | --- | --- | --- |
-| `C1-Context.puml` | C1 | 系统上下文（含 Explore IAM、AI iOS、LaunchDarkly、Datadog） |
-| `C2-Container.puml` | C2 | 容器图（13 子域 + AI iOS + IAM） |
-| `C3-Component.puml` | C3 | **单图**：Web + iOS + Backend；`IamResourceServerConfig` |
-| `C4-Code-Domain-Model.puml` | **Code** | 领域模型（Entity 行为 + VO / Repository；对齐 `com.ai.*.domain`） |
+| `C1-Context.puml` | C1 | 系统上下文（含 Explore IAM OIDC + SCIM、AI iOS、LaunchDarkly、Datadog） |
+| `C2-Container.puml` | C2 | 容器图（13 子域 + SCIM Provisioning + AI iOS + IAM） |
+| `C3-Component.puml` | C3 | **单图**：Web + iOS + Backend；`IamResourceServerConfig`、`ScimSecurityConfig` |
+| `C4-Code-Domain-Model.puml` | **Code** | 领域模型（Entity 行为 + VO / Repository；按业务域分 package：Domain Kernel、Common、Chat、RAG…） |
 | `C4-Deployment.puml` | Deployment | **单图**：本地（IAM :9100 / AI :9000 / Simulator）+ 生产 |
-| `style-zinc.puml` | Shared | Code + Dynamic 共用样式（白底、标题色区分 stereotype） |
+| `style-zinc.puml` | Shared | Dynamic 序列图可选样式（Code 领域模型内联白底黑边框） |
 | `C4-Dynamic-Document-Upload.puml` | Dynamic | 文档上传 ETL |
 | `C4-Dynamic-Rag-Ask.puml` | Dynamic | RAG SSE 问答 |
 | `C4-Dynamic-Chat-Tools.puml` | Dynamic | Chat 工具 SSE + A2UI 图表 |
 | `C4-Dynamic-IamNativeSignIn.puml` | Dynamic | AI iOS PKCE → IAM → Bearer `/api/account/me` → Home |
+| `C4-Dynamic-ScimProvisioning.puml` | Dynamic | Explore IAM → `/scim/v2/Users`（`write:ai_scim`）→ Account 生命周期 + 删除擦除 |
 
 > **Code vs Deployment**：C4 官方第 4 层是 **Code**（类与关系）。本仓 `C4-Deployment.puml` 是部署视图；领域类型总览见 `C4-Code-Domain-Model.puml`。图中 stereotype 表示约定，**没有**共享 Java `Entity`/`AggregateRoot` 基类。
 
@@ -85,6 +87,7 @@ Do not mix `C4_blue_new` into domain/dynamic diagrams（也不要把 `style-zinc
 | [C4-Dynamic-Rag-Ask.puml](C4-Dynamic-Rag-Ask.puml) | RAG 提问 → 检索 → SSE 流式回答 |
 | [C4-Dynamic-Chat-Tools.puml](C4-Dynamic-Chat-Tools.puml) | Chat 工具调用 → SSE → A2UI 图表 |
 | [C4-Dynamic-IamNativeSignIn.puml](C4-Dynamic-IamNativeSignIn.puml) | AI iOS IAM PKCE 登录 → Bearer me → Home |
+| [C4-Dynamic-ScimProvisioning.puml](C4-Dynamic-ScimProvisioning.puml) | Explore IAM SCIM 推送 → `write:ai_scim` → 创建 / 替换 / 停用 / 删除并擦除 Account |
 
 ![C4-Dynamic-Rag-Ask](png/C4-Dynamic-Rag-Ask.png)
 
@@ -97,8 +100,9 @@ Do not mix `C4_blue_new` into domain/dynamic diagrams（也不要把 `style-zinc
 - **运行时**: Spring Boot 4.1 / Java 25 / Spring AI 2.0
 - **架构**: Clean Architecture（`domain/repository/`，非 Hexagonal `domain/port/`）
 - **端口**: dev **9000** / prod **8080** (Render `PORT`)
-- **子域 (13)**: Chat / Pipeline / Skill / RAG / Tools / Analysis / Eval / Image / Image Analysis (`vision`) / Audio (TTS+ASR) / MCP Server / MCP Client / Metrics
-- **持久化**: H2 嵌入式（会话元数据 `JdbcChatSessionMetadataRepository` + 消息 `JdbcChatMemoryRepository` + 向量 + AI 调用事件 `ai_invocation_events`）
+- **子域 (13)**: Chat / Pipeline / Skill / RAG / Tools / Text Analysis (`textanalysis`) / Eval / Image / Image Analysis (`vision`) / Audio (TTS+ASR) / MCP Server / MCP Client / Metrics
+- **持久化**: H2 嵌入式（会话元数据 `ChatSessionRepository` + 消息 `JdbcChatMemoryRepository` + 向量 + AI 调用事件 `ai_invocation_event`）
+- **JPA / Hibernate**: 归属聚合继承 `AbstractOwnerAwareEntity`（运行记录与调用事件继承 `AbstractOwnerAwareImmutable`）（`owner_key` NOT NULL，Liquibase `0.1-012` 回填遗留会话为 `c:legacy-orphan`）；领域仓储继承 Spring Data `Repository<T, ID>`，按归属读写以 `OwnerKey` 作为显式查询参数（如 `findByIdAndOwnerKey`），后台任务使用不带归属的查询；类型化 ID 映射原生 UUID 列；`AiInvocationEvent` 为 `@Immutable`；`Account` 以 `@NaturalId`（provider + subject）查找
 - **功能开关**: LaunchDarkly（`ModuleAccessFilter` + `FeatureFlagService`）
 - **可观测性**: Datadog RUM（前端，可选）；APM javaagent 可选（Render Starter 512MB 默认关闭）
 - **外部服务 (cloud)**: DeepSeek API (LLM) / OpenAI API (DALL-E + TTS) / Serper.dev (Web 搜索) / Resend (Automations 邮件)
@@ -110,12 +114,12 @@ Do not mix `C4_blue_new` into domain/dynamic diagrams（也不要把 `style-zinc
 
 | 能力 | API | 主要组件 |
 | --- | --- | --- |
-| Worker 列表 / 健康 | `GET /api/pipelines/list`, `.../health` | `PipelineController`, `PipelineFacade` |
+| Worker 列表 / 健康 | `GET /api/pipelines/agent-types`, `.../health` | `PipelineController`, `PipelineService` |
 | 单 Worker SSE | `POST /api/pipelines/{type}/invoke/sse` | `SpringAiWorkerAgentInvoker` |
 | Supervisor SSE | `POST /api/pipelines/supervisor/invoke/sse` | `SpringAiSupervisorRouter` |
-| 画布图 SSE | `POST /api/pipelines/invoke/sse` | `OrchestratorWorkersUseCase`；节点可带 `systemPrompt`/`toolKeys` 快照 |
+| 画布图 SSE | `POST /api/pipelines/invoke/sse` | `PipelineOrchestrationService`；节点可带 `systemPrompt`/`tools` 快照 |
 
-Worker 定义来自 Pipeline 内置目录：`AgentTemplateCatalog`（`classpath:agent-templates/{lang}.json`）经 `CatalogAgentRegistry` 提供调色板种子；画布双击编辑的是**图内节点副本**。Classpath Agent Skills：`AgentSkillsRuntime`（`com.ai.common`，`app.pipeline.skills`）。
+Worker 定义来自 Pipeline 内置目录：`AgentTemplateCatalog`（`classpath:agent-templates/{lang}.json`）经 `CatalogAgentRegistry` 提供调色板种子；画布双击编辑的是**图内节点副本**。Classpath Agent Skills：`AgentSkillsRuntime`（`com.ai.common`，`app.agent-skills`）。
 
 ### Prompt Catalog（横切）
 
@@ -137,7 +141,7 @@ Worker 定义来自 Pipeline 内置目录：`AgentTemplateCatalog`（`classpath:
 
 独立 `/vision` 页面，**不经过 Ollama**（受 `module-vision` flag 守卫）：
 
-| 能力 | API | 适配器 | 依赖 |
+| 能力 | API | 实现 | 依赖 |
 | --- | --- | --- | --- |
 | Caption | `POST /api/vision/caption` | `OnnxBlipCaptioner` | `models/blip_*.onnx` |
 | Detect | `POST /api/vision/detect` | `OnnxYoloDetector` | `models/yolov8n.onnx` |
@@ -152,35 +156,36 @@ Worker 定义来自 Pipeline 内置目录：`AgentTemplateCatalog`（`classpath:
 
 | 能力 | API | 主要组件 |
 | --- | --- | --- |
-| 概览 | `GET /api/metrics/overview` | `MetricsController`, `MetricsUseCase` |
-| 域快照 | `GET /api/metrics/domains/{domain}` | `JdbcMetricsQueryRepository` |
+| 概览 | `GET /api/metrics/overview` | `MetricsController`, `MetricsService` |
+| 能力快照 | `GET /api/metrics/capabilities/{capability}` | `JdbcMetricsQueryRepository` |
 | 时序 | `GET /api/metrics/series` | `SeriesSnapshot` |
-| 下钻 | `GET /api/metrics/drilldown` | `AiInvocationEvent`, `JdbcAiInvocationEventRepository` |
+| 下钻 | `GET /api/metrics/drilldown` | `AiInvocationEvent`, `JpaAiInvocationEventRepository`（JPA persist 写入，JDBC 下钻） |
 
-业务路径通过 `AiInvocationRecorder` 旁路写入 `ai_invocation_events`（Chat / RAG / Agents / Tools / Vision）。
+业务路径通过 `AiInvocationRecorder` 旁路写入 `ai_invocation_event`（Chat / RAG / Agents / Tools / Vision）。
 LLM 调用另由 Spring AI Micrometer Observation 导出 GenAI 语义指标（`/actuator/prometheus`）；业务域计数仍以 `AiInvocationRecorder` 为准。
 RAG 检索经 `H2SpringAiVectorStore`（Spring AI `VectorStore` SPI）+ `VectorStoreDocumentRetriever`；本地 profile 默认关闭 MCP client，避免 STDIO 阻断启动（生产用 Streamable HTTP）。
 
 ### 前端 (Web Frontend)
 
 - **框架**: Angular 22 + TypeScript
-- **路由**: `/chat` `/chat/:sessionId` / `/generate` / `/rag` / `/metrics` + flag `/pipelines` `/skills` `/vision` `/mcp` `/eval` `/asr`
-- **对话壳**: `shared/components/chat-shell`（message-pane / sender-bar / bubble-list / welcome），供 Chat / RAG / Agents 共用
-- **实现目录**: `app/chat/`、`app/generate/{image,tts}/`、`app/metrics/`（与业务域 / 路由对齐）
-- **API 服务**: `ApiChatService` / `ApiRagService` / `ApiMediaService` / `AgentsService` / `MetricsService` + `sse-client.ts` + shared ECharts panels
+- **路由**: `/chat` `/chat/:sessionId` / `/generate` / `/rag` / `/metrics` + flag `/pipelines` `/skills` `/vision` `/mcp` `/eval` `/speech-to-text`（`/asr` 重定向）
+- **对话壳**: `app/chat-shell/`（message-pane / sender-bar / bubble-list / welcome + markdown、mermaid、`a2ui-*`），供 Chat / RAG / Pipelines 共用
+- **实现目录**: 每个限界上下文一个扁平文件夹 `app/<context>/`（page、service、component、`<context>.routes.ts` 平铺，文件夹、路由、i18n 区段与导航 key 同名）；跨上下文代码放在 `app/layout`、`app/http`、`app/i18n`、`app/feature-flags`、`app/ui`（zard 组件库，按组件分文件夹）和 `app/chat-shell`；不使用 `core` / `shared` / `*.model.ts`，类型内联在 service 或使用处
+- **API 服务**: 每个上下文的 `<context>.service.ts`（`ChatService` / `RagService` / `ImageService` / `TtsService` / `VisionService` / `SpeechToTextService` / `PipelinesService` / `AgentsService` / `MetricsService`）+ `http/sse-client.ts` + `metrics/` 下的 ECharts 面板
+- **浏览器存储**: 键名统一为 `explore-ai.<area>.<key>`（`app/storage-keys.ts`），启动时一次性迁移旧键 `language` / `ea_oauth_return` / `explore-ai-privacy-consent`
 - **功能开关**: `FeatureFlagService` + `moduleEnabledGuard`（LaunchDarkly Client SDK）
-- **可观测性**: `datadog-rum.config.ts`
+- **可观测性**: `privacy/datadog-rum.config.ts`
 - **端口**: dev 4200 (proxy `/api` → `:9000`) / prod Vercel 静态托管
 
 ### Chat 流式 API
 
 | 端点 | 说明 |
 | --- | --- |
-| `POST /api/text/chat/stream` | SSE 流式对话（`TextController`） |
-| `GET /api/text/providers` | 可用 LLM Provider |
-| `GET /api/text/models` | 模型列表 |
+| `POST /api/chat/stream` | SSE 流式对话（`TextController`） |
+| `GET /api/chat/providers` | 可用 LLM Provider |
+| `GET /api/chat/models` | 模型列表 |
 | `POST /api/chat` | 非流式对话（`ChatController`） |
-| `GET/POST /api/sessions` | 会话 CRUD |
+| `GET/POST /api/chat/sessions` | 会话 CRUD |
 
 ---
 
@@ -191,7 +196,7 @@ RAG 检索经 `H2SpringAiVectorStore`（Spring AI `VectorStore` SPI）+ `VectorS
 ```
 Browser :4200 → Angular Dev Server → proxy /api/* → Spring Boot :9000
                                               ↘ H2 ./data/explore-ai
-                                              ↘ Ollama :11434 / speech :8004 / Tesseract
+                                              ↘ Ollama :11434 / explore-ml :8000 / Tesseract
                                               ↘ DeepSeek / OpenAI / Serper / Resend
 ```
 
@@ -224,8 +229,7 @@ Browser → Vercel (Angular static) → Render Starter explore-ai (:8080 + H2 ep
 | Spring Boot Backend (prod) | **8080** |
 | H2 Embedded | 内嵌 (dev `./data` / prod `/app/data` volume) |
 | Ollama (Embedding/RAG Vision) | 11434 [local] |
-| explore-ml speech (Qwen3 ASR/TTS) | 8004 [local] |
-| explore-ml image-playground | 8003 [local] |
+| explore-ml (speech: Qwen3 ASR/TTS) | 8000 [local] |
 | Tesseract OCR | 系统安装 (JNA) [local] |
 | Image Analysis ONNX Models | `models/` 本地文件 [local] |
 | Angular Dev Server | 4200 |
@@ -243,7 +247,7 @@ Browser → Vercel (Angular static) → Render Starter explore-ai (:8080 + H2 ep
 | `module-pipelines` | Pipeline（工作流） | `/pipelines` | `/api/pipelines` | `true` |
 | `module-skills` | Skills | `/skills` | `/api/skills` | `true` |
 | `module-vision` | Image Analysis | `/vision` | `/api/vision` | `false` |
-| `module-audio-asr` | ASR | `/asr` | `/ws/audio` | `false` |
+| `module-audio-asr` | Speech-to-Text (ASR) | `/speech-to-text` | `/ws/audio` | `false` |
 | `module-mcp` | MCP | `/mcp` | `/api/mcp` | `false` |
 | `module-eval` | Eval | `/eval` | `/api/eval` | `false` |
 
@@ -259,9 +263,9 @@ Browser → Vercel (Angular static) → Render Starter explore-ai (:8080 + H2 ep
 | Caption | BLIP base ONNX | ONNX Runtime 本地 |
 | Detect | YOLOv8n ONNX | COCO 80 类 |
 | OCR | eng + chi_sim | Tesseract tessdata |
-| ASR | Qwen3-ASR-1.7B | explore-ml speech `:8004` |
+| ASR | Qwen3-ASR-1.7B | explore-ml speech `:8000` |
 | Image Gen | dall-e-3 | OpenAI API |
-| TTS | Qwen3-TTS (default) / gpt-4o-mini-tts | explore-ml speech `:8004` / OpenAI |
+| TTS | Qwen3-TTS (default) / gpt-4o-mini-tts | explore-ml speech `:8000` / OpenAI |
 
 ---
 

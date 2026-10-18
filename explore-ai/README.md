@@ -75,7 +75,7 @@ Environment variables override defaults in `src/main/resources/application.yml`.
 - **`H2_URL`** — optional database URL override
 - **`GOLDEN_EVAL_IT`** — set `true` to enable live Golden Eval integration tests ([guide](docs/developer/golden-eval.md))
 - **`APP_OAUTH_EXPLORE_IAM_ISSUER_URI`** — Explore IAM issuer (default `http://localhost:9100`) for OAuth Login and JWT resource server
-- **`APP_OAUTH_EXPLORE_IAM_RESOURCE_SERVER`** — accept IAM `Authorization: Bearer` tokens (default `true`)
+- **`APP_OAUTH_EXPLORE_IAM_RESOURCE_SERVER`** — accept IAM `Authorization: Bearer` tokens (default `true`); also enables `/scim/v2/Users`, where Explore IAM provisions, deactivates, and deletes accounts with scope `write:ai_scim` (deleting erases the account's data). Without it, `/scim/v2` denies every request. See [E12 SCIM provisioning](docs/product-owner/user-stories/E12-scim-provisioning.md).
 
 See [`.env.example`](.env.example) for the full list.
 
@@ -90,11 +90,15 @@ See [`.env.example`](.env.example) for the full list.
 - Explore capabilities on the [User Story Map](docs/product-owner/User-Story-Map.md)
 - Deploy: backend on [Render](https://render.com/docs/compute-plans) via [`render.yaml`](render.yaml); frontend on [Vercel](https://vercel.com) via [`vercel.json`](vercel.json) (proxies `/api/*` to Render)
 
-Run unit tests with `./gradlew test`.
+Run unit tests with `./gradlew test`. Run end-to-end tests with `pnpm e2e`; it starts the backend on an in-memory H2 database and the web app, or reuses them if they are already running on ports 9000 and 4200.
 
 ## Contributing
 
-Contributions are welcome. Open an issue or pull request on [GitHub](https://github.com/felixzhu97/explore-ai). Keep domain and API names aligned with the [Glossary](docs/Glossary.md) when changing behavior or docs.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Open an issue or pull request on [GitHub](https://github.com/felixzhu97/explore-ai). Keep domain and API names aligned with the [Glossary](docs/Glossary.md) when changing behavior or docs. Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Security
+
+Report vulnerabilities as described in [SECURITY.md](SECURITY.md).
 
 ## Project status
 
