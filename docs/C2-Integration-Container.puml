@@ -1,0 +1,53 @@
+@startuml C2-Integration-Container
+!theme C4_blue_new from https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/themes
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_LEFT_RIGHT()
+
+title Integration Containers — calls that cross system boundaries
+
+Person(end_user, "End User")
+
+System_Boundary(iam_sys, "Explore IAM") {
+    Container(iam_app, "IAM Application", "Spring Boot + Angular", ":9100 · /oauth2/authorize · /oauth2/token · JWKS · Console · SCIM push")
+}
+
+System_Boundary(ai_sys, "Explore AI") {
+    Container(ai_web, "AI Web", "Angular", ":4200 · OAuth login via backend")
+    Container(ai_ios, "AI iOS", "SwiftUI", "client explore-ai-ios · PKCE")
+    Container(ai_api, "AI Backend", "Spring Boot", ":9000 · /api · /scim/v2/Users")
+}
+
+System_Boundary(chat_sys, "Explore Chat") {
+    Container(chat_ios, "Chat iOS", "SwiftUI", "client explore-chat-ios · PKCE")
+    Container(chat_api, "Chat API Server", "Spring Boot", ":9001 · /api/v1 · AiProxyService")
+}
+
+System_Boundary(ml_sys, "Explore ML") {
+    Container(ml_app, "ML App", "FastAPI / uvicorn", ":8000 · /api/v1 · recommendation, vision, rag, image, speech, video")
+}
+
+System_Ext(enterprise_idp, "Enterprise IdP", "SCIM client")
+
+Rel(end_user, ai_web, "Uses", "HTTPS")
+Rel(end_user, ai_ios, "Uses")
+Rel(end_user, chat_ios, "Uses")
+
+Rel(ai_web, ai_api, "REST / SSE", "HTTPS")
+Rel(ai_api, iam_app, "Authorization code (client explore-ai)", "OIDC")
+Rel(ai_ios, iam_app, "Authorize + token", "OIDC + PKCE")
+Rel(ai_ios, ai_api, "Bearer API", "HTTPS")
+Rel(ai_api, iam_app, "Validate JWT", "JWKS")
+
+Rel(chat_ios, iam_app, "Authorize + token", "OIDC + PKCE")
+Rel(chat_ios, chat_api, "Bearer API", "HTTPS")
+Rel(chat_api, iam_app, "Validate JWT (CHAT_IAM_ISSUER_URI)", "JWKS")
+
+Rel(iam_app, ai_api, "Push users (iam-scim-outbound, write:ai_scim)", "SCIM 2.0 / HTTPS")
+Rel(enterprise_idp, iam_app, "Provision users (write:iam_scim)", "SCIM 2.0 / HTTPS")
+
+Rel(chat_api, ml_app, "feeds:rank · images:predict · images:generate · voices:synthesize · videos:generate", "HTTP loopback")
+Rel(chat_api, ai_api, "chat.upstreams.explore-ai [planned]", "HTTPS")
+
+SHOW_LEGEND()
+@enduml

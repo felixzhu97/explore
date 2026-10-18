@@ -33,6 +33,20 @@ Source: [`Workspace-Map.puml`](Workspace-Map.puml)
 
 Uncatalogued local trees stay default-denied until onboarded — see [sync-repo](../.cursor/skills/developers/public-docs/references/sync-repo.md).
 
+## System Landscape
+
+Which Explore systems talk to each other, and over what: IAM as OIDC provider and SCIM hub, Chat calling the ML app, and the planned Chat to AI BFF.
+
+![System Landscape](png/C1-System-Landscape.png)
+
+Source: [`C1-System-Landscape.puml`](C1-System-Landscape.puml)
+
+The integration container view keeps only the containers that make cross-system calls, with protocol, port, client id, and scope on each relation.
+
+![Integration Containers](png/C2-Integration-Container.png)
+
+Source: [`C2-Integration-Container.puml`](C2-Integration-Container.puml)
+
 ## Domain Model
 
 Workspace-wide DDD view: one package per catalogued project with its bounded contexts, aggregate roots, entities, value objects, enums, and domain events, plus dashed cross-project references (IAM OIDC, ML calls, AI proxy).
@@ -48,4 +62,5 @@ brew install plantuml   # macOS
 plantuml docs/Workspace-Map.puml
 mv docs/Explore-Workspace-Map.png docs/png/Workspace-Map.png
 plantuml -DPLANTUML_LIMIT_SIZE=30000 -o png docs/Domain-Model.puml
+plantuml -tpng -o png docs/C1-System-Landscape.puml docs/C2-Integration-Container.puml
 ```

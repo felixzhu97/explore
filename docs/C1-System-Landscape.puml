@@ -1,0 +1,47 @@
+@startuml C1-System-Landscape
+!theme C4_blue_new from https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/themes
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_TOP_DOWN()
+
+title System Landscape — Explore workspace
+
+Person(end_user, "End User", "Uses Explore products on web and iOS")
+Person(iam_admin, "IAM Administrator", "Manages users, clients, and policies")
+
+Enterprise_Boundary(explore, "Explore workspace") {
+    System(iam, "Explore IAM", "OIDC provider, policy, STS, SCIM hub :9100")
+    System(ai, "Explore AI", "Chat, RAG, tools, eval, metrics :9000")
+    System(chat, "Explore Chat", "Feed, messaging, calls :9001")
+    System(ml, "Explore ML", "FastAPI ranking, vision, RAG, media :8000 (loopback)")
+    System(commerce, "Explore Commerce", "Shop, admin, API")
+    System(lowcode, "Explore Lowcode", "Canvas, themes, export")
+    System(portfolio, "Explore Portfolio", "FinPulse portfolio and quotes")
+    System(three, "Explore Three", "Three.js globe")
+}
+
+System_Ext(enterprise_idp, "Enterprise IdP", "Okta / Microsoft Entra ID")
+System_Ext(social_idp, "Social IdPs", "Google / GitHub")
+System_Ext(llm, "LLM providers", "DeepSeek / OpenAI / Ollama")
+
+Rel(end_user, ai, "Uses", "HTTPS")
+Rel(end_user, chat, "Uses", "HTTPS")
+Rel(end_user, iam, "Signs in", "OIDC + PKCE")
+Rel(iam_admin, iam, "Manages users", "Console")
+
+Rel(ai, iam, "Validates access tokens", "JWKS")
+Rel(chat, iam, "Validates access tokens", "JWKS")
+Rel(iam, ai, "Pushes users", "SCIM 2.0, client_credentials")
+Rel(enterprise_idp, iam, "Provisions users", "SCIM 2.0, client_credentials")
+Rel(iam, social_idp, "Federates sign-in", "OAuth2")
+
+Rel(chat, ml, "Ranking, vision, image, voice, video", "HTTP /api/v1")
+Rel_D(chat, ai, "AI features via BFF + ACL [planned]", "HTTPS")
+Rel(ai, llm, "Generates and embeds", "HTTPS")
+Rel(ml, llm, "Embeds and generates", "HTTP")
+
+Rel_D(iam, commerce, "OIDC sign-in [planned]")
+Rel_D(iam, lowcode, "OIDC sign-in [planned]")
+
+SHOW_LEGEND()
+@enduml
