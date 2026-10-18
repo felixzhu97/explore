@@ -67,6 +67,12 @@ After signing in, register clients in the console or over the API:
 
 Optional seed clients can be declared under `app.oidc.seed-clients` / matching env vars in `.env.example` for local development.
 
+### Provision with SCIM
+
+Enterprise IdPs such as Okta and Microsoft Entra ID provision users and groups at `/scim/v2` (SCIM 2.0, `application/scim+json`). They authenticate with the `scim-provisioner` client (`client_credentials`, scope `write:iam_scim`); set `IAM_CLIENT_SCIM_PROVISIONER_SECRET` to enable it.
+
+IAM then pushes users to Explore AI's `/scim/v2/Users` with its own `iam-scim-outbound` client (`write:ai_scim`). Push stays off until `EXPLORE_AI_SCIM_URL` is set; `EXPLORE_AI_SCIM_ASSIGNMENT_GROUP` limits it to one group's members. Pushes run after commit through Spring Modulith event publications and are retried until they succeed. See [E8 SCIM provisioning](docs/product-owner/user-stories/E8-scim-provisioning.md) for behavior and manual validator checks.
+
 ### Configuration
 
 | Variable | Purpose |
@@ -74,7 +80,13 @@ Optional seed clients can be declared under `app.oidc.seed-clients` / matching e
 | `SERVER_PORT` | HTTP port (default `9100`) |
 | `OIDC_ISSUER` | Issuer URL (default `http://localhost:9100`) |
 | `APP_DEMO_USER_*` | Local demo IAM User for form login |
+| `APP_TOTP_ENCRYPT_PASSWORD` | Password for encrypting TOTP secrets at rest (required) |
+| `APP_TOTP_ENCRYPT_SALT` | Hex salt for TOTP secret encryption (required) |
 | Seed client env vars | Optional bootstrap OIDC client entries |
+| `IAM_CLIENT_SCIM_PROVISIONER_SECRET` | Secret for the enterprise IdP SCIM client (blank disables it) |
+| `IAM_CLIENT_SCIM_OUTBOUND_SECRET` | Secret for IAM's push client to Explore AI |
+| `EXPLORE_AI_SCIM_URL` | Explore AI SCIM base URL, `https` outside localhost (blank disables push) |
+| `EXPLORE_AI_SCIM_ASSIGNMENT_GROUP` | Optional group whose members are pushed |
 
 Do not commit real secrets.
 
@@ -107,7 +119,11 @@ Plan is Render Starter (Oregon). Disk for H2 under `/app/data` is ephemeral on S
 
 ## Contributing
 
-Contributions are welcome. Keep changes small and let CI stay green: [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs Checkstyle and tests. Weekly GitHub Actions updates come from [Dependabot](.github/dependabot.yml).
+See [CONTRIBUTING.md](CONTRIBUTING.md). Keep changes small and let CI stay green: [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs Checkstyle and tests. Weekly GitHub Actions updates come from [Dependabot](.github/dependabot.yml). Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Security
+
+Report vulnerabilities as described in [SECURITY.md](SECURITY.md).
 
 ## Project Status
 
