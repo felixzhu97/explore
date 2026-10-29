@@ -1,6 +1,6 @@
 # Public Docs
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 A collection of **architecture diagrams** for public projects — primarily [C4 Model](https://c4model.com/) views — to help developers understand system boundaries, containers, and core components.
@@ -136,9 +136,9 @@ Thanks to the authors and contributors of the listed public projects. Architectu
 
 ## License
 
-[MIT](LICENSE) © 2026 Felix
+[Apache-2.0](LICENSE) © 2026 Felix Zhu
 
-- Cataloging, learning paths, and docs in this repository are shared under the MIT license
+- Cataloging, learning paths, and docs in this repository are shared under the Apache-2.0 license
 - Architecture models that include project copyrighted material remain under the corresponding project licenses
 - Review each project’s `LICENSE` before reuse or redistribution
 
