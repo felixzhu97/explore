@@ -152,6 +152,8 @@ journey
 | E9 企业与未来 | [E9-enterprise-future.md](./user-stories/E9-enterprise-future.md) | US-23 – US-29；US-27a 已实现 | 规划中（US-27a 已实现） |
 | E10 Skills | [E10-skills.md](./user-stories/E10-skills.md) | US-30 – US-31, US-35 | 已实现 |
 | E12 SCIM 用户同步 | [E12-scim-provisioning.md](./user-stories/E12-scim-provisioning.md) | US-37 – US-38 | 已实现 |
+| E13 Agent façade + A2A | [E13-agent-a2a.md](./user-stories/E13-agent-a2a.md) | US-40 – US-41 | 已实现 |
+| E14 Agent Gallery 与互操作 | [E14-agent-gallery-interop.md](./user-stories/E14-agent-gallery-interop.md) | US-42 – US-46 | 已实现 |
 
 ## 参考
 
