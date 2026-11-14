@@ -31,6 +31,7 @@ nested-git → living-docs (Phase 1–3) → c4-model → sync-repo → gh stack
 | Sync whitelist docs into this repo | [sync-repo](references/sync-repo.md) |
 | Stack of Draft PRs | [delivery-github-stack](references/delivery-github-stack.md) |
 | Branch / commit / PR title & body | [commit-pr](references/commit-pr.md) |
+| Agent harness in project repos (`AGENTS.md`, `verify`, guardrails, shared agents) | [harness](references/harness.md) |
 
 Tickets for sync or C4 work follow [public-docs-backlog](../../product-owner/public-docs-backlog/SKILL.md).
 
@@ -55,4 +56,6 @@ Tickets for sync or C4 work follow [public-docs-backlog](../../product-owner/pub
 | Update C4 | [c4-model](references/c4-model.md) |
 | GitHub Stack delivery | [delivery-github-stack](references/delivery-github-stack.md) |
 | Commit / PR | [commit-pr](references/commit-pr.md) |
+| Agent harness template | [harness](references/harness.md) |
+| Canonical `.cursor/agents` + drift check | [agents/](agents/), [sync-agents.sh](scripts/sync-agents.sh) |
 | Stories / AC / DoD | [public-docs-backlog](../../product-owner/public-docs-backlog/SKILL.md) |
