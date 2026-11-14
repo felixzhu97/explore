@@ -27,8 +27,6 @@ Root `.gitignore` uses `/*` default-deny, un-ignores published project roots, th
 
 Current published project roots:
 
-- `explore-ai/`
-- `explore-iam/`
 - `explore-chat/`
 - `explore-commerce/`
 - `explore-lowcode/`
@@ -44,8 +42,6 @@ Stage **only** whitelist paths. Do **not** use `git add -A`.
 git add .gitignore README.md
 git add docs/
 git add .cursor/skills/
-git add explore-ai/README.md explore-ai/docs/Glossary.md explore-ai/docs/product-owner/ explore-ai/docs/developer/c4-model/
-git add explore-iam/README.md explore-iam/docs/Glossary.md explore-iam/docs/product-owner/ explore-iam/docs/developer/c4-model/
 git add explore-chat/README.md explore-chat/docs/Glossary.md explore-chat/docs/product-owner/ explore-chat/docs/developer/c4-model/
 git add explore-commerce/README.md explore-commerce/docs/Glossary.md explore-commerce/docs/product-owner/ explore-commerce/docs/developer/c4-model/
 git add explore-lowcode/README.md explore-lowcode/docs/Glossary.md explore-lowcode/docs/product-owner/ explore-lowcode/docs/developer/c4-model/
