@@ -1,6 +1,6 @@
 # Explore monorepo：一键启动与跨项目依赖
 
-状态：阶段 0–4.4 已完成，4.5 在 2026-11-21 观察期结束后执行；阶段 5 进行中 | 最后更新：2026-11-14 | 涉及仓库：全部 8 个项目 + 元仓库
+状态：阶段 0–4.4 和阶段 5 已完成，4.5 在 2026-11-21 观察期结束后执行；下一步是阶段 6 | 最后更新：2026-11-14 | 涉及仓库：全部 8 个项目 + 元仓库
 
 ## 目标
 
@@ -348,6 +348,28 @@ iam 的部署暂不切换，仍从原仓库发布。
 | 5.5 | `shared/identity`：资源服务器交给 Boot 的标准配置项，库里只放 scope 授权；`render.yaml` 不设 issuer 即关闭令牌校验 | 用 IAM 签发的令牌访问 ai 通过，生产环境健康检查 UP |
 | 5.6 | `shared/provisioning`：迁入两边一致的 SCIM 组件，配一个 SCIM 契约测试 | iam 推送用户到 ai 端到端通过 |
 
+阶段 5 的实际做法：
+
+- **5.1**：冻结的违规只在 ai（已有的包循环），iam 接入后没有新的违规。
+- **5.3**：最后做，单独一个 PR。
+  - 先在旧基类上写 characterization tests，覆盖每个聚合的保存和重新加载、版本号递增和审计时间。
+  - 再按聚合逐个换成类型化 ID（如 `UserId`、`GroupId`），ID 列和表结构不变。
+  - 令牌的 `sub` 和 `session_id`、签名密钥的 `kid`、SCIM 的 `id` 和 API 响应仍然输出原来的字符串。
+- **5.4**：`type` 由各异常的错误码生成。ai 保留自己的校验错误处理，另加了参数类型不匹配的处理。
+- **5.5**：基础配置里 issuer 留空，本地在 `.env` 里打开；合并后删掉了 Render 上旧的 `APP_OAUTH_EXPLORE_IAM_RESOURCE_SERVER`。
+- **5.6**：非法的 SCIM filter 改为返回 400。推送监听测试偶发失败，原因是演示用户的初始化和测试抢着建账号，测试里关掉了演示用户。
+- **已验证**：
+  - 本地端到端：iam 创建、改名、停用、删除用户，都能同步到 ai。
+  - 合并后的生产环境：健康检查 UP；未登录对话能流式返回；校验失败和资源不存在都返回 `application/problem+json`。
+- **遗留**：
+  - ai 前端有 2 个测试套件在阶段 5 之前就失败，和本阶段无关。
+  - 隐私声明要写明 ai 是 iam 用户数据的下游接收方。
+
+阶段 5 的 PR：
+
+- explore-workspace：[#30](https://github.com/felixzhu97/explore-workspace/pull/30)（5.0）、[#31](https://github.com/felixzhu97/explore-workspace/pull/31)（5.1）、[#32](https://github.com/felixzhu97/explore-workspace/pull/32)（5.2）、[#33](https://github.com/felixzhu97/explore-workspace/pull/33)（5.4）、[#34](https://github.com/felixzhu97/explore-workspace/pull/34)（5.5）、[#35](https://github.com/felixzhu97/explore-workspace/pull/35)（5.6）、[#36](https://github.com/felixzhu97/explore-workspace/pull/36)（5.3）
+- 合并后：[#39](https://github.com/felixzhu97/explore-workspace/pull/39)（只改文档时不跑 iOS CI）
+
 ### 阶段 6：迁入 ml 和 chat
 
 | 步骤 | 内容 | 完成条件 |
@@ -421,6 +443,14 @@ iam 的部署暂不切换，仍从原仓库发布。
 - 并行服务适合用来验证，但正式运行时会重复计费。验证通过后，改原服务的 Git 来源，比切域名更简单，也不需要迁移环境变量。
 - Render 用 API 新建服务时，`buildFilter` 会被忽略，要建好后再 PATCH 一次。`autoDeploy` 和 `autoDeployTrigger` 不能同时传。
 - Render 自动预览会把生产环境的环境变量带进预览环境，所以改成手动预览。
+
+阶段 5：
+
+- 把 `String` ID 换成类型化 ID 时，编译器能查出大部分调用点，但查不出这三类：`equals` 拿 ID 对象和字符串比较（永远不相等）、JPQL 里的类型不匹配、ID 对象传给 `Object` 参数（如令牌 claim、`Map`）。要靠 characterization tests 和搜索剩下的 `getId()` 来补。
+- `@MapsId` 的子实体主键字段类型要和父实体 ID 一致，父实体换成类型化 ID 后，子实体的复合主键也要跟着换。
+- 共享基类的 `version` 是 `Long`，保存前为 null；原来的 `long` 默认 0。在保存前读版本号的地方要按 0 处理。
+- 用 Render API 删环境变量不会触发重新部署；代码已经不读这个变量时，可以直接删。
+- iOS 的路径过滤要排除 `*.md`，否则改一行 README 也会在 macOS runner 上跑完整的编译和测试。
 
 ## References
 
