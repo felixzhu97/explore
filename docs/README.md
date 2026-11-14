@@ -4,6 +4,10 @@ How catalogued Explore products **fit together** in this meta repository (`felix
 
 Per-product software architecture stays under each project’s `docs/developer/c4-model/`. This folder does not replace those C4 models.
 
+## Plans
+
+Cross-project plans for upcoming work live in [`plans/`](plans/README.md).
+
 ## Workspace Map
 
 ![Workspace Map](png/Workspace-Map.png)
