@@ -59,7 +59,7 @@
 ```text
 explore-workspace/
 ├── ai/          server  web  ios
-├── iam/         server  console
+├── iam/         server  console  ios
 ├── chat/        server  web  admin  mobile  ios
 ├── ml/          server  web
 ├── portfolio/   server  analytics  admin  portal  mobile
@@ -210,8 +210,7 @@ flowchart LR
 
 ### 风险与待定
 
-- **待定**：仓库名。元仓已经叫 `felixzhu97/explore`，暂定新仓库叫 `explore-workspace`。
-- **待定**：仓库公开还是私有。
+- **已定**：新仓库叫 `felixzhu97/explore-workspace`（元仓已经叫 `felixzhu97/explore`），公开，与现有各项目仓库一致。
 - portfolio 从 Bazel 改 Gradle、升级 Spring Boot 4，工作量最大，放在第二批。
 - Nx 的 continuous 任务目前看不出会等下游服务健康检查就绪，应用服务之间先保留 `wait-on`；确认 Nx 提供就绪判断后再去掉。
 - Nx Cloud 是第三方服务：构建产物和日志会上传到它的服务器，受免费计划额度约束。按"用好工具自带能力"里的安全约束接入；退出时删掉 `nxCloudId` 和 `start-ci-run` 即可回到本地缓存，不影响其他步骤。
@@ -254,7 +253,7 @@ flowchart LR
 | 步骤 | 内容 | 完成条件 |
 |------|------|----------|
 | 2.1 | `git filter-repo --to-subdirectory-filter iam` 后合并进新仓库，内部结构不变，仍用它自己的 Gradle 构建 | `cd iam && ./gradlew bootRun` 能启动，`git log iam/` 能看到历史 |
-| 2.2 | 用 `git mv` 把后端和控制台拆成 `iam/server`、`iam/console`，只改路径 | 原有测试全部通过 |
+| 2.2 | 用 `git mv` 把后端、控制台和 iOS 拆成 `iam/server`、`iam/console`、`iam/ios`，只改路径 | 原有测试全部通过 |
 | 2.3 | 把 `iam/server` 加进根 `settings.gradle.kts`，套用 `build-logic`，删掉它自己的 checkstyle 配置 | 在根目录执行 `./gradlew :iam:server:check` 通过 |
 | 2.4 | 控制台加进 pnpm workspace；让插件推断 `iam-server`、`iam-console` 的目标，只补写 `serve` 的依赖和标签 | `pnpm dev iam` 能启动两者 |
 | 2.5 | 根 CI 覆盖 iam；原仓库 README 标注"已迁移"，停止在原仓库提交新改动 | iam 相关改动在新仓库的 CI 通过 |
