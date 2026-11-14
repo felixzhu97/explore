@@ -1,20 +1,31 @@
 # E11 — Blockchain demo
 
+← [User Story Map](../User-Story-Map.md)
+
 ## Background
 
-Mobile includes a demo path for wallet connect / ETH transfer on a test network (e.g. Sepolia).
+Mobile includes a demo path for wallet connect and ETH transfer on a test network (for example Sepolia).
 
-## User Stories
+---
 
-### US-23 Blockchain demo
+## US-23 Blockchain demo
 
-**As an** investor (demo), **I want** to connect a wallet and try a testnet transfer, **so that** I can explore blockchain UX safely.
+**As an** investor (demo)  
+**I want** to connect a wallet and try a testnet transfer  
+**So that** connection state and transfer results show without touching production funds
 
-**Acceptance Criteria**
+### Acceptance criteria
 
-1. GIVEN mobile blockchain screens and a testnet configuration  
-   WHEN I connect a wallet  
-   THEN the app shows connection state without affecting production funds
-2. GIVEN a connected wallet on testnet  
-   WHEN I initiate a demo transfer  
-   THEN the app shows success/failure feedback from the JSON-RPC path
+1. **Scenario** Wallet connect on testnet  
+   **GIVEN** mobile blockchain screens and a testnet configuration  
+   **WHEN** a wallet is connected  
+   **THEN** the app shows connection state without affecting production funds
+
+2. **Scenario** Demo transfer feedback  
+   **GIVEN** a connected wallet on testnet  
+   **WHEN** a demo transfer is initiated  
+   **THEN** the app shows success/failure feedback from the JSON-RPC path
+
+### Status
+
+Done
