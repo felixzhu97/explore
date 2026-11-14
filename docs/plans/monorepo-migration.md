@@ -158,7 +158,7 @@ flowchart LR
   - 运行时依赖写进 `dependsOn`，例如 `ai-server:serve` 依赖 `ollama:serve`。
   - `ollama`、`kafka`、`postgres` 等基础设施本身也是 Nx 项目，项目根是 `infrastructure/<服务名>/`。本地插件 `tools/plugin/compose.js` 从 `compose.yaml` 推断 `serve` 目标：端口上已有服务在跑（例如本机原生的 Ollama，可以用 GPU）就直接复用，否则执行 `docker compose up <服务名>`。
   - 基础设施之间的就绪顺序由 Compose 的 `healthcheck` 和 `depends_on: condition: service_healthy` 保证。
-  - 应用服务之间（例如 `ai-web` 等 `ai-server`）用 `wait-on` 等健康检查地址就绪后，再启动下游服务。
+  - 应用服务之间的就绪顺序用 Nx 自带的 `readyWhen`（例如健康检查地址）加 `dependsOn` 里的 `waitFor: "ready"`，例如 `ai-server` 等 `iam-server` 就绪、`ai-web` 等 `ai-server` 就绪。
 - **命令**：一个命令，参数就是产品名。
   - `pnpm dev ai`：启动 ai 和它依赖的服务。
   - `pnpm dev ai iam`：同时启动 ai 和 iam，相同的依赖只起一份。
@@ -217,7 +217,6 @@ flowchart LR
 
 - **已定**：新仓库叫 `felixzhu97/explore-workspace`（元仓已经叫 `felixzhu97/explore`），公开，与现有各项目仓库一致。
 - portfolio 从 Bazel 改 Gradle、升级 Spring Boot 4，工作量最大，放在第二批。
-- Nx 的 continuous 任务目前看不出会等下游服务健康检查就绪，应用服务之间先保留 `wait-on`；确认 Nx 提供就绪判断后再去掉。
 - Nx Cloud 是第三方服务：构建产物和日志会上传到它的服务器，受免费计划额度约束。按"用好工具自带能力"里的安全约束接入；退出时删掉 `nxCloudId` 和 CI 里的令牌即可回到本地缓存，不影响其他步骤。
 - 安全审查的后续项：GitHub Actions 固定到 commit SHA；补 Nx Cloud 的数据处理协议和保留期说明；去掉 iam `application.yml` 里默认的 localhost issuer。
 - Render 和 Vercel 换仓库期间会短暂中断部署，要选在没有发布的时候切换。
@@ -275,12 +274,22 @@ iam 的部署暂不切换，仍从原仓库发布。
 
 | 步骤 | 内容 | 完成条件 |
 |------|------|----------|
-| 3.1 | 原样迁入 `ai/` | `cd ai && ./gradlew bootRun` 和 `pnpm start` 能启动 |
-| 3.2 | 拆成 `ai/server`、`ai/web`、`ai/ios`，只改路径 | 原有测试和 e2e 通过 |
-| 3.3 | 接入根 Gradle 和 `build-logic` | `./gradlew :ai-server:check` 通过 |
-| 3.4 | 让插件推断目标；`ai-server:serve` 依赖 `ollama:serve`，用 `spring-boot-docker-compose` 自动连接 compose 服务；`ai-web:serve` 依赖 `ai-server:serve`，并用 `wait-on` 等 `/actuator/health` | `pnpm dev ai` 和 `pnpm dev ai iam` 都能完整启动，用 IAM 登录成功 |
-| 3.5 | 根 CI 覆盖 ai，iOS 工作流加路径过滤 | CI 通过 |
-| 3.6 | CI 加 `npx nx start-ci-run`，ai 的 e2e 用 Nx Agents 加 Atomizer 分布式执行，打开不稳定任务自动重试 | CI 总耗时下降，结果与不分布式时一致 |
+| 3.1 | 原样迁入 `ai/`，`.nxignore` 先把它排除在 Nx 依赖图外 | `cd ai && ./gradlew bootRun` 和 `pnpm install && pnpm start` 能启动（pnpm 认最近的 `ai/pnpm-workspace.yaml`，不受根 workspace 影响） |
+| 3.2 | 拆成 `ai/server`、`ai/web`、`ai/ios`，只改路径；`docs/`、`.cursor/` 留在 `ai/` | 原有测试和 e2e 通过 |
+| 3.3 | 接入根 Gradle 和 `build-logic`，Dockerfile 改以仓库根目录为构建上下文 | `./gradlew :ai-server:check` 通过 |
+| 3.4 | `ai/web` 加入 pnpm workspace；`ai-server:serve` 依赖 `ollama:serve`，并等 `iam-server:serve` 就绪；`ai-web:serve` 等 `ai-server:serve` 就绪；`ai-web:build` 把 `DD_APPLICATION_ID`、`DD_CLIENT_TOKEN` 列为缓存输入；ai 的 `zod` override 只作用于 `@a2ui/*` | `pnpm dev ai` 和 `pnpm dev ai iam` 都能完整启动，用 IAM 登录成功 |
+| 3.5 | 根 CI 覆盖 ai，iOS 和镜像构建各一个带路径过滤的 workflow；删掉 `.husky`；原仓库 README 标注"已迁移" | CI 通过 |
+| 3.6 | CI 加 `npx nx start-ci-run`，ai 的 e2e 用 Nx Agents 加 Atomizer 分布式执行，打开不稳定任务自动重试。3.1–3.5 合并后先量 CI 耗时再决定是否做 | CI 总耗时下降，结果与不分布式时一致 |
+
+阶段 3 不用的两项及原因：
+
+- `spring-boot-docker-compose`：`ollama:serve` 已经负责复用本机的 Ollama 或启动 compose 服务；Spring Boot 再起一次 compose 会在本机已有 Ollama 时端口冲突，而 `base-url` 本来就是 `localhost:11434`。
+- `wait-on`：Nx 24 的 continuous 任务自带 `readyWhen` 和 `waitFor: "ready"`，不需要另装工具。打开 IAM 登录时，ai 启动时就要读 IAM 的 issuer 配置，iam 没就绪会直接启动失败，所以 `ai-server:serve` 依赖 `iam-server:serve` 并等它就绪；代价是 `pnpm dev ai` 总会一起起 iam。
+
+阶段 3 的 PR：
+
+- explore-workspace：[#19](https://github.com/felixzhu97/explore-workspace/pull/19)（3.1，merge commit 合并）、[#20](https://github.com/felixzhu97/explore-workspace/pull/20)（DOMPurify 升到 3.4.17）、[#21](https://github.com/felixzhu97/explore-workspace/pull/21)（3.2）、[#22](https://github.com/felixzhu97/explore-workspace/pull/22)（3.3）、[#23](https://github.com/felixzhu97/explore-workspace/pull/23)（3.4）、[#24](https://github.com/felixzhu97/explore-workspace/pull/24)（3.5）
+- 原仓库：[explore-ai#689](https://github.com/felixzhu97/explore-ai/pull/689)
 
 ### 阶段 4：切换 explore-ai 部署（每步都可以退回旧服务）
 
@@ -361,6 +370,16 @@ iam 的部署暂不切换，仍从原仓库发布。
 - pnpm 11 默认禁止依赖的构建脚本，要在 `allowBuilds` 里放行 `nx` 等包；刚发布不到一天的版本会被 `minimumReleaseAge` 拦下，固定到上一个版本，不加排除项。
 - 本机 Docker 里下载 Gradle 依赖很慢，完整镜像构建交给 CI 的 `iam image` workflow 验证。
 
+阶段 3：
+
+- GitHub 不允许为和 main 没有共同历史的分支开 PR。迁入分支要从 main 开出，再用 `--allow-unrelated-histories` 把改写后的历史合并进来。
+- `pnpm install --ignore-workspace` 会连产品自己的 `pnpm-workspace.yaml`（overrides 等）一起忽略；pnpm 本来就认最近的 workspace 文件，产品目录里直接 `pnpm install` 即可。
+- 锁文件合并进根目录时会重新解析，直接依赖会被顺带升级。先把直接依赖临时钉在原版本安装一次，再恢复版本范围，pnpm 会沿用锁文件里的版本。
+- 全局 override 会影响其他产品（ai 的 `zod: ^3` 会压到 iam 的 Angular CLI），要改成 `父包>依赖` 的定向写法。
+- `minimumReleaseAge` 在解析前就校验整个锁文件，调高限制会让已锁定的新版本全部失败；要等这些版本过了期限再调高，或者重新解析整个锁文件。
+- 构建上下文改成仓库根目录后，`Dockerfile.dockerignore` 要排除所有产品的本地数据（`**/data`）和 `.env.*`，否则本地构建会把 IAM 的 H2 数据库带进构建层。
+- 产品的 checkstyle 规则和根配置不同时，先保留产品自己的 `configFile`，对齐规则另做。
+
 ## References
 
 命名依据：
@@ -380,7 +399,6 @@ iam 的部署暂不切换，仍从原仓库发布。
 - [Render Blueprint spec](https://render.com/docs/blueprint-spec)、[Render monorepo support](https://render.com/docs/monorepo-support)
 - [Vercel monorepos](https://vercel.com/docs/monorepos)
 - [git filter-repo](https://github.com/newren/git-filter-repo)
-- [wait-on](https://github.com/jeffbski/wait-on)
 
 工具自带能力：
 
