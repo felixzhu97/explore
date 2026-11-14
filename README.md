@@ -45,8 +45,8 @@ Workspace-level view of how catalogued Explore products **evolve**, **integrate*
 
 | Project | Type | Path | Description |
 |---------|------|------|-------------|
-| [Explore AI](https://github.com/felixzhu97/explore-ai) | C4 | [`explore-ai/docs/developer/c4-model/`](explore-ai/docs/developer/c4-model/) | Conversational AI platform: Chat, RAG, tools, eval (Spring AI + Angular) |
-| [Explore IAM](explore-iam/README.md) | C4 | [`explore-iam/docs/developer/c4-model/`](explore-iam/docs/developer/c4-model/) | AWS IAM–style identity, policy, STS, and SSO for sibling apps |
+| [Explore AI](https://github.com/felixzhu97/explore-workspace/tree/main/ai) | C4 | [`explore-workspace/ai/docs/developer/c4-model/`](https://github.com/felixzhu97/explore-workspace/tree/main/ai/docs/developer/c4-model) | Conversational AI platform: Chat, RAG, tools, eval (Spring AI + Angular); moved into explore-workspace |
+| [Explore IAM](https://github.com/felixzhu97/explore-workspace/tree/main/iam) | C4 | [`explore-workspace/iam/docs/developer/c4-model/`](https://github.com/felixzhu97/explore-workspace/tree/main/iam/docs/developer/c4-model) | AWS IAM–style identity, policy, STS, and SSO for sibling apps; moved into explore-workspace |
 | [Explore Chat](https://github.com/felixzhu97/explore-chat) | C4 | [`explore-chat/docs/developer/c4-model/`](explore-chat/docs/developer/c4-model/) | Social + messaging: feed, chat/calls, Nest API, optional AI |
 | [Explore Commerce](https://github.com/felixzhu97/explore-commerce) | C4 | [`explore-commerce/docs/developer/c4-model/`](explore-commerce/docs/developer/c4-model/) | E-commerce monorepo: Web shop, admin, API |
 | [Explore Lowcode](https://github.com/felixzhu97/explore-lowcode) | C4 | [`explore-lowcode/docs/developer/c4-model/`](explore-lowcode/docs/developer/c4-model/) | Visual page builder: canvas, components, themes, export |
@@ -60,12 +60,6 @@ Workspace-level view of how catalogued Explore products **evolve**, **integrate*
 explore/
 ├── README.md
 ├── docs/                    # Workspace Map + cross-project Domain Model
-├── explore-ai/
-│   ├── README.md
-│   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
-├── explore-iam/
-│   ├── README.md
-│   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
 ├── explore-chat/
 │   ├── README.md
 │   └── docs/{Glossary.md,product-owner/,developer/c4-model/}
@@ -96,14 +90,14 @@ explore/
 
 ```bash
 brew install plantuml   # macOS
-plantuml explore-ai/docs/developer/c4-model/C1-Context.puml
+plantuml explore-chat/docs/developer/c4-model/C1-Context.puml
 ```
 
 Useful entry points:
 
 - [Explore Workspace Map](docs/Workspace-Map.puml)
-- [Explore AI system context](explore-ai/docs/developer/c4-model/C1-Context.puml)
-- [Explore IAM system context](explore-iam/docs/developer/c4-model/C1-Context.puml)
+- [Explore AI system context](https://github.com/felixzhu97/explore-workspace/blob/main/ai/docs/developer/c4-model/C1-Context.puml)
+- [Explore IAM system context](https://github.com/felixzhu97/explore-workspace/blob/main/iam/docs/developer/c4-model/C1-Context.puml)
 - [Explore Chat system context](explore-chat/docs/developer/c4-model/C1-Context.puml)
 - [Explore Commerce system context](explore-commerce/docs/developer/c4-model/C1-Context.puml)
 - [Explore Lowcode system context](explore-lowcode/docs/developer/c4-model/C1-Context.puml)
@@ -113,8 +107,8 @@ Useful entry points:
 ## Suggested Learning Path
 
 1. Skim the [Workspace Map](docs/README.md) for evolution, integration, and migration across catalogued products
-2. Read [Explore AI C4](explore-ai/docs/developer/c4-model/) for Spring AI + Angular container and deployment boundaries
-3. Read [Explore IAM C4](explore-iam/docs/developer/c4-model/) for AWS IAM–style identity, policy, STS, and SSO boundaries
+2. Read [Explore AI C4](https://github.com/felixzhu97/explore-workspace/tree/main/ai/docs/developer/c4-model) for Spring AI + Angular container and deployment boundaries
+3. Read [Explore IAM C4](https://github.com/felixzhu97/explore-workspace/tree/main/iam/docs/developer/c4-model) for AWS IAM–style identity, policy, STS, and SSO boundaries
 4. Read [Explore Chat C4](explore-chat/docs/developer/c4-model/) for Nest API, clients, and Python service boundaries
 5. Read [Explore Commerce C4](explore-commerce/docs/developer/c4-model/) for Web / Admin / API container split
 6. Read [Explore Lowcode C4](explore-lowcode/docs/developer/c4-model/) for SPA canvas / domain layout and Vercel deploy

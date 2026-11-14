@@ -8,22 +8,22 @@ Local full project trees keep VCS as `.git.local` when the meta-repo is being co
 
 ```bash
 # Work inside a project clone (normal day-to-day)
-mv explore-ai/.git.local explore-ai/.git
+mv explore-chat/.git.local explore-chat/.git
 
 # Before committing this meta-repo, hide nested Git again
-mv explore-ai/.git explore-ai/.git.local
+mv explore-chat/.git explore-chat/.git.local
 ```
 
-Replace `explore-ai` with the target project directory name. Repeat for every published project that has a nested Git dir.
+Replace `explore-chat` with the target project directory name. Repeat for every published project that has a nested Git dir.
 
 ## Pull / push project remotes
 
 Projects are **owned** remotes (not third-party upstream mirrors). When you need latest project source before updating C4:
 
 ```bash
-mv explore-ai/.git.local explore-ai/.git
-git -C explore-ai pull --ff-only
-mv explore-ai/.git explore-ai/.git.local
+mv explore-chat/.git.local explore-chat/.git
+git -C explore-chat pull --ff-only
+mv explore-chat/.git explore-chat/.git.local
 ```
 
 Never `git push` from a project directory as part of the meta-repo sync workflow unless the ticket explicitly asks for a project-repo PR.

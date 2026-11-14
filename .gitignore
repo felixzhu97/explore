@@ -16,8 +16,6 @@
 !docs/**
 
 # Published project roots
-!explore-ai/
-!explore-iam/
 !explore-chat/
 !explore-commerce/
 !explore-lowcode/

@@ -7,8 +7,8 @@ does not.
 
 Do **not** sync new business semantics before Phase 1 is done (or marked N/A).
 
-Paths below are under each published project root (`explore-ai/`, `explore-iam/`,
-`explore-chat/`, …) in this meta-repo.
+Paths below are under each published project root (`explore-chat/`,
+`explore-commerce/`, …) in this meta-repo.
 
 ## Documents
 

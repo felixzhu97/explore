@@ -26,8 +26,8 @@ Source: [`Workspace-Map.puml`](Workspace-Map.puml)
 
 | Product | C4 | Glossary | Story Map |
 |---------|----|----------|-----------|
-| [Explore AI](../explore-ai/README.md) | [c4-model](../explore-ai/docs/developer/c4-model/) | [Glossary](../explore-ai/docs/Glossary.md) | [User Story Map](../explore-ai/docs/product-owner/User-Story-Map.md) |
-| [Explore IAM](../explore-iam/README.md) | [c4-model](../explore-iam/docs/developer/c4-model/) | [Glossary](../explore-iam/docs/Glossary.md) | [User Story Map](../explore-iam/docs/product-owner/User-Story-Map.md) |
+| [Explore AI](https://github.com/felixzhu97/explore-workspace/blob/main/ai/README.md) | [c4-model](https://github.com/felixzhu97/explore-workspace/tree/main/ai/docs/developer/c4-model) | [Glossary](https://github.com/felixzhu97/explore-workspace/blob/main/ai/docs/Glossary.md) | [User Story Map](https://github.com/felixzhu97/explore-workspace/blob/main/ai/docs/product-owner/User-Story-Map.md) |
+| [Explore IAM](https://github.com/felixzhu97/explore-workspace/blob/main/iam/README.md) | [c4-model](https://github.com/felixzhu97/explore-workspace/tree/main/iam/docs/developer/c4-model) | [Glossary](https://github.com/felixzhu97/explore-workspace/blob/main/iam/docs/Glossary.md) | [User Story Map](https://github.com/felixzhu97/explore-workspace/blob/main/iam/docs/product-owner/User-Story-Map.md) |
 | [Explore Chat](../explore-chat/README.md) | [c4-model](../explore-chat/docs/developer/c4-model/) | [Glossary](../explore-chat/docs/Glossary.md) | [User Story Map](../explore-chat/docs/product-owner/User-Story-Map.md) |
 | [Explore Commerce](../explore-commerce/README.md) | [c4-model](../explore-commerce/docs/developer/c4-model/) | [Glossary](../explore-commerce/docs/Glossary.md) | [User Story Map](../explore-commerce/docs/product-owner/User-Story-Map.md) |
 | [Explore Lowcode](../explore-lowcode/README.md) | [c4-model](../explore-lowcode/docs/developer/c4-model/) | [Glossary](../explore-lowcode/docs/Glossary.md) | [User Story Map](../explore-lowcode/docs/product-owner/User-Story-Map.md) |

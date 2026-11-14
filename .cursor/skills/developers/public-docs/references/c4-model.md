@@ -6,8 +6,8 @@ Architecture insight in this repo lives under each project's `docs/developer/c4-
 
 | Project | Path |
 |---------|------|
-| Explore AI | [`explore-ai/docs/developer/c4-model/`](../../../../explore-ai/docs/developer/c4-model/) |
-| Explore IAM | [`explore-iam/docs/developer/c4-model/`](../../../../explore-iam/docs/developer/c4-model/) |
+| Explore AI | [`explore-workspace/ai/docs/developer/c4-model/`](https://github.com/felixzhu97/explore-workspace/tree/main/ai/docs/developer/c4-model) (moved; not published here) |
+| Explore IAM | [`explore-workspace/iam/docs/developer/c4-model/`](https://github.com/felixzhu97/explore-workspace/tree/main/iam/docs/developer/c4-model) (moved; not published here) |
 | Explore Chat | [`explore-chat/docs/developer/c4-model/`](../../../../explore-chat/docs/developer/c4-model/) |
 | Explore Commerce | [`explore-commerce/docs/developer/c4-model/`](../../../../explore-commerce/docs/developer/c4-model/) |
 | Explore Lowcode | [`explore-lowcode/docs/developer/c4-model/`](../../../../explore-lowcode/docs/developer/c4-model/) |
