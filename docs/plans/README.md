@@ -8,6 +8,7 @@
 |------|------|----------|----------|
 | [Harness Engineering 推广](harness-engineering-rollout.md) | 暂停 | 全部 8 个项目 + 元仓库 | 2026-11-14 |
 | [Workspace 助手：一个入口询问所有系统](workspace-assistant.md) | 草案 | explore-ai（入口），其余项目为数据来源 | 2026-11-14 |
+| [Explore monorepo：一键启动与跨项目依赖](monorepo-migration.md) | 草案 | 全部 8 个项目 + 元仓库 | 2026-11-14 |
 
 状态取值：草案、进行中、暂停、已完成。
 
