@@ -1,6 +1,6 @@
 # Explore monorepo：一键启动与跨项目依赖
 
-状态：阶段 0–2 已完成 | 最后更新：2026-11-14 | 涉及仓库：全部 8 个项目 + 元仓库
+状态：阶段 0–4.4 已完成，4.5 在 2026-11-21 观察期结束后执行；阶段 5 进行中 | 最后更新：2026-11-14 | 涉及仓库：全部 8 个项目 + 元仓库
 
 ## 目标
 
@@ -145,7 +145,7 @@ flowchart LR
   - `spring-boot-docker-compose`：`bootRun` 时自动起 compose 服务并通过 `ServiceConnection` 注入连接信息，替代手写数据库地址。
   - Testcontainers 的 `@ServiceConnection`：集成测试自动接入容器，替代手写 `@DynamicPropertySource`。
 - **Render 和 Vercel**
-  - Render `previews`：每个 PR 自动建预览环境，替代手工建临时服务。
+  - Render `previews`：预览环境按需手动创建（`generation: manual`）。自动预览会继承生产环境的密钥，隐私审查没有通过。
   - Vercel 原生"跳过未受影响的项目"：根据 workspace 依赖判断是否构建；`nx-ignore` 作为后备。
 - **GitHub Actions**
   - `gradle/actions/setup-gradle`：自带 Gradle 缓存，替代手写 `actions/cache`。
@@ -188,7 +188,7 @@ flowchart LR
   - ai 服务用 `dockerContext: .`，`dockerfilePath: ai/server/Dockerfile`。
   - `buildFilter.paths` 只包含 `ai/server/**`、`shared/**`、`build-logic/**` 和 Gradle 文件。
   - Dockerfile 改为执行 `./gradlew :ai-server:bootJar -PcloudMinimal`，以仓库根目录为构建上下文，旁边放 `Dockerfile.dockerignore`（做法同已完成的 `iam/Dockerfile`）。
-  - 打开 `previews`，每个 PR 自动建预览环境。
+  - `previews` 设为手动，原因见上文。
 - **Vercel**
   - Root Directory 设为 `ai/web`，`vercel.json` 跟着移过去。
   - 先用 Vercel 原生的"跳过未受影响的项目"；它对 Gradle 后端的改动判断不准时，再在 Ignored Build Step 用 `npx nx-ignore ai-web` 作为后备。
@@ -301,16 +301,52 @@ iam 的部署暂不切换，仍从原仓库发布。
 | 4.4 | 旧的 Render 服务和 Vercel 项目暂停，保留一周 | 一周内没有回滚 | 恢复旧服务 |
 | 4.5 | 归档 explore-ai 原仓库，README 指向新仓库 | 已归档 | 取消归档 |
 
+阶段 4 的实际做法：
+
+- **4.1 和 4.2 的做法**：
+  - 最初按计划建了并行服务 `ai-server` 和 `ai-web`，验证通过。
+  - 并行服务会让同一个后端多收一份 Starter 实例的费用，所以最后复用原来的 Render `explore-ai` 和 Vercel `explore-ai`，只把它们的 Git 来源改成 explore-workspace，再删掉并行服务。
+  - 原服务名、地址和正式域名都没变。
+- **4.3 自动满足**：正式域名 `www.felixzhu.chat` 一直挂在原 Vercel 项目上，不需要切换。
+- **回滚**：把 Render 和 Vercel 的 Git 来源改回 explore-ai 仓库。观察期内阶段 5 已经开始，回滚会连同阶段 5 的改动一起退回。
+- **已验证**：
+  - 健康检查 UP。
+  - 线上聊天经 Vercel 转到 Render 能返回数据。
+  - 合并 #29 没有触发 Render 重建，说明 `buildFilter` 生效。
+- **还没验证**：
+  - Vercel 是否跳过只改 `iam/` 的提交：切换后还没有这样的提交。
+  - IAM 登录：线上令牌校验目前关闭。
+- **4.4 观察期**：到 2026-11-21 结束，之后执行 4.5。
+
+阶段 4 的 PR：
+
+- explore-workspace：[#28](https://github.com/felixzhu97/explore-workspace/pull/28)（并行服务和根目录的 `render.yaml`）、[#29](https://github.com/felixzhu97/explore-workspace/pull/29)（改回原来的 Render 服务）
+
 ### 阶段 5：抽取 `shared/`（一个库一个 PR，先接一个使用方）
+
+开始前核对代码发现的出入：
+
+- **kernel**：ai 和 iam 的基类已经分叉。ai 用泛型的 `@EmbeddedId`，类型化 ID 包着 UUID；iam 用 `@Id String`。
+- **architecture**：ArchUnit 没有冻结存储，规则里写死了根包名。
+- **errors**：两边的错误格式不同：ai 是 `{message, errorCode, timestamp, path}`，iam 是 `{error, message}`。两边都改用 RFC 9457 的 `ProblemDetail`。
+- **identity**：只有 ai 用到。配置项从 `app.oauth.explore-iam.*` 改成 Spring Boot 标准的 `spring.security.oauth2.resourceserver.jwt.*`。
+
+命名：
+
+- **项目名和包名**：Gradle 项目叫 `:shared-<库>`，Java 包名叫 `com.explore.<库>`。
+- **约定插件**：叫 `explore.java-library-conventions`。
+- **错误类型**：用 RFC 9457 的 `type`（例如 `/problems/not-found`），不另加 `errorCode`。
+- **授权类**：ai 的 `JwtPresentScopeAuthorization` 改名为 `BearerTokenScopeAuthorization`。
 
 | 步骤 | 内容 | 完成条件 |
 |------|------|----------|
-| 5.1 | `shared/architecture`：只用于测试，风险最低。先接 ai，再接 iam | 两边架构测试通过，冻结的违规清单不增加 |
-| 5.2 | `shared/kernel`：先接 ai，它和 portfolio 的版本完全一致 | ai 测试通过 |
-| 5.3 | iam 改用 `shared/kernel`；它的版本已经分叉，先补测试锁定现有行为，再替换 | iam 测试通过，数据库表结构不变 |
-| 5.4 | `shared/errors`：先接 ai，再接 iam | 错误响应的 JSON 结构不变（用测试对比） |
-| 5.5 | `shared/identity`：先接 ai | 用 IAM 签发的令牌访问 ai 通过 |
-| 5.6 | `shared/provisioning`：ai 和 iam 一起改，配一个 SCIM 契约测试 | iam 推送用户到 ai 端到端通过 |
+| 5.0 | `build-logic` 加 `explore.java-library-conventions`（`java-library` 加 `java-test-fixtures`）；版本目录补上 ArchUnit 和 scim2 SDK；镜像 workflow 的路径过滤补上 `shared/**` | CI 通过 |
+| 5.1 | `shared/architecture`：通用规则以 test fixtures 提供，根包名作参数。先接 ai，再接 iam；iam 新暴露的违规用 `FreezingArchRule` 冻结 | 两边架构测试通过，规则不减少 |
+| 5.2 | `shared/kernel`：迁入 ai 的 `AbstractEmbeddable`、`AbstractImmutable`、`AbstractEntity`，先接 ai | ai 测试通过，Liquibase 校验通过 |
+| 5.3 | iam 改用 `shared/kernel`：先补 characterization tests 锁定现有行为，再换成类型化 ID，ID 列保持 `varchar(36)` | iam 测试通过，表结构不变 |
+| 5.4 | `shared/errors`：`DomainException` 加 `DomainExceptionHandler`，返回 `ProblemDetail`；标准异常交给 Boot 的 `spring.mvc.problemdetails.enabled`。ai 前端和 iam 控制台改读 `detail`，兼容旧字段 | 两边契约测试断言 RFC 9457 字段，前端单测通过 |
+| 5.5 | `shared/identity`：资源服务器交给 Boot 的标准配置项，库里只放 scope 授权；`render.yaml` 不设 issuer 即关闭令牌校验 | 用 IAM 签发的令牌访问 ai 通过，生产环境健康检查 UP |
+| 5.6 | `shared/provisioning`：迁入两边一致的 SCIM 组件，配一个 SCIM 契约测试 | iam 推送用户到 ai 端到端通过 |
 
 ### 阶段 6：迁入 ml 和 chat
 
@@ -379,6 +415,12 @@ iam 的部署暂不切换，仍从原仓库发布。
 - `minimumReleaseAge` 在解析前就校验整个锁文件，调高限制会让已锁定的新版本全部失败；要等这些版本过了期限再调高，或者重新解析整个锁文件。
 - 构建上下文改成仓库根目录后，`Dockerfile.dockerignore` 要排除所有产品的本地数据（`**/data`）和 `.env.*`，否则本地构建会把 IAM 的 H2 数据库带进构建层。
 - 产品的 checkstyle 规则和根配置不同时，先保留产品自己的 `configFile`，对齐规则另做。
+
+阶段 4：
+
+- 并行服务适合用来验证，但正式运行时会重复计费。验证通过后，改原服务的 Git 来源，比切域名更简单，也不需要迁移环境变量。
+- Render 用 API 新建服务时，`buildFilter` 会被忽略，要建好后再 PATCH 一次。`autoDeploy` 和 `autoDeployTrigger` 不能同时传。
+- Render 自动预览会把生产环境的环境变量带进预览环境，所以改成手动预览。
 
 ## References
 
