@@ -1,7 +1,7 @@
 # Cursor config (portable)
 
-This `.cursor/` tree is **vendored for cross-machine development**. After
-clone, open the repo in Cursor — no manual copy from `~/.cursor/` required.
+This `.cursor/` tree carries the rules, agents, and meta-repo skills for this
+repo. General skills live only in `~/.cursor/skills/` on each machine.
 
 | Path | Source | Role |
 |------|--------|------|
@@ -11,7 +11,7 @@ clone, open the repo in Cursor — no manual copy from `~/.cursor/` required.
 | [rules/java-standards.mdc](./rules/java-standards.mdc) | Global copy | Java conventions |
 | [rules/angular-standards.mdc](./rules/angular-standards.mdc) | Global copy | Angular conventions |
 | [agents/](./agents/) | `~/.cursor/agents` | Custom subagents (13 roles: compliance, security-architect, …) |
-| [skills/](./skills/) | Mixed | Flat `{role}/{skill}/` tree + meta `public-docs*` overlays |
+| [skills/](./skills/) | Project | Meta-repo skills only (`public-docs`, `public-docs-backlog`) |
 
 Indexes:
 
@@ -23,12 +23,7 @@ Indexes:
 ```bash
 cp ~/.cursor/rules/{architecture,java-standards,angular-standards}.mdc .cursor/rules/
 cp ~/.cursor/agents/*.md .cursor/agents/
-for role in developers product-owner scrum-master \
-  executive compliance customer user sponsor business-owner subject-matter-expert \
-  architect devops ux-designer researcher; do
-  rsync -a ~/.cursor/skills/"$role"/ .cursor/skills/"$role"/
-done
-cp ~/.cursor/skills/README.md .cursor/skills/GLOBAL-SKILLS-INDEX.md
 ```
 
-Not vendored: `~/.cursor/skills-cursor/` (Cursor plugin skills, per machine).
+Not vendored: general skills in `~/.cursor/skills/` and Cursor plugin skills in
+`~/.cursor/skills-cursor/` (per machine).
