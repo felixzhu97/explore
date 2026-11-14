@@ -212,6 +212,8 @@ flowchart LR
   - `serve`、`build`、`test`、`lint` 是 Nx 默认的目标名。
 - **项目名用 `<产品>-<角色>`**：例如 `ai-server`、`ai-web`、`iam-console`，与目录一一对应。
 - **沿用项目自己的叫法**：portfolio 的 Python 服务在它的 README 里叫 "Portfolio Analytics"，所以用 `analytics`。
+- **类名、接口、令牌、环境变量和部署名**：按[命名标准化计划](naming-standards.md)的依据、规则和检查表执行；依据标准的命名在定义处标注出处。
+- **REST 遵循 Google AIP**：资源导向，集合名用复数 lowerCamelCase，动作用 `:verb` 自定义方法（AIP-121、122、136），详见命名标准化计划第 2 节。
 
 ### 风险与待定
 
@@ -372,6 +374,8 @@ iam 的部署暂不切换，仍从原仓库发布。
 
 ### 阶段 6：迁入 ml 和 chat
 
+迁入时按[命名标准化计划](naming-standards.md)第 6 节的 ml、chat 两张表改名，并补齐标准标注；chat 的 RFC 8829 引用改为 RFC 9429。
+
 | 步骤 | 内容 | 完成条件 |
 |------|------|----------|
 | 6.1 | 原样迁入 `ml/` | uvicorn 能启动 |
@@ -384,6 +388,8 @@ iam 的部署暂不切换，仍从原仓库发布。
 | 6.8 | chat 改用 `shared/identity` | 用 IAM 令牌访问 chat 通过 |
 
 ### 阶段 7：迁入 portfolio（工作量最大，拆得最细）
+
+迁入时按[命名标准化计划](naming-standards.md)第 6 节的 portfolio 表改名，并补齐标准标注：`finpulse-*`、`@fintech/*` 等包名在 7.3 一起改，`EXPO_PUBLIC_DEMO_*` 这个隐私阻断项在 7.1 处理。
 
 | 步骤 | 内容 | 完成条件 |
 |------|------|----------|
@@ -404,6 +410,8 @@ iam 的部署暂不切换，仍从原仓库发布。
 1. 原样迁入，在产品目录下能用原命令启动。
 2. 调整成角色目录（commerce 的 `api` 改名为 `server`），让插件推断目标；commerce 的 MongoDB 改用根 `compose.yaml` 里的 `mongodb`。
 3. 部署改指新仓库：commerce 的 Vercel Root Directory 和 Lambda 工作流路径，three 的 Vercel Root Directory。lowcode 目前没有部署。
+
+迁入时按[命名标准化计划](naming-standards.md)第 6 节的 commerce、lowcode、three 三张表改名，并补齐标准标注；commerce 的 crawler、data-mining、CLI 先确定角色名，`NEXT_PUBLIC_DD_RUM_USER_EMAIL` 这个隐私阻断项在第 1 步处理。
 
 完成条件：`pnpm dev <产品名>` 能启动，部署的 preview 可用。
 
@@ -453,6 +461,8 @@ iam 的部署暂不切换，仍从原仓库发布。
 - iOS 的路径过滤要排除 `*.md`，否则改一行 README 也会在 macOS runner 上跑完整的编译和测试。
 
 ## References
+
+标准类链接见 [docs/References.md](../References.md)。
 
 命名依据：
 
