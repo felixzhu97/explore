@@ -20,6 +20,8 @@ Allowed to stage and commit:
 | `README.md` | Projects catalog and entry points |
 | `.gitignore` | Default-deny root + docs whitelist |
 | `.cursor/skills/` | Maintainer workflow skills |
+| `tools/` | Meta-repo link and naming checkers |
+| `.github/workflows/` | Meta-repo CI (standards checks) |
 
 **Not** published: project `.cursor/skills/`, application source, secrets, or build artifacts.
 
@@ -42,6 +44,8 @@ Stage **only** whitelist paths. Do **not** use `git add -A`.
 git add .gitignore README.md
 git add docs/
 git add .cursor/skills/
+git add tools/
+git add .github/workflows/
 git add explore-chat/README.md explore-chat/docs/Glossary.md explore-chat/docs/product-owner/ explore-chat/docs/developer/c4-model/
 git add explore-commerce/README.md explore-commerce/docs/Glossary.md explore-commerce/docs/product-owner/ explore-commerce/docs/developer/c4-model/
 git add explore-lowcode/README.md explore-lowcode/docs/Glossary.md explore-lowcode/docs/product-owner/ explore-lowcode/docs/developer/c4-model/

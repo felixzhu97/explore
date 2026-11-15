@@ -13,7 +13,7 @@ stay in each project's own Git remote.
 
 Stage **only** paths in [sync-repo](../skills/developers/public-docs/references/sync-repo.md):
 
-- `README.md`, `.gitignore`, `.cursor/skills/**`
+- `README.md`, `.gitignore`, `.cursor/skills/**`, `tools/**`, `.github/workflows/**`
 - `*/README.md`, `*/docs/Glossary.md`, `*/docs/product-owner/**`
 - `*/docs/developer/c4-model/**`
 

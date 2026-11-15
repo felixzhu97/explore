@@ -14,6 +14,11 @@
 !SECURITY.md
 !docs/
 !docs/**
+!tools/
+!tools/**
+!.github/
+!.github/workflows/
+!.github/workflows/**
 
 # Published project roots
 !explore-chat/
@@ -42,6 +47,11 @@
 # Optional project root README under any published project root
 !*/README.md
 
-# After */** so Cursor skills remain trackable
+# After */** so Cursor skills, tools, and workflows remain trackable
 !.cursor/
 !.cursor/**
+!tools/
+!tools/**
+!.github/
+!.github/workflows/
+!.github/workflows/**
