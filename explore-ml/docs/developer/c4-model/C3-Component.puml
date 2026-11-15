@@ -14,12 +14,12 @@ skinparam shadowing false
 LAYOUT_TOP_DOWN()
 title [C4 Level 3] Explore ML - Components (ML app, RAG module and Model Test UI)
 
-Container_Boundary(app, "python_ml") {
+Container_Boundary(app, "server") {
   Component(server, "server.py", "FastAPI app shell", "build_app: module routers, lifespans, aggregated /health (main.py imports the six modules)")
   Component(modules, "<module>/module.py", "module contract", "router, health, optional lifespan; RAG adds register_exception_handlers")
 }
 
-Container_Boundary(rag, "python_ml/rag") {
+Container_Boundary(rag, "server/rag") {
   Component(routers, "controller/", "FastAPI routers", "documents, query, crawler, sync, api (health); inline Pydantic DTOs; XServiceDependency")
   Component(errors, "controller/errors.py", "exception handlers", "Domain errors -> 400 / 404 / 503 / upstream status, {detail}")
   Component(services, "service/", "XService classes", "DocumentService, QueryService, WebpageService, SyncService; @lru_cache get_x_service()")
@@ -28,7 +28,7 @@ Container_Boundary(rag, "python_ml/rag") {
   Component(infra, "infra/", "adapters", "QdrantService, EmbeddingService, LlmClient, ContentApiClient, DocumentProcessor, pdf_parser, web_fetcher, reranker")
 }
 
-Container_Boundary(ui, "ui/src/app") {
+Container_Boundary(ui, ":web/src/app") {
   Component(shared, "shared/", "Angular", "helpers registry, /ml proxy, HealthService, Call, SSE, polling, module page")
   Component(charts, "shared/ charts", "Angular + d3", "bar, line, slope, histogram, scatter, job timeline, waveform; pure math in chart-math.ts")
   Component(pages, "<module>/", "Angular", "<module>.page.ts + <module>.service.ts (HttpClient, inline types) per module")

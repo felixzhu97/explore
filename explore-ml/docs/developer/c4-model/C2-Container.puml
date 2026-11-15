@@ -19,13 +19,13 @@ Person(engineer, "Platform engineer", "Local")
 System_Ext(sibling_api, "Sibling Explore API", "Product API boundary")
 
 System_Boundary(ml, "Explore ML") {
-  Container(ui, "Model Test UI", "Angular 22, NG-ZORRO, Tailwind, d3", "ui/ :4210 (ng serve); module pages with D3 charts")
-  Container(proxy, "ML proxy", "ng serve proxy", "ui/proxy.conf.json; /ml -> ML app (prefix stripped, WS on)")
-  Container(app, "ML app", "FastAPI, uvicorn", "python_ml/main.py :8000; modules recommendation, vision, rag, image_playground, speech, video; GET /health aggregates them")
+  Container(ui, "Model Test UI", "Angular 22, NG-ZORRO, Tailwind, d3", ":web/ :4210 (ng serve); module pages with D3 charts")
+  Container(proxy, "ML proxy", "ng serve proxy", ":web/proxy.conf.json; /ml -> ML app (prefix stripped, WS on)")
+  Container(app, "ML app", "FastAPI, uvicorn", "server/main.py :8000; modules recommendation, vision, rag, image_playground, speech, video; GET /health aggregates them")
   ContainerDb(fixtures, "Fixture data", "JSONL", "data/finetune/ for training/ scripts")
 }
 
-ContainerDb_Ext(qdrant, "Qdrant", "Vector DB", "Embedded at python_ml/rag/data/qdrant or QDRANT_URL")
+ContainerDb_Ext(qdrant, "Qdrant", "Vector DB", "Embedded at server/rag/data/qdrant or QDRANT_URL")
 Container_Ext(llm, "Ollama / OpenAI", "HTTP", "Embeddings + chat")
 Container_Ext(content_api, "Content API", "HTTP", "CONTENT_API_URL /posts, /comments")
 ContainerDb_Ext(rec_stores, "Postgres / Redis / Cassandra", "Stores", "Recommendation features and vectors")

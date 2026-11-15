@@ -20,7 +20,7 @@ operations stay inside Explore ML.
 
 1. **Scenario** Module matches layer layout  
    **GIVEN** the Explore ML app source tree  
-   **WHEN** a module under `python_ml/` is opened  
+   **WHEN** a module under `server/` is opened  
    **THEN** it follows `controller` → `service` → `domain` ← `infra`
 
 ### Status

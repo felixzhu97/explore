@@ -1,6 +1,6 @@
 # 命名标准化：按法律法规、国际、国家与行业标准统一术语
 
-状态：草案 | 最后更新：2026-11-14 | 涉及仓库：explore-workspace（shared、基础设施、iam、ai，以及待迁入的 ml、chat、portfolio、commerce、lowcode、three）+ 元仓库
+状态：进行中 | 最后更新：2026-11-15 | 涉及仓库：explore-workspace（shared、基础设施、iam、ai，以及待迁入的 ml、chat、portfolio、commerce、lowcode、three）+ 元仓库
 
 ## 目标
 

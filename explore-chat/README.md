@@ -6,7 +6,7 @@ Cross-language IM wire shapes are documented in [`src/main/im-contract/openapi.y
 
 Clients talk only to the Spring API over HTTPS and Socket.IO (plus WebRTC signaling). Optional AI, vision, recommendation, and RAG side services stay behind the API. Local Java defaults use H2 + Liquibase.
 
-**Live:** [https://whatschat-web.vercel.app](https://whatschat-web.vercel.app)
+**Live:** [https://explore-chat-web.vercel.app](https://explore-chat-web.vercel.app)
 
 ## Get started
 

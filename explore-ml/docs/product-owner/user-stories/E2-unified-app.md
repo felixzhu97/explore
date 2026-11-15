@@ -79,7 +79,7 @@ Done
 ## US-08 UI proxy and per-module health
 
 **As a** model-test engineer  
-**I want** the `ui/` console to use a single `/ml` proxy and show module health  
+**I want** the `web/` console to use a single `/ml` proxy and show module health  
 **So that** modules can be exercised without six separate origins
 
 ### Acceptance criteria

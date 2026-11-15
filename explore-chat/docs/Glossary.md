@@ -101,7 +101,7 @@ flowchart TB
 
 | Preferred Term                  | 中文             | Definition                                                                                                       |
 | ------------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Chat                     | Chat      | 社交 + 即时通讯产品；npm scope `@chat/*`；`whatschat-*` / `explorechat-*` 为历史名                                 |
+| Chat                     | Chat      | 社交 + 即时通讯产品；npm scope `@chat/*`；`explore-chat-*` / `explorechat-*` 为历史名                                 |
 | Cover URL                       | 封面 URL         | 视频帖封面图地址；与 mediaUrls 分离                                                                              |
 | Feed Entry                      | 信息流条目       | Feed 中的一条 Post 引用                                                                                          |
 | Engagement                      | 互动             | 点赞、收藏及计数                                                                                                 |

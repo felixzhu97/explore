@@ -13,7 +13,7 @@ title: Explore ML - User Story Map
 | ---- | ----------- |
 | Platform engineer | Starts the loopback ML app locally and mounts fixture data |
 | Sibling API developer | Calls recommendation / vision / rag / image_playground / speech / video routes on one base URL |
-| Model-test engineer | Exercises each module from the `ui/` operator console on :4210 |
+| Model-test engineer | Exercises each module from the `web/` operator console on :4210 |
 
 ## Journey overview
 

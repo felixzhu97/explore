@@ -4,7 +4,7 @@
 
 ## Background
 
-The `ui/` console provides one page per ML module with charts so routes can be
+The `web/` console provides one page per ML module with charts so routes can be
 checked before sibling products attach BFFs.
 
 ---
@@ -18,7 +18,7 @@ checked before sibling products attach BFFs.
 ### Acceptance criteria
 
 1. **Scenario** Submit fixture per module  
-   **GIVEN** the `ui/` app on :4210  
+   **GIVEN** the `web/` app on :4210  
    **WHEN** each module route is opened  
    **THEN** a fixture request can be submitted and a structured result shown
 
@@ -69,7 +69,7 @@ Done
 ## US-12 Eval dashboard
 
 **As a** model-test engineer  
-**I want** an eval dashboard in `ui/`  
+**I want** an eval dashboard in `web/`  
 **So that** fixture-run quality metrics can be compared across modules
 
 ### Acceptance criteria

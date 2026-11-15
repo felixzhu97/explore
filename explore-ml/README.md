@@ -5,8 +5,8 @@ Explore products. It serves recommendation, vision, RAG, and media
 generation — including speech transcription — on loopback.
 
 Product clients never call it directly. A Spring (or other) API proxies over
-localhost. Six modules live under `python_ml/` as packages of one process on
-port `8000`. `ui/` is an Angular model-test front end with D3 charts for
+localhost. Six modules live under `server/` as packages of one process on
+port `8000`. `web/` is an Angular model-test front end with D3 charts for
 every module; `data/` holds small fixtures.
 
 ## Get started
@@ -29,7 +29,7 @@ cd explore-ml
 ### Run the app
 
 ```bash
-cd python_ml
+cd server
 uv venv && source .venv/bin/activate
 uv pip install -r requirements.txt --override overrides.txt
 cp .env.example .env
@@ -39,7 +39,7 @@ uvicorn main:app --port 8000
 This creates a virtualenv, installs every module's dependencies, copies the
 secrets file (loaded automatically) and starts all six modules on port
 `8000`. `GET /health` reports each module's status. Details:
-[`python_ml/README.md`](python_ml/README.md).
+[`server/README.md`](server/README.md).
 
 | Module           | Package            | Operations under `/api/v1`                      |
 | ---------------- | ------------------ | ----------------------------------------------- |
@@ -64,12 +64,12 @@ npm start
 This serves the UI at <http://localhost:4210>. It proxies `/ml/*` to the app
 on port `8000` without CORS setup. Each module has one page where you can call
 all of its endpoints and see the results charted with D3. See
-[ui/README.md](ui/README.md).
+[:web/README.md](:web/README.md).
 
 ### Configuration
 
-Settings are constants in `python_ml/config.py` and each
-`<module>/config.py`; edit them in place. `python_ml/.env` holds only
+Settings are constants in `server/config.py` and each
+`<module>/config.py`; edit them in place. `server/.env` holds only
 secrets (`DATABASE_URL`, `REDIS_PASSWORD`, `OPENAI_API_KEY`); never commit
 it. Large model weights stay out of git under `~/Codes/models`
 (`LOCAL_MODELS_ROOT`); download them with the
@@ -81,10 +81,10 @@ fixtures under `data/`.
 ### Checks
 
 ```bash
-cd python_ml && pytest -q tests <module>/tests
+cd server && pytest -q tests <module>/tests
 ```
 
-For the UI, run `npm test` and `npm run build` in `ui/`.
+For the UI, run `npm test` and `npm run build` in `web/`.
 
 GitHub Actions runs on every pull request and every push to `main`: `pytest`
 for the app and RAG (Python 3.12) and the UI tests and build (Node 22). Run
@@ -106,8 +106,8 @@ the other modules' suites locally.
 ## Repository layout
 
 ```text
-python_ml/     One FastAPI app (recommendation / vision / rag / image_playground / speech / video)
-ui/            Model-test UI (Angular, NG-ZORRO, Tailwind, D3)
+server/     One FastAPI app (recommendation / vision / rag / image_playground / speech / video)
+:web/            Model-test UI (Angular, NG-ZORRO, Tailwind, D3)
 data/          Test / fixture data
 docs/          Glossary, Guideline, user-guide, C4, product-owner
 ```
